@@ -1,3 +1,20 @@
 {
-  "sources": []
+  "sources": [
+    {
+      "id": "groww",
+      "company": "Groww",
+      "provider": "greenhouse",
+      "board_token": "groww",
+      "region": "India",
+      "enabled": true
+    },
+    {
+      "id": "razorpay",
+      "company": "Razorpay",
+      "provider": "greenhouse",
+      "board_token": "razorpaysoftwareprivatelimited",
+      "region": "India",
+      "enabled": true
+    }
+  ]
 }
