@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#101827">
 <meta name="description" content="Discover job opportunities from companies worldwide.">
 <title>JobRadar India | Find Your Next Opportunity</title>
+
 <style>
 :root {
   --bg:#f5f7fb;
@@ -15,6 +16,7 @@
   --border:#e2e8f0;
   --primary:#2563eb;
 }
+
 body.dark {
   --bg:#0b1220;
   --card:#131e30;
@@ -23,7 +25,15 @@ body.dark {
   --border:#28364b;
   --primary:#60a5fa;
 }
-* {box-sizing:border-box}
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
 body {
   margin:0;
   background:var(--bg);
@@ -31,10 +41,12 @@ body {
   font-family:Arial,sans-serif;
   transition:.2s;
 }
+
+/* FIXED: Navbar no longer overlaps hero */
 header {
-  position:sticky;
-  top:0;
-  z-index:10;
+  position:relative;
+  width:100%;
+  z-index:1;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -42,10 +54,28 @@ header {
   background:var(--card);
   border-bottom:1px solid var(--border);
 }
-.logo {font-size:21px;font-weight:bold}
-.logo span {color:var(--primary)}
-nav {display:flex;align-items:center;gap:20px}
-nav a {color:var(--muted);text-decoration:none;font-size:14px}
+
+.logo {
+  font-size:21px;
+  font-weight:bold;
+}
+
+.logo span {
+  color:var(--primary);
+}
+
+nav {
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
+nav a {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+}
+
 button {
   border:0;
   border-radius:9px;
@@ -55,19 +85,29 @@ button {
   font-weight:bold;
   cursor:pointer;
 }
+
 .theme {
   background:var(--bg);
   color:var(--text);
   border:1px solid var(--border);
 }
+
 .hero {
   background:linear-gradient(135deg,#101827,#1d3b70);
   color:white;
   text-align:center;
   padding:65px 20px;
 }
-.hero h1 {font-size:clamp(32px,6vw,52px);margin:0 0 14px}
-.hero p {color:#cbd5e1}
+
+.hero h1 {
+  font-size:clamp(32px,6vw,52px);
+  margin:0 0 14px;
+}
+
+.hero p {
+  color:#cbd5e1;
+}
+
 .search {
   display:flex;
   gap:10px;
@@ -77,6 +117,7 @@ button {
   background:white;
   border-radius:13px;
 }
+
 .search input {
   flex:1;
   min-width:0;
@@ -86,7 +127,13 @@ button {
   color:#172033;
   font-size:15px;
 }
-.container {max-width:1150px;margin:35px auto;padding:0 20px}
+
+.container {
+  max-width:1150px;
+  margin:35px auto;
+  padding:0 20px;
+}
+
 .section-head {
   display:flex;
   justify-content:space-between;
@@ -94,26 +141,64 @@ button {
   flex-wrap:wrap;
   gap:12px;
 }
-h2 {font-size:23px}
-.muted {color:var(--muted)}
-.filters {display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}
+
+h2 {
+  font-size:23px;
+}
+
+.muted {
+  color:var(--muted);
+}
+
+.filters {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin:20px 0;
+}
+
 .filter {
   background:var(--card);
   color:var(--muted);
   border:1px solid var(--border);
   font-weight:normal;
 }
-.filter.active {background:var(--primary);color:white}
-.jobs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+
+.filter.active {
+  background:var(--primary);
+  color:white;
+}
+
+.jobs {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+
 .job {
   background:var(--card);
   border:1px solid var(--border);
   padding:21px;
   border-radius:14px;
 }
-.job h3 {margin:0 0 8px;font-size:18px}
-.company {color:var(--muted);font-size:14px}
-.tags {display:flex;flex-wrap:wrap;gap:7px;margin:17px 0}
+
+.job h3 {
+  margin:0 0 8px;
+  font-size:18px;
+}
+
+.company {
+  color:var(--muted);
+  font-size:14px;
+}
+
+.tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:17px 0;
+}
+
 .tag {
   padding:6px 9px;
   border-radius:6px;
@@ -121,6 +206,7 @@ h2 {font-size:23px}
   color:var(--muted);
   font-size:12px;
 }
+
 .status {
   display:inline-block;
   font-size:11px;
@@ -130,8 +216,18 @@ h2 {font-size:23px}
   color:#166534;
   margin-bottom:12px;
 }
-.demo {background:#fef3c7;color:#92400e}
-.job a {color:var(--primary);font-weight:bold;text-decoration:none}
+
+.demo {
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.job a {
+  color:var(--primary);
+  font-weight:bold;
+  text-decoration:none;
+}
+
 .empty {
   grid-column:1/-1;
   text-align:center;
@@ -141,6 +237,7 @@ h2 {font-size:23px}
   border:1px solid var(--border);
   border-radius:14px;
 }
+
 footer {
   margin-top:60px;
   padding:30px 20px;
@@ -150,12 +247,35 @@ footer {
   color:var(--muted);
   font-size:13px;
 }
+
 @media(max-width:650px) {
-  nav a {display:none}
-  .hero {padding:48px 17px}
-  .search {flex-direction:column}
-  .search input {width:100%}
-  .jobs {grid-template-columns:1fr}
+  header {
+    padding:15px 5%;
+  }
+
+  nav {
+    gap:8px;
+  }
+
+  nav a {
+    display:none;
+  }
+
+  .hero {
+    padding:48px 17px;
+  }
+
+  .search {
+    flex-direction:column;
+  }
+
+  .search input {
+    width:100%;
+  }
+
+  .jobs {
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -164,6 +284,7 @@ footer {
 
 <header>
   <div class="logo"><span>◉</span> JobRadar India</div>
+
   <nav>
     <a href="#home">Home</a>
     <a href="#jobs">Find Jobs</a>
@@ -175,19 +296,25 @@ footer {
 <section class="hero" id="home">
   <h1>Find Your Next Opportunity.</h1>
   <p>Discover opportunities from companies across the world.</p>
+
   <div class="search">
-    <input id="searchInput" type="search"
-      placeholder="Job title, skill or company...">
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Job title, skill or company..."
+    >
     <button id="searchBtn">Search Jobs</button>
   </div>
 </section>
 
 <main class="container" id="jobs">
+
   <div class="section-head">
     <div>
       <h2>Explore Opportunities</h2>
       <p class="muted">Find jobs that match your career goals.</p>
     </div>
+
     <span class="muted" id="jobCount">Loading jobs...</span>
   </div>
 
@@ -202,6 +329,7 @@ footer {
   <div class="jobs" id="jobList">
     <div class="empty">Loading job database...</div>
   </div>
+
 </main>
 
 <section class="container" id="about">
@@ -244,8 +372,12 @@ function renderJobs() {
 
   const filtered = allJobs.filter(job => {
     const text = [
-      job.title, job.company, job.location,
-      job.category, job.industry, job.job_type,
+      job.title,
+      job.company,
+      job.location,
+      job.category,
+      job.industry,
+      job.job_type,
       job.experience
     ].join(" ").toLowerCase();
 
@@ -276,18 +408,23 @@ function renderJobs() {
         <span class="status ${isDemo ? "demo" : ""}">
           ${isDemo ? "DEMO LISTING" : "JOB LISTING"}
         </span>
+
         <h3>${safe(job.title)}</h3>
+
         <div class="company">${safe(job.company)}</div>
+
         <div class="tags">
           <span class="tag">${safe(job.location)}</span>
           <span class="tag">${safe(job.job_type)}</span>
           <span class="tag">${safe(job.category || job.industry)}</span>
           <span class="tag">${safe(job.work_mode)}</span>
         </div>
+
         <p class="muted" style="font-size:12px">
           ${isDemo ? "Illustrative listing." :
           "First detected: " + safe(job.first_detected_at || "Not available")}
         </p>
+
         ${isDemo ? "" :
           `<a href="${safe(job.application_url || job.source_url || "#")}" target="_blank" rel="noopener noreferrer">Official application ↗</a>`
         }
@@ -302,7 +439,9 @@ async function loadJobs() {
       cache:"no-store"
     });
 
-    if (!response.ok) throw new Error("Database unavailable");
+    if (!response.ok) {
+      throw new Error("Database unavailable");
+    }
 
     const database = await response.json();
 
@@ -315,8 +454,10 @@ async function loadJobs() {
 
   } catch (error) {
     jobCount.textContent = "Database unavailable";
+
     jobList.innerHTML =
       '<div class="empty"><h3>Unable to load jobs</h3><p>Please refresh the website and try again.</p></div>';
+
     console.error("JobRadar:", error);
   }
 }
@@ -328,6 +469,7 @@ document.querySelectorAll(".filter").forEach(button => {
 
     button.classList.add("active");
     selectedFilter = button.dataset.filter;
+
     renderJobs();
   });
 });
@@ -340,10 +482,16 @@ document.getElementById("searchBtn")
 document.getElementById("themeBtn")
   .addEventListener("click", () => {
     document.body.classList.toggle("dark");
+
     const dark = document.body.classList.contains("dark");
+
     document.getElementById("themeBtn").textContent =
       dark ? "☀ Light" : "☾ Theme";
-    localStorage.setItem("jobradar-theme", dark ? "dark" : "light");
+
+    localStorage.setItem(
+      "jobradar-theme",
+      dark ? "dark" : "light"
+    );
   });
 
 if (localStorage.getItem("jobradar-theme") === "dark") {
