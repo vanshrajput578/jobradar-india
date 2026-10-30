@@ -1,4 +1,5 @@
 import json
+import re
 import urllib.request
 import urllib.parse
 from pathlib import Path
@@ -8,6 +9,52 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parent
 SOURCES_FILE = ROOT / "sources.json"
 JOBS_FILE = ROOT / "jobs.json"
+
+
+# India location keywords used for approximate classification.
+INDIA_KEYWORDS = [
+    "india", "bharat",
+    "andhra pradesh", "arunachal pradesh",
+    "assam", "bihar", "chhattisgarh",
+    "goa", "gujarat", "haryana",
+    "himachal pradesh", "jharkhand",
+    "karnataka", "kerala", "madhya pradesh",
+    "maharashtra", "manipur", "meghalaya",
+    "mizoram", "nagaland", "odisha",
+    "punjab", "rajasthan", "sikkim",
+    "tamil nadu", "telangana", "tripura",
+    "uttar pradesh", "uttarakhand",
+    "west bengal", "delhi", "new delhi",
+    "jammu", "kashmir", "ladakh",
+    "chandigarh", "puducherry",
+
+    "bengaluru", "bangalore", "mumbai",
+    "pune", "hyderabad", "chennai",
+    "kolkata", "noida", "gurugram",
+    "gurgaon", "ghaziabad", "meerut",
+    "lucknow", "kanpur", "agra",
+    "varanasi", "prayagraj", "jaipur",
+    "ahmedabad", "surat", "vadodara",
+    "indore", "bhopal", "nagpur",
+    "nashik", "kochi", "cochin",
+    "thiruvananthapuram", "trivandrum",
+    "coimbatore", "mysuru", "mysore",
+    "mangalore", "mangaluru", "visakhapatnam",
+    "vizag", "gurugram", "faridabad",
+    "greater noida", "dehradun", "patna",
+    "ranchi", "bhubaneswar", "chandigarh",
+    "ludhiana", "amritsar", "jodhpur",
+    "udaipur", "raipur", "guwahati",
+    "siliguri", "jamshedpur"
+]
+
+
+REMOTE_KEYWORDS = [
+    "remote",
+    "work from anywhere",
+    "anywhere",
+    "distributed"
+]
 
 
 def now_utc():
@@ -22,8 +69,68 @@ def read_json(path, default):
         return json.load(file)
 
 
+def contains_location_keyword(location, keywords):
+    text = location.lower()
+
+    for keyword in keywords:
+        pattern = (
+            r"(?<![a-z])"
+            + re.escape(keyword)
+            + r"(?![a-z])"
+        )
+
+        if re.search(pattern, text):
+            return True
+
+    return False
+
+
+def detect_region(location):
+    """
+    Approximate location classification.
+
+    India:
+        Location contains a known Indian city, state or country.
+
+    Unspecified:
+        Location is missing or only says Remote.
+
+    Global:
+        A specific non-India location is provided.
+    """
+
+    if not location:
+        return "Unspecified"
+
+    location = str(location).strip()
+
+    if not location or location.lower() in [
+        "not specified",
+        "unknown",
+        "n/a",
+        "none"
+    ]:
+        return "Unspecified"
+
+    if contains_location_keyword(
+        location,
+        INDIA_KEYWORDS
+    ):
+        return "India"
+
+    if contains_location_keyword(
+        location,
+        REMOTE_KEYWORDS
+    ):
+        return "Unspecified"
+
+    return "Global"
+
+
 def classify(title, departments):
-    text = (title + " " + " ".join(departments)).lower()
+    text = (
+        title + " " + " ".join(departments)
+    ).lower()
 
     if "intern" in text:
         return "Internships"
@@ -64,18 +171,25 @@ def fetch_greenhouse(source):
         }
     )
 
-    with urllib.request.urlopen(request, timeout=30) as response:
+    with urllib.request.urlopen(
+        request,
+        timeout=30
+    ) as response:
+
         data = json.loads(
             response.read().decode("utf-8")
         )
 
     if not isinstance(data.get("jobs"), list):
-        raise ValueError("Invalid Greenhouse API response")
+        raise ValueError(
+            "Invalid Greenhouse API response"
+        )
 
     return data["jobs"]
 
 
 def main():
+
     sources_data = read_json(
         SOURCES_FILE,
         {"sources": []}
@@ -93,7 +207,9 @@ def main():
     sources = sources_data.get("sources", [])
 
     if not isinstance(sources, list) or not sources:
-        raise RuntimeError("No job sources configured.")
+        raise RuntimeError(
+            "No job sources configured."
+        )
 
     existing_jobs = database.get("jobs", [])
 
@@ -103,7 +219,8 @@ def main():
     old_jobs = {
         str(job["id"]): job
         for job in existing_jobs
-        if isinstance(job, dict) and job.get("id") is not None
+        if isinstance(job, dict)
+        and job.get("id") is not None
     }
 
     successful_sources = 0
@@ -127,7 +244,10 @@ def main():
         board_token = source.get("board_token", "")
 
         if not source_id or not board_token:
-            print("Invalid source configuration:", company)
+            print(
+                "Invalid source configuration:",
+                company
+            )
             continue
 
         print("Checking:", company)
@@ -140,7 +260,9 @@ def main():
 
             for posting in postings:
 
-                external_id = str(posting.get("id", ""))
+                external_id = str(
+                    posting.get("id", "")
+                )
 
                 if not external_id:
                     continue
@@ -149,9 +271,14 @@ def main():
 
                 previous = old_jobs.get(job_id, {})
 
-                title = posting.get("title", "Untitled")
+                title = posting.get(
+                    "title",
+                    "Untitled"
+                )
 
-                location_data = posting.get("location") or {}
+                location_data = (
+                    posting.get("location") or {}
+                )
 
                 location = (
                     location_data.get("name")
@@ -160,11 +287,18 @@ def main():
 
                 departments = [
                     item.get("name", "")
-                    for item in posting.get("departments", [])
+                    for item in posting.get(
+                        "departments", []
+                    )
                     if isinstance(item, dict)
                 ]
 
-                category = classify(title, departments)
+                category = classify(
+                    title,
+                    departments
+                )
+
+                region = detect_region(location)
 
                 new_jobs[job_id] = {
                     "id": job_id,
@@ -172,6 +306,7 @@ def main():
                     "title": title,
                     "company": company,
                     "location": location,
+                    "region": region,
                     "category": category,
                     "industry": "Not specified",
                     "job_type": "Not specified",
@@ -179,18 +314,25 @@ def main():
                     "work_mode": "Not specified",
                     "demo": False,
                     "first_detected_at": (
-                        previous.get("first_detected_at")
-                        or now_utc()
+                        previous.get(
+                            "first_detected_at"
+                        ) or now_utc()
                     ),
-                    "posted_at": posting.get("updated_at"),
+                    "posted_at": posting.get(
+                        "updated_at"
+                    ),
                     "application_url": posting.get(
-                        "absolute_url", ""
+                        "absolute_url",
+                        ""
                     ),
                     "source_url": (
                         "https://boards.greenhouse.io/"
                         + board_token
                     ),
-                    "description": posting.get("content", "")
+                    "description": posting.get(
+                        "content",
+                        ""
+                    )
                 }
 
             print(
@@ -201,6 +343,7 @@ def main():
             )
 
         except Exception as error:
+
             print(
                 "Source failed:",
                 company,
@@ -213,7 +356,9 @@ def main():
             "Existing jobs.json was not changed."
         )
 
-    # Preserve previously collected jobs from failed sources.
+    # Preserve previously collected jobs
+    # from sources that failed.
+
     for job_id, job in old_jobs.items():
 
         source_id = job.get("source_id")
@@ -222,21 +367,58 @@ def main():
             source_id = job_id.split("-", 1)[0]
 
         if source_id not in successful_source_ids:
-            new_jobs[job_id] = job
+
+            preserved_job = dict(job)
+
+            preserved_job["region"] = detect_region(
+                preserved_job.get(
+                    "location",
+                    "Not specified"
+                )
+            )
+
+            new_jobs[job_id] = preserved_job
+
+    jobs_list = list(new_jobs.values())
+
+    # Count regional classifications.
+
+    india_count = sum(
+        1 for job in jobs_list
+        if job.get("region") == "India"
+    )
+
+    global_count = sum(
+        1 for job in jobs_list
+        if job.get("region") == "Global"
+    )
+
+    unspecified_count = sum(
+        1 for job in jobs_list
+        if job.get("region") == "Unspecified"
+    )
 
     result = {
         "last_updated": now_utc(),
-        "total_jobs": len(new_jobs),
+        "total_jobs": len(jobs_list),
+        "india_jobs": india_count,
+        "global_jobs": global_count,
+        "unspecified_jobs": unspecified_count,
         "jobs": sorted(
-            new_jobs.values(),
+            jobs_list,
             key=lambda job: job.get(
-                "first_detected_at", ""
+                "first_detected_at",
+                ""
             ),
             reverse=True
         )
     }
 
-    with JOBS_FILE.open("w", encoding="utf-8") as file:
+    with JOBS_FILE.open(
+        "w",
+        encoding="utf-8"
+    ) as file:
+
         json.dump(
             result,
             file,
@@ -248,6 +430,9 @@ def main():
     print("JobRadar update complete.")
     print("Successful sources:", successful_sources)
     print("Total jobs saved:", result["total_jobs"])
+    print("India jobs:", india_count)
+    print("Global jobs:", global_count)
+    print("Unspecified jobs:", unspecified_count)
     print("--------------------------------")
 
 
