@@ -12,7 +12,55 @@
       "id": "razorpay",
       "company": "Razorpay",
       "provider": "greenhouse",
-      "board_token": "razorpaysoftwareprivatelimited",
+      "board_token": "razorpaysoftware",
+      "region": "India",
+      "enabled": true
+    },
+    {
+      "id": "6sense",
+      "company": "6sense",
+      "provider": "greenhouse",
+      "board_token": "6sense",
+      "region": "Global",
+      "enabled": true
+    },
+    {
+      "id": "alphasense",
+      "company": "AlphaSense India",
+      "provider": "greenhouse",
+      "board_token": "alphasenseindia",
+      "region": "India",
+      "enabled": true
+    },
+    {
+      "id": "deepintent",
+      "company": "DeepIntent",
+      "provider": "greenhouse",
+      "board_token": "deepintent",
+      "region": "India",
+      "enabled": true
+    },
+    {
+      "id": "gitlab",
+      "company": "GitLab",
+      "provider": "greenhouse",
+      "board_token": "gitlab",
+      "region": "Global",
+      "enabled": true
+    },
+    {
+      "id": "neo4j",
+      "company": "Neo4j",
+      "provider": "greenhouse",
+      "board_token": "neo4j",
+      "region": "Global",
+      "enabled": true
+    },
+    {
+      "id": "commerceiq",
+      "company": "CommerceIQ",
+      "provider": "greenhouse",
+      "board_token": "commerceiq",
       "region": "India",
       "enabled": true
     }
