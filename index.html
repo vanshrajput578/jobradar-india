@@ -1,13 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#101827">
-<meta name="description" content="Discover job opportunities from companies worldwide with JobRadar India.">
-<title>JobRadar India — Discover Opportunities</title>
-
+<meta name="description" content="Discover job opportunities from companies worldwide.">
+<title>JobRadar India | Find Your Next Opportunity</title>
 <style>
 :root {
   --bg:#f5f7fb;
@@ -34,43 +32,28 @@ body {
   transition:.2s;
 }
 header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:17px 6%;
-  background:var(--card);
-  border-bottom:1px solid var(--border);
   position:sticky;
   top:0;
-  z-index:5;
-}
-.logo {
+  z-index:10;
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:10px;
-  font-size:21px;
-  font-weight:bold;
+  padding:16px 6%;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
 }
-.logo-icon {
-  background:#2563eb;
-  color:white;
-  padding:10px;
-  border-radius:10px;
-}
-nav {display:flex;gap:22px;align-items:center}
-nav a {
-  color:var(--muted);
-  text-decoration:none;
-  font-size:14px;
-}
+.logo {font-size:21px;font-weight:bold}
+.logo span {color:var(--primary)}
+nav {display:flex;align-items:center;gap:20px}
+nav a {color:var(--muted);text-decoration:none;font-size:14px}
 button {
-  cursor:pointer;
   border:0;
   border-radius:9px;
-  padding:11px 16px;
+  padding:11px 15px;
   background:var(--primary);
   color:white;
   font-weight:bold;
+  cursor:pointer;
 }
 .theme {
   background:var(--bg);
@@ -78,23 +61,20 @@ button {
   border:1px solid var(--border);
 }
 .hero {
-  padding:65px 20px 45px;
-  text-align:center;
   background:linear-gradient(135deg,#101827,#1d3b70);
   color:white;
+  text-align:center;
+  padding:65px 20px;
 }
-.hero h1 {
-  font-size:clamp(32px,6vw,52px);
-  margin:0 0 14px;
-}
+.hero h1 {font-size:clamp(32px,6vw,52px);margin:0 0 14px}
 .hero p {color:#cbd5e1}
 .search {
-  max-width:850px;
-  margin:30px auto 0;
   display:flex;
   gap:10px;
-  background:white;
+  max-width:850px;
+  margin:30px auto 0;
   padding:10px;
+  background:white;
   border-radius:13px;
 }
 .search input {
@@ -106,11 +86,7 @@ button {
   color:#172033;
   font-size:15px;
 }
-.container {
-  max-width:1150px;
-  margin:35px auto;
-  padding:0 20px;
-}
+.container {max-width:1150px;margin:35px auto;padding:0 20px}
 .section-head {
   display:flex;
   justify-content:space-between;
@@ -120,27 +96,15 @@ button {
 }
 h2 {font-size:23px}
 .muted {color:var(--muted)}
-.filters {
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin:20px 0;
-}
+.filters {display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}
 .filter {
   background:var(--card);
   color:var(--muted);
   border:1px solid var(--border);
   font-weight:normal;
 }
-.filter.active {
-  background:var(--primary);
-  color:white;
-}
-.jobs {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
-}
+.filter.active {background:var(--primary);color:white}
+.jobs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .job {
   background:var(--card);
   border:1px solid var(--border);
@@ -149,12 +113,7 @@ h2 {font-size:23px}
 }
 .job h3 {margin:0 0 8px;font-size:18px}
 .company {color:var(--muted);font-size:14px}
-.tags {
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin:17px 0;
-}
+.tags {display:flex;flex-wrap:wrap;gap:7px;margin:17px 0}
 .tag {
   padding:6px 9px;
   border-radius:6px;
@@ -162,29 +121,34 @@ h2 {font-size:23px}
   color:var(--muted);
   font-size:12px;
 }
-.demo {
-  color:#b45309;
-  background:#fef3c7;
+.status {
+  display:inline-block;
+  font-size:11px;
   padding:5px 8px;
   border-radius:5px;
-  font-size:11px;
-  display:inline-block;
+  background:#dcfce7;
+  color:#166534;
   margin-bottom:12px;
 }
-footer {
-  margin-top:60px;
-  background:var(--card);
-  border-top:1px solid var(--border);
-  padding:30px 20px;
-  text-align:center;
-  color:var(--muted);
-  font-size:13px;
-}
+.demo {background:#fef3c7;color:#92400e}
+.job a {color:var(--primary);font-weight:bold;text-decoration:none}
 .empty {
   grid-column:1/-1;
   text-align:center;
-  padding:40px;
+  padding:45px 15px;
   color:var(--muted);
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+}
+footer {
+  margin-top:60px;
+  padding:30px 20px;
+  text-align:center;
+  background:var(--card);
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:13px;
 }
 @media(max-width:650px) {
   nav a {display:none}
@@ -192,7 +156,6 @@ footer {
   .search {flex-direction:column}
   .search input {width:100%}
   .jobs {grid-template-columns:1fr}
-  .container {margin:22px auto}
 }
 </style>
 </head>
@@ -200,10 +163,7 @@ footer {
 <body>
 
 <header>
-  <div class="logo">
-    <span class="logo-icon">◉</span>
-    JobRadar India
-  </div>
+  <div class="logo"><span>◉</span> JobRadar India</div>
   <nav>
     <a href="#home">Home</a>
     <a href="#jobs">Find Jobs</a>
@@ -214,24 +174,21 @@ footer {
 
 <section class="hero" id="home">
   <h1>Find Your Next Opportunity.</h1>
-  <p>Discover job opportunities from companies across the world.</p>
-
+  <p>Discover opportunities from companies across the world.</p>
   <div class="search">
-    <input id="searchInput"
-      type="search"
+    <input id="searchInput" type="search"
       placeholder="Job title, skill or company...">
     <button id="searchBtn">Search Jobs</button>
   </div>
 </section>
 
 <main class="container" id="jobs">
-
   <div class="section-head">
     <div>
       <h2>Explore Opportunities</h2>
       <p class="muted">Find jobs that match your career goals.</p>
     </div>
-    <span class="muted" id="jobCount">3 demo jobs</span>
+    <span class="muted" id="jobCount">Loading jobs...</span>
   </div>
 
   <div class="filters">
@@ -242,98 +199,126 @@ footer {
     <button class="filter" data-filter="Internship">Internships</button>
   </div>
 
-  <div class="jobs" id="jobList"></div>
-
+  <div class="jobs" id="jobList">
+    <div class="empty">Loading job database...</div>
+  </div>
 </main>
 
 <section class="container" id="about">
   <h2>About JobRadar</h2>
   <p class="muted">
-    JobRadar India is being built to make job discovery easier.
-    Our goal is to collect publicly available opportunities,
-    identify new vacancies and direct applicants to official
-    company application pages.
+    JobRadar India helps people discover job opportunities
+    from official company sources. Our goal is to detect
+    new vacancies and direct applicants to official
+    application pages.
   </p>
 </section>
 
 <footer>
-  <div><strong>JobRadar India</strong></div>
+  <strong>JobRadar India</strong>
   <p>Discover. Track. Apply.</p>
-  <p>© 2026 JobRadar India. All rights reserved.</p>
-  <p>Demo listings are illustrative and not real vacancies.</p>
+  <p>© 2026 JobRadar India.</p>
+  <p>Always verify vacancies on the employer's official website.</p>
 </footer>
 
 <script>
-const demoJobs = [
-  {
-    title:"Software Engineer Intern",
-    company:"Example Technology",
-    location:"Bengaluru, India",
-    type:"Internship",
-    category:"Technology"
-  },
-  {
-    title:"Graduate Engineer Trainee",
-    company:"Example Industries",
-    location:"India",
-    type:"Full-time",
-    category:"Engineering"
-  },
-  {
-    title:"Financial Analyst",
-    company:"Example Finance",
-    location:"Mumbai, India",
-    type:"Full-time",
-    category:"Finance"
-  }
-];
-
+let allJobs = [];
 let selectedFilter = "All";
 
 const jobList = document.getElementById("jobList");
 const searchInput = document.getElementById("searchInput");
 const jobCount = document.getElementById("jobCount");
 
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
 function renderJobs() {
   const query = searchInput.value.toLowerCase().trim();
 
-  const filtered = demoJobs.filter(job => {
-    const matchesSearch =
-      (job.title + " " + job.company + " " +
-       job.location + " " + job.category)
-      .toLowerCase().includes(query);
+  const filtered = allJobs.filter(job => {
+    const text = [
+      job.title, job.company, job.location,
+      job.category, job.industry, job.job_type,
+      job.experience
+    ].join(" ").toLowerCase();
+
+    const matchesSearch = text.includes(query);
 
     const matchesCategory =
       selectedFilter === "All" ||
       job.category === selectedFilter ||
-      job.type === selectedFilter;
+      job.industry === selectedFilter ||
+      job.job_type === selectedFilter;
 
     return matchesSearch && matchesCategory;
   });
 
-  jobCount.textContent = filtered.length + " demo jobs";
+  jobCount.textContent = filtered.length + " jobs found";
 
-  if (!filtered.length) {
+  if (filtered.length === 0) {
     jobList.innerHTML =
-      '<div class="empty">No matching demo jobs found.</div>';
+      '<div class="empty"><h3>No jobs found</h3><p>Try another search or category.</p></div>';
     return;
   }
 
-  jobList.innerHTML = filtered.map(job => `
-    <article class="job">
-      <span class="demo">DEMO LISTING</span>
-      <h3>${job.title}</h3>
-      <div class="company">${job.company}</div>
-      <div class="tags">
-        <span class="tag">${job.location}</span>
-        <span class="tag">${job.type}</span>
-        <span class="tag">${job.category}</span>
-      </div>
-      <p class="muted" style="font-size:12px">
-        Illustrative listing. Not an active vacancy.
-      </p>
-    </article>
-  `).join("");
+  jobList.innerHTML = filtered.map(job => {
+    const isDemo = job.demo === true;
+
+    return `
+      <article class="job">
+        <span class="status ${isDemo ? "demo" : ""}">
+          ${isDemo ? "DEMO LISTING" : "JOB LISTING"}
+        </span>
+        <h3>${safe(job.title)}</h3>
+        <div class="company">${safe(job.company)}</div>
+        <div class="tags">
+          <span class="tag">${safe(job.location)}</span>
+          <span class="tag">${safe(job.job_type)}</span>
+          <span class="tag">${safe(job.category || job.industry)}</span>
+          <span class="tag">${safe(job.work_mode)}</span>
+        </div>
+        <p class="muted" style="font-size:12px">
+          ${isDemo ? "Illustrative listing." :
+          "First detected: " + safe(job.first_detected_at || "Not available")}
+        </p>
+        ${isDemo ? "" :
+          `<a href="${safe(job.application_url || job.source_url || "#")}" target="_blank" rel="noopener noreferrer">Official application ↗</a>`
+        }
+      </article>
+    `;
+  }).join("");
+}
+
+async function loadJobs() {
+  try {
+    const response = await fetch("./jobs.json", {
+      cache:"no-store"
+    });
+
+    if (!response.ok) throw new Error("Database unavailable");
+
+    const database = await response.json();
+
+    if (!Array.isArray(database.jobs)) {
+      throw new Error("Invalid job database");
+    }
+
+    allJobs = database.jobs;
+    renderJobs();
+
+  } catch (error) {
+    jobCount.textContent = "Database unavailable";
+    jobList.innerHTML =
+      '<div class="empty"><h3>Unable to load jobs</h3><p>Please refresh the website and try again.</p></div>';
+    console.error("JobRadar:", error);
+  }
 }
 
 document.querySelectorAll(".filter").forEach(button => {
@@ -355,12 +340,18 @@ document.getElementById("searchBtn")
 document.getElementById("themeBtn")
   .addEventListener("click", () => {
     document.body.classList.toggle("dark");
-    const isDark = document.body.classList.contains("dark");
+    const dark = document.body.classList.contains("dark");
     document.getElementById("themeBtn").textContent =
-      isDark ? "☀ Light" : "☾ Dark";
+      dark ? "☀ Light" : "☾ Theme";
+    localStorage.setItem("jobradar-theme", dark ? "dark" : "light");
   });
 
-renderJobs();
+if (localStorage.getItem("jobradar-theme") === "dark") {
+  document.body.classList.add("dark");
+  document.getElementById("themeBtn").textContent = "☀ Light";
+}
+
+loadJobs();
 </script>
 
 </body>
