@@ -345,6 +345,24 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
  #applicationRows button{padding:7px 8px;margin:2px 0!important}
 }
 
+
+/* Hash-based app views */
+.view{display:none;min-height:55vh}
+.view.active{display:block}
+.view.active>.hero{display:flex}
+.view.active>.container{display:block}
+.view.active .motion-reveal{opacity:1;transform:none}
+#navigation a.active{background:var(--soft);color:var(--primary)}
+.mobile-dock a.active{background:var(--soft);color:var(--primary)}
+.mobile-dock button#moreBtn{background:transparent;color:var(--muted);padding:4px 1px;min-height:42px;font-size:9px;font-weight:750}
+.mobile-dock button#moreBtn:before{content:"⋯";display:block;font-size:19px;line-height:1.2}
+.mobile-dock button#moreBtn.active{background:var(--soft);color:var(--primary)}
+.more-menu{position:absolute;right:0;bottom:calc(100% + 10px);width:min(220px,70vw);padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);display:grid;gap:4px}
+.more-menu[hidden]{display:none}
+.more-menu a{padding:11px 12px;border-radius:9px;text-decoration:none;color:var(--text);font-size:12px;font-weight:700}
+.more-menu a:hover,.more-menu a.active{background:var(--soft);color:var(--primary)}
+@media(min-width:601px){.mobile-dock .more-menu{display:none}}
+
 </style>
 </head>
 <body>
@@ -354,18 +372,19 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <div class="logo">JobRadar India</div>
 <button class="menu secondary" id="menuBtn" aria-label="Open navigation" aria-controls="navigation">☰</button>
 <nav id="navigation" aria-label="Main navigation">
-<a href="#home">Home</a>
-<a href="#jobs">Find Jobs</a>
-<a href="#companies">Companies</a>
-<a href="#saved">Saved Jobs</a>
-<a href="#tracker">My Applications</a>
-<a href="#verification">Verification</a>
-<a href="#career-tools">Career Tools</a>
-<a href="#about">About</a>
+<a href="#home" data-view="home">Home</a>
+<a href="#jobs" data-view="jobs">Find Jobs</a>
+<a href="#companies" data-view="companies">Companies</a>
+<a href="#saved" data-view="saved">Saved Jobs</a>
+<a href="#tracker" data-view="tracker">My Applications</a>
+<a href="#verification" data-view="verification">Verification</a>
+<a href="#tools" data-view="tools">Career Tools</a>
+<a href="#about" data-view="about">About</a>
 <button class="theme" id="themeBtn">☾ Theme</button>
 </nav>
 </header>
 
+<div class="view active" id="view-home">
 <section class="hero" id="home"><video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="./icon.svg"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"></video><div class="hero-video-shade" aria-hidden="true"></div>
 <h1>Find work that moves you forward.</h1>
 <p>Explore employer-listed roles, verify availability, and manage your job search in one focused workspace.</p>
@@ -375,6 +394,30 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </div>
 </section>
 
+
+
+<section class="container">
+<h2>Latest Jobs</h2>
+<p class="muted">Recently detected opportunities.</p>
+<div class="jobs" id="latestJobs"></div>
+</section>
+
+<section class="container" id="market-insights">
+<div class="panel">
+<h2>Job Market Snapshot</h2>
+<p class="muted">Statistics describe only the listings collected by JobRadar, not the entire labour market.</p>
+<div class="verification-grid">
+<div class="stat"><strong id="insightIndia">0</strong><span>India listings</span></div>
+<div class="stat"><strong id="insightRemote">0</strong><span>Remote listings</span></div>
+<div class="stat"><strong id="insightCompanies">0</strong><span>Companies represented</span></div>
+</div>
+<p id="topCategories" class="muted"></p>
+</div>
+</section>
+
+</div>
+
+<div class="view" id="view-jobs">
 <main class="container" id="jobs">
 <h2>Explore opportunities</h2>
 <p class="muted">Find jobs that match your career goals.</p>
@@ -432,13 +475,9 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </div>
 <div class="jobs" id="jobList"><div class="empty">Loading job database...</div></div>
 </main>
+</div>
 
-<section class="container">
-<h2>Latest Jobs</h2>
-<p class="muted">Recently detected opportunities.</p>
-<div class="jobs" id="latestJobs"></div>
-</section>
-
+<div class="view" id="view-saved">
 <section class="container" id="saved">
 <div class="panel">
 <div class="panel-head">
@@ -448,7 +487,9 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <div class="jobs" id="savedJobs"></div>
 </div>
 </section>
+</div>
 
+<div class="view" id="view-tracker">
 <section class="container" id="tracker">
 <div class="panel">
 <h2>My Applications</h2>
@@ -490,7 +531,9 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <div id="savedSearchList" class="tool-output">No saved searches yet.</div>
 </div>
 </section>
+</div>
 
+<div class="view" id="view-verification">
 <section class="container" id="verification">
 <div class="panel">
 <h2>Job Verification Center</h2>
@@ -504,7 +547,9 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <p class="muted" id="verificationUpdated"></p>
 </div>
 </section>
+</div>
 
+<div class="view" id="view-tools">
 <section class="container" id="career-tools">
 <h2>Career Workspace</h2>
 <p class="muted">These tools run locally in your browser. They do not send your personal information to an AI service.</p>
@@ -560,18 +605,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </div>
 </section>
 
-<section class="container" id="market-insights">
-<div class="panel">
-<h2>Job Market Snapshot</h2>
-<p class="muted">Statistics describe only the listings collected by JobRadar, not the entire labour market.</p>
-<div class="verification-grid">
-<div class="stat"><strong id="insightIndia">0</strong><span>India listings</span></div>
-<div class="stat"><strong id="insightRemote">0</strong><span>Remote listings</span></div>
-<div class="stat"><strong id="insightCompanies">0</strong><span>Companies represented</span></div>
-</div>
-<p id="topCategories" class="muted"></p>
-</div>
-</section>
+
 
 <section class="container" id="companies">
 <h2>Company Directory</h2>
@@ -586,7 +620,9 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </div>
 <div class="company-grid" id="companyGrid"><div class="empty">Loading company directory...</div></div>
 </section>
+</div>
 
+<div class="view" id="view-about">
 <section class="container" id="about">
 <div class="panel">
 <h2>About JobRadar India</h2>
@@ -596,9 +632,16 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <p class="muted" id="lastUpdated">Last database update: Not available</p>
 </div>
 </section>
+</div>
 
 <div class="mobile-dock" aria-label="Quick navigation">
-<a href="#home">Home</a><a href="#jobs">Jobs</a><a href="#saved">Saved</a><a href="#tracker">Tracker</a><a href="#career-tools">Tools</a>
+<a href="#home" data-view="home">Home</a><a href="#jobs" data-view="jobs">Jobs</a><a href="#saved" data-view="saved">Saved</a><a href="#tracker" data-view="tracker">Tracker</a><button type="button" id="moreBtn" aria-expanded="false" aria-controls="moreMenu">More</button>
+<div class="more-menu" id="moreMenu" hidden>
+<a href="#tools" data-view="tools">Career Tools</a>
+<a href="#companies" data-view="companies">Companies</a>
+<a href="#verification" data-view="verification">Verification</a>
+<a href="#about" data-view="about">About</a>
+</div>
 </div>
 
 <footer>
@@ -1085,7 +1128,7 @@ function renderCompanies() {
         $("searchInput").value = "";
         $("statusFilter").value = "active";
         renderJobs();
-        $("jobs").scrollIntoView({behavior:"smooth"});
+        if(location.hash!=="#jobs") location.hash="jobs"; else showView("jobs",false);
       };
       card.append(button);
     }
@@ -1174,7 +1217,58 @@ async function loadJobs() {
   }
 }
 
-$("searchBtn").onclick = () => { renderJobs(); $("jobs").scrollIntoView({behavior:"smooth",block:"start"}); };
+
+/* Hash router: each route displays one grouped view while preserving the existing app state. */
+const VIEW_ROUTES = {
+ home:"view-home", jobs:"view-jobs", saved:"view-saved", tracker:"view-tracker",
+ tools:"view-tools", "career-tools":"view-tools", companies:"view-companies",
+ verification:"view-verification", about:"view-about",
+ "market-insights":"view-home", "interview-calendar":"view-tracker", "saved-searches":"view-tracker"
+};
+function showView(route, updateHash=false){
+ const key=VIEW_ROUTES[route] ? route : "home";
+ const viewId=VIEW_ROUTES[key];
+ document.querySelectorAll(".view").forEach(view=>view.classList.toggle("active",view.id===viewId));
+ document.querySelectorAll("[data-view]").forEach(link=>{
+  const active=link.dataset.view===((key==="career-tools")?"tools":key);
+  link.classList.toggle("active",active);
+  if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
+ });
+ const moreActive=["tools","companies","verification","about"].includes(key);
+ $("moreBtn")?.classList.toggle("active",moreActive);
+ $("moreMenu")?.setAttribute("hidden","");
+ $("moreBtn")?.setAttribute("aria-expanded","false");
+ $("navigation").classList.remove("open");
+ $("menuBtn").setAttribute("aria-expanded","false");
+ if(updateHash && location.hash!=="#"+key) history.pushState(null,"","#"+key);
+ window.scrollTo({top:0,behavior:"auto"});
+}
+function routeFromHash(){
+ const route=decodeURIComponent(location.hash.replace(/^#/,"")).toLowerCase();
+ if(!route || !VIEW_ROUTES[route]){
+  history.replaceState(null,"",location.pathname+location.search+"#home");
+  showView("home",false);
+  return;
+ }
+ showView(route,false);
+}
+window.addEventListener("hashchange",routeFromHash);
+document.querySelectorAll("[data-view]").forEach(link=>{
+ link.addEventListener("click",event=>{
+  event.preventDefault();
+  const route=link.dataset.view;
+  if(location.hash==="#"+route)showView(route,false);
+  else location.hash=route;
+ });
+});
+$("moreBtn").onclick=()=>{
+ const menu=$("moreMenu"),open=menu.hasAttribute("hidden");
+ if(open)menu.removeAttribute("hidden");else menu.setAttribute("hidden","");
+ $("moreBtn").setAttribute("aria-expanded",String(open));
+};
+routeFromHash();
+
+$("searchBtn").onclick = () => { renderJobs(); if(location.hash!=="#jobs") location.hash="jobs"; else showView("jobs",false); };
 $("searchInput").addEventListener("keydown", event => { if(event.key === "Enter") $("searchBtn").click(); });
 $("searchInput").oninput = renderJobs;
 
