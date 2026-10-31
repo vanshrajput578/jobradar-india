@@ -314,6 +314,72 @@ def detect_location_details(location):
 
     return result
 
+def classify_india_eligibility(location, description, location_details=None):
+    """Classify whether a posting is open to India using explicit evidence only.
+
+    A foreign location is treated as restricted to that location. Generic Remote
+    or Global labels never imply worldwide hiring or India eligibility.
+    """
+    details = location_details or detect_location_details(location)
+    location_text = normalize_location_text(location)
+    description_text = normalize_location_text(
+        re.sub(r"<[^>]+>", " ", html.unescape(str(description or "")))
+    )
+
+    if details.get("country") == "India":
+        return {
+            "india_eligibility": "eligible",
+            "india_eligibility_reason": "The job location explicitly identifies India.",
+            "india_eligibility_confidence": "high",
+        }
+
+    # Explicit exclusion or a clear country-specific location restriction.
+    exclusion_patterns = [
+        r"\bnot (?:open|available) to (?:candidates|applicants|employees) in india\b",
+        r"\b(india|indian residents) (?:is|are) not eligible\b",
+        r"\bcannot hire (?:in|from) india\b",
+        r"\bno hiring in india\b",
+        r"\bmust be (?:based|located|resident) in (?:the )?(?:united states|u\.s\.|usa|canada|united kingdom|uk|australia)\b",
+        r"\bonly (?:open|available) to (?:candidates|applicants|residents) in\b",
+    ]
+    if any(re.search(pattern, description_text) for pattern in exclusion_patterns):
+        return {
+            "india_eligibility": "not_eligible",
+            "india_eligibility_reason": "The job description contains an explicit country restriction that excludes or limits applicants outside the listed location.",
+            "india_eligibility_confidence": "high",
+        }
+
+    if details.get("country") and details.get("country") != "India":
+        country = details["country"]
+        return {
+            "india_eligibility": "not_eligible",
+            "india_eligibility_reason": f"The listed job location is {country}; the posting does not identify India as an eligible hiring location.",
+            "india_eligibility_confidence": "high",
+        }
+
+    # Recognize India only when it appears in an eligibility/location context,
+    # not when it is merely mentioned in company boilerplate.
+    india_allowed_patterns = [
+        r"\b(?:remote|work(?:ing)? location|employment location|hiring location|eligible locations?|locations? available)\s*[:\-]?\s*(?:in\s+)?india\b",
+        r"\bindia\s+(?:is|are)\s+(?:an?\s+)?(?:eligible|approved|supported)\s+(?:country|location)\b",
+        r"\b(?:hire|hiring|employ|employment)\s+(?:in|from)\s+india\b",
+        r"\b(?:open|available) to (?:applicants|candidates|employees) in india\b",
+        r"\bcountries?\s*(?:include|:).*\bindia\b",
+    ]
+    if any(re.search(pattern, description_text) for pattern in india_allowed_patterns):
+        return {
+            "india_eligibility": "eligible",
+            "india_eligibility_reason": "The job description explicitly lists India in its hiring or eligible-location information.",
+            "india_eligibility_confidence": "high",
+        }
+
+    return {
+        "india_eligibility": "unclear",
+        "india_eligibility_reason": "The posting does not provide enough explicit location or hiring-country information to confirm India eligibility.",
+        "india_eligibility_confidence": "low",
+    }
+
+
 def detect_location(location):
     """Backward-compatible region/work-mode detector."""
     details = detect_location_details(location)
@@ -531,6 +597,9 @@ def make_job(source, posting, previous):
         ]
 
     location_details = detect_location_details(location)
+    india_eligibility = classify_india_eligibility(
+        location, posting.get("content") or "", location_details
+    )
     region = location_details["region"]
     work_mode = location_details["work_mode"]
     board_token = str(source.get("board_token", "")).strip()
@@ -550,6 +619,7 @@ def make_job(source, posting, previous):
         "state": location_details["state"],
         "city": location_details["city"],
         "location_confidence": location_details["location_confidence"],
+        **india_eligibility,
         "category": classify(title, departments),
         "industry": previous.get("industry", "Not specified"),
         "job_type": previous.get("job_type", "Not specified"),
