@@ -1633,6 +1633,7 @@ function renderHomePopularSearches() {
 
 function applyHomeSearch(event) {
   if (event) event.preventDefault();
+  currentJobsPage = 1;
   selectedDiscoveryMode = "";
   selectedRegion = "All";
   selectedCategory = "All";
@@ -2536,6 +2537,8 @@ document.querySelectorAll("[data-view]").forEach(link => {
 
 function handleDiscoveryNavigation(link) {
   const intent = link.dataset.navIntent;
+  currentJobsPage = 1;
+  currentCompaniesPage = 1;
   if (intent === "internships") {
     selectedDiscoveryMode = "internships";
     selectedRegion = "All";
