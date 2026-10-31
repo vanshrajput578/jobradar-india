@@ -1383,6 +1383,7 @@ async function loadJobs() {
     filtersInit();
     render();
     renderCompanies();
+    if (location.hash.startsWith("#company/")) renderCompanyProfile();
 
     $("lastUpdated").textContent = "Last database update: " + (data.last_updated || "Not available");
     $("verificationUpdated").textContent = "Last data refresh: " + (data.last_updated || "Not available");
