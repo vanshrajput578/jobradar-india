@@ -17,7 +17,7 @@ class FrontendContractTests(unittest.TestCase):
             with self.subTest(element_id=element_id):
                 self.assertIn(f'id="{element_id}"', HTML)
         self.assertIn('id="advancedFilters"', HTML)
-        self.assertIn('class="jobs-overview"', HTML)
+        self.assertIn("jobs-overview", HTML)
         self.assertIn('class="quick-filter-group"', HTML)
 
     def test_job_card_has_clear_semantic_regions(self):
