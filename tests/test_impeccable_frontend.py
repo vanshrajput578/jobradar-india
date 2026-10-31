@@ -24,7 +24,7 @@ class ImpeccableFrontendTests(unittest.TestCase):
     def test_search_location_and_discovery_shortcuts_use_real_jobs(self):
         self.assertIn('function populateHomeLocations', HTML)
         self.assertIn('function applyHomeSearch', HTML)
-        self.assertIn('allJobs.map(job => job.location)', HTML)
+        self.assertIn('allJobs.map(job => String(job.location || "").trim())', HTML)
         self.assertIn('job.title', HTML)
         self.assertIn('job.india_eligibility', HTML)
 
