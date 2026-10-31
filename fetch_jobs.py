@@ -11,7 +11,6 @@ SOURCES_FILE = ROOT / "sources.json"
 JOBS_FILE = ROOT / "jobs.json"
 
 
-# India location keywords used for approximate classification.
 INDIA_KEYWORDS = [
     "india", "bharat",
     "andhra pradesh", "arunachal pradesh",
@@ -24,10 +23,9 @@ INDIA_KEYWORDS = [
     "punjab", "rajasthan", "sikkim",
     "tamil nadu", "telangana", "tripura",
     "uttar pradesh", "uttarakhand",
-    "west bengal", "delhi", "new delhi",
+    "west bengal", "new delhi", "delhi",
     "jammu", "kashmir", "ladakh",
     "chandigarh", "puducherry",
-
     "bengaluru", "bangalore", "mumbai",
     "pune", "hyderabad", "chennai",
     "kolkata", "noida", "gurugram",
@@ -35,17 +33,56 @@ INDIA_KEYWORDS = [
     "lucknow", "kanpur", "agra",
     "varanasi", "prayagraj", "jaipur",
     "ahmedabad", "surat", "vadodara",
-    "indore", "bhopal", "nagpur",
-    "nashik", "kochi", "cochin",
-    "thiruvananthapuram", "trivandrum",
-    "coimbatore", "mysuru", "mysore",
-    "mangalore", "mangaluru", "visakhapatnam",
-    "vizag", "gurugram", "faridabad",
+    "indore", "bhopal", "nagpur", "nashik",
+    "kochi", "cochin", "thiruvananthapuram",
+    "trivandrum", "coimbatore", "mysuru",
+    "mysore", "mangalore", "mangaluru",
+    "visakhapatnam", "vizag", "faridabad",
     "greater noida", "dehradun", "patna",
-    "ranchi", "bhubaneswar", "chandigarh",
-    "ludhiana", "amritsar", "jodhpur",
-    "udaipur", "raipur", "guwahati",
-    "siliguri", "jamshedpur"
+    "ranchi", "bhubaneswar", "ludhiana",
+    "amritsar", "jodhpur", "udaipur",
+    "raipur", "guwahati", "siliguri",
+    "jamshedpur"
+]
+
+
+GLOBAL_COUNTRIES = [
+    "united states", "usa", "u.s.a.", "us",
+    "united kingdom", "uk", "u.k.",
+    "canada", "australia", "new zealand",
+    "singapore", "malaysia", "indonesia",
+    "philippines", "thailand", "vietnam",
+    "japan", "south korea", "korea",
+    "china", "hong kong", "taiwan",
+    "germany", "france", "italy", "spain",
+    "portugal", "netherlands", "belgium",
+    "switzerland", "sweden", "norway",
+    "denmark", "finland", "ireland",
+    "poland", "austria", "greece",
+    "romania", "czech republic", "czechia",
+    "hungary", "ukraine", "turkey",
+    "united arab emirates", "uae",
+    "saudi arabia", "qatar", "kuwait",
+    "bahrain", "oman", "israel",
+    "south africa", "nigeria", "kenya",
+    "egypt", "morocco", "ghana",
+    "brazil", "mexico", "argentina",
+    "chile", "colombia", "peru",
+    "costa rica", "panama",
+    "bangladesh", "pakistan", "sri lanka",
+    "nepal", "bhutan", "maldives",
+    "russia", "iceland", "luxembourg",
+    "estonia", "latvia", "lithuania",
+    "slovakia", "slovenia", "croatia",
+    "serbia", "bulgaria", "cyprus",
+    "malta", "georgia", "armenia",
+    "azerbaijan", "kazakhstan",
+    "uzbekistan", "mongolia", "cambodia",
+    "laos", "myanmar", "ethiopia",
+    "tanzania", "uganda", "senegal",
+    "tunisia", "algeria", "uruguay",
+    "ecuador", "venezuela", "jamaica",
+    "dominican republic"
 ]
 
 
@@ -53,7 +90,11 @@ REMOTE_KEYWORDS = [
     "remote",
     "work from anywhere",
     "anywhere",
-    "distributed"
+    "distributed",
+    "home based",
+    "home-based",
+    "work from home",
+    "wfh"
 ]
 
 
@@ -69,8 +110,8 @@ def read_json(path, default):
         return json.load(file)
 
 
-def contains_location_keyword(location, keywords):
-    text = location.lower()
+def contains_keyword(text, keywords):
+    text = str(text).lower()
 
     for keyword in keywords:
         pattern = (
@@ -85,46 +126,53 @@ def contains_location_keyword(location, keywords):
     return False
 
 
-def detect_region(location):
+def detect_location(location):
     """
-    Approximate location classification.
+    Returns:
+        region: India, Global, Remote, Unspecified
+        work_mode: Remote, Not specified
 
-    India:
-        Location contains a known Indian city, state or country.
-
-    Unspecified:
-        Location is missing or only says Remote.
-
-    Global:
-        A specific non-India location is provided.
+    Unknown locations are never automatically
+    classified as Global.
     """
 
     if not location:
-        return "Unspecified"
+        return "Unspecified", "Not specified"
 
     location = str(location).strip()
 
-    if not location or location.lower() in [
+    if location.lower() in [
         "not specified",
         "unknown",
         "n/a",
-        "none"
+        "none",
+        "null"
     ]:
-        return "Unspecified"
+        return "Unspecified", "Not specified"
 
-    if contains_location_keyword(
-        location,
-        INDIA_KEYWORDS
-    ):
-        return "India"
-
-    if contains_location_keyword(
+    is_remote = contains_keyword(
         location,
         REMOTE_KEYWORDS
-    ):
-        return "Unspecified"
+    )
 
-    return "Global"
+    # India takes priority over generic remote.
+    if contains_keyword(location, INDIA_KEYWORDS):
+        return "India", (
+            "Remote" if is_remote else "Not specified"
+        )
+
+    # Explicit foreign country.
+    if contains_keyword(location, GLOBAL_COUNTRIES):
+        return "Global", (
+            "Remote" if is_remote else "Not specified"
+        )
+
+    # Remote without a known country.
+    if is_remote:
+        return "Remote", "Remote"
+
+    # No reliable location match.
+    return "Unspecified", "Not specified"
 
 
 def classify(title, departments):
@@ -268,7 +316,6 @@ def main():
                     continue
 
                 job_id = source_id + "-" + external_id
-
                 previous = old_jobs.get(job_id, {})
 
                 title = posting.get(
@@ -298,7 +345,9 @@ def main():
                     departments
                 )
 
-                region = detect_region(location)
+                region, work_mode = detect_location(
+                    location
+                )
 
                 new_jobs[job_id] = {
                     "id": job_id,
@@ -311,7 +360,7 @@ def main():
                     "industry": "Not specified",
                     "job_type": "Not specified",
                     "experience": "Not specified",
-                    "work_mode": "Not specified",
+                    "work_mode": work_mode,
                     "demo": False,
                     "first_detected_at": (
                         previous.get(
@@ -356,8 +405,7 @@ def main():
             "Existing jobs.json was not changed."
         )
 
-    # Preserve previously collected jobs
-    # from sources that failed.
+    # Preserve old jobs from failed sources.
 
     for job_id, job in old_jobs.items():
 
@@ -370,32 +418,38 @@ def main():
 
             preserved_job = dict(job)
 
-            preserved_job["region"] = detect_region(
+            region, work_mode = detect_location(
                 preserved_job.get(
                     "location",
                     "Not specified"
                 )
             )
 
+            preserved_job["region"] = region
+            preserved_job["work_mode"] = work_mode
+
             new_jobs[job_id] = preserved_job
 
     jobs_list = list(new_jobs.values())
 
-    # Count regional classifications.
-
     india_count = sum(
-        1 for job in jobs_list
-        if job.get("region") == "India"
+        job.get("region") == "India"
+        for job in jobs_list
     )
 
     global_count = sum(
-        1 for job in jobs_list
-        if job.get("region") == "Global"
+        job.get("region") == "Global"
+        for job in jobs_list
+    )
+
+    remote_count = sum(
+        job.get("region") == "Remote"
+        for job in jobs_list
     )
 
     unspecified_count = sum(
-        1 for job in jobs_list
-        if job.get("region") == "Unspecified"
+        job.get("region") == "Unspecified"
+        for job in jobs_list
     )
 
     result = {
@@ -403,6 +457,7 @@ def main():
         "total_jobs": len(jobs_list),
         "india_jobs": india_count,
         "global_jobs": global_count,
+        "remote_jobs": remote_count,
         "unspecified_jobs": unspecified_count,
         "jobs": sorted(
             jobs_list,
@@ -432,6 +487,7 @@ def main():
     print("Total jobs saved:", result["total_jobs"])
     print("India jobs:", india_count)
     print("Global jobs:", global_count)
+    print("Remote jobs:", remote_count)
     print("Unspecified jobs:", unspecified_count)
     print("--------------------------------")
 
