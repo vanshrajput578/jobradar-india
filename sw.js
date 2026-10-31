@@ -1,4 +1,4 @@
-const CACHE_NAME = "jobradar-shell-v6";
+const CACHE_NAME = "jobradar-shell-v7";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)));
