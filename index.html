@@ -1088,7 +1088,6 @@ table{min-width:640px}
   <div><h2>Latest jobs</h2><p class="muted">Recently detected opportunities from connected employer boards.</p></div>
   <a href="#jobs" data-view="jobs" class="text-link">View all jobs <span aria-hidden="true">→</span></a>
 </div>
-<p class="muted">Recently detected opportunities.</p>
 <div class="jobs" id="latestJobs"></div>
 </section>
 
@@ -1190,6 +1189,7 @@ table{min-width:640px}
 <button class="secondary" id="clearFilters">Clear filters</button>
 </div>
 <div class="jobs" id="jobList"><div class="empty">Loading job database...</div></div>
+<div class="pagination" id="jobPagination" aria-label="Job result pages"></div>
 </main>
 </div>
 
@@ -1328,13 +1328,15 @@ table{min-width:640px}
 <p class="muted">Browse the JobRadar master directory. A company appearing here does not mean it currently has a vacancy on JobRadar.</p>
 <div class="company-directory-tools">
 <input class="field" id="companyDirectorySearch" type="search" placeholder="Search companies by name, industry or category...">
-<select class="field" id="companyDirectoryCategory"><option value="">All company categories</option></select>
+<select class="field" id="companyDirectoryCategory" aria-label="Filter companies by category"><option value="">All company categories</option></select>
+<select class="field" id="companyDirectorySort" aria-label="Sort companies"><option value="name">Name A–Z</option><option value="jobs">Most active listings</option></select>
 </div>
 <div class="company-directory-meta">
 <strong id="companyDirectoryCount">Loading company directory...</strong>
 <span class="muted" id="companyDirectoryNote">Vacancy status is shown separately from directory membership.</span>
 </div>
 <div class="company-grid" id="companyGrid"><div class="empty">Loading company directory...</div></div>
+<div class="pagination" id="companyPagination" aria-label="Company result pages"></div>
 </section>
 </div>
 
