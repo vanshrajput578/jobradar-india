@@ -672,7 +672,7 @@ function stats() {
   $("statRemote").textContent = allJobs.filter(remote).length;
   $("statActive").textContent = allJobs.filter(j => j.availability_status === "active").length;
   $("statClosed").textContent = allJobs.filter(j => j.availability_status === "closed").length;
-  $("statUnverified").textContent = allJobs.filter(j => j.verification_status !== "verified").length;
+  $("statUnverified").textContent = allJobs.filter(j => (j.availability_status || "unverified") === "unverified").length;
   $("verifyActive").textContent = allJobs.filter(j => j.availability_status === "active").length;
   $("verifyClosed").textContent = allJobs.filter(j => j.availability_status === "closed").length;
   $("verifyUnknown").textContent = allJobs.filter(j => j.verification_status !== "verified").length;
@@ -821,7 +821,7 @@ function renderJobs() {
     const availability = job.availability_status || "unverified";
     if(status === "active" && availability !== "active") return false;
     if(status === "closed" && availability !== "closed") return false;
-    if(status === "unverified" && job.verification_status === "verified") return false;
+    if(status === "unverified" && availability !== "unverified") return false;
     if(status === "all" && availability === "closed") return false;
     const text = [
       job.title, job.company, job.location, job.category,
@@ -1269,6 +1269,11 @@ function downloadText(filename, text) {
   const a = document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+$("resumeName").addEventListener("input", () => generatedResume = "");
+$("resumeContact").addEventListener("input", () => generatedResume = "");
+$("resumeSummary").addEventListener("input", () => generatedResume = "");
+$("resumeSkills").addEventListener("input", () => generatedResume = "");
+$("resumeEducation").addEventListener("input", () => generatedResume = "");
 let generatedResume = "";
 $("buildResume").onclick = () => {
   if(!$("resumeName").value.trim() || !$("resumeContact").value.trim() || !$("resumeSummary").value.trim()) {
@@ -1284,7 +1289,7 @@ $("buildResume").onclick = () => {
   $("resumeOutput").textContent = generatedResume;
 };
 $("downloadResume").onclick = () => {
-  if(!generatedResume) $("buildResume").click();
+  $("buildResume").click();
   if(generatedResume.trim()) downloadText("JobRadar-Resume.txt", generatedResume);
 };
 $("analyzeMatch").onclick = () => {
@@ -1325,7 +1330,8 @@ $("exportBackup").onclick = () => {
 };
 $("restoreBackup").onchange = async event => {
   const file=event.target.files[0]; if(!file) return;
-  try { const data=JSON.parse(await file.text()); if(!Array.isArray(data.savedIds)||!Array.isArray(data.applications)) throw new Error("Invalid backup");
+  try { const data=JSON.parse(await file.text()); if(!data || !Array.isArray(data.savedIds) || !Array.isArray(data.applications)) throw new Error("Invalid backup format");
+    if(!data.savedIds.every(id => typeof id === "string") || !data.applications.every(app => app && typeof app === "object" && typeof app.id === "string" && typeof app.jobTitle === "string" && typeof app.company === "string" && ["Saved","Applied","Interview","Offer","Rejected"].includes(app.status))) throw new Error("Backup contains invalid application records");
     savedIds=data.savedIds; applications=data.applications; persist(); render(); $("backupOutput").textContent="Backup restored.";
   } catch(e) {$("backupOutput").textContent="Restore failed: "+e.message;}
 };
