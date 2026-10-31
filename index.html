@@ -835,26 +835,59 @@ footer::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;b
 .search input:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
 @media(prefers-reduced-motion:reduce){.rv,.rv.in{opacity:1!important;transform:none!important;transition:none!important}}
 
-/* Company directory: compact, content-led cards (fix excessive vertical gaps). */
-#companyGrid{align-items:start}
+/* Company directory: clear identity hierarchy and labeled metadata. */
+#companyGrid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:14px}
 #companyGrid .company-card{
-  align-self:start;min-height:0;height:auto;gap:5px;padding:14px;
+  display:flex;flex-direction:column;align-items:stretch;align-self:start;
+  height:auto;min-height:0;gap:12px;padding:16px;
 }
-#companyGrid .company-card>strong{margin:0 0 2px;line-height:1.25}
-#companyGrid .company-card .company-category{
-  min-height:0;margin:0;line-height:1.4;
+#companyGrid .company-card__identity{
+  display:block;margin:0;padding:0 0 12px;border-bottom:1px solid var(--border);
 }
-#companyGrid .company-card .company-jobs{
-  margin:2px 0;line-height:1.4;
+#companyGrid .company-card__name{
+  margin:0 0 7px;color:var(--text);font-size:18px;font-weight:850;
+  line-height:1.25;letter-spacing:-.35px;overflow-wrap:anywhere;
 }
-#companyGrid .company-card .company-status{margin:2px 0 3px}
-#companyGrid .company-card .company-profile-button{margin:4px 0 0;min-height:38px}
-#companyGrid .company-card>a.secondary,
-#companyGrid .company-card>button.secondary{margin:3px 0 0}
+#companyGrid .company-card__category{
+  display:inline-block;margin:0;padding:5px 8px;border-radius:7px;
+  background:var(--soft);color:var(--primary);font-size:10px;
+  font-weight:750;line-height:1.4;overflow-wrap:anywhere;
+}
+#companyGrid .company-card .company-status{align-self:flex-start;margin:0}
+#companyGrid .company-card__facts{
+  display:grid;gap:0;margin:0;padding:0;
+}
+#companyGrid .company-card__fact{
+  display:grid;grid-template-columns:minmax(0, .8fr) minmax(0,1.2fr);
+  gap:10px;padding:9px 0;border-bottom:1px solid var(--border);
+}
+#companyGrid .company-card__fact:last-child{border-bottom:0}
+#companyGrid .company-card__fact dt{
+  margin:0;color:var(--muted);font-size:10px;font-weight:750;
+  line-height:1.45;text-transform:uppercase;letter-spacing:.35px;
+}
+#companyGrid .company-card__fact dd{
+  margin:0;color:var(--text);font-size:11px;font-weight:650;
+  line-height:1.5;text-align:right;overflow-wrap:anywhere;
+}
+#companyGrid .company-card__actions{display:grid;gap:8px;margin-top:2px}
+#companyGrid .company-card__actions>*{width:100%;min-width:0;text-align:center}
+#companyGrid .company-card .company-profile-button{
+  margin:0;min-height:42px;font-size:12px;font-weight:800;
+}
+#companyGrid .company-card__actions .secondary{
+  display:flex;align-items:center;justify-content:center;min-height:38px;
+  padding:9px 12px;border-radius:10px;text-decoration:none;font-size:11px;
+}
+#companyGrid .company-card__missing-link{
+  color:var(--muted);font-size:10px;line-height:1.4;padding:3px 0;
+}
+@media(max-width:900px){#companyGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
-  #companyGrid{grid-template-columns:minmax(0,1fr);gap:10px}
-  #companyGrid .company-card{padding:13px;gap:4px}
-  #companyGrid .company-card .company-profile-button{min-height:36px}
+  #companyGrid{grid-template-columns:minmax(0,1fr);gap:11px}
+  #companyGrid .company-card{padding:15px;gap:11px}
+  #companyGrid .company-card__name{font-size:18px}
+  #companyGrid .company-card__fact{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);padding:8px 0}
 }
 
 </style>
@@ -1752,45 +1785,57 @@ function renderCompanies() {
     const card = document.createElement("article");
     card.className = "company-card";
 
-    const title = document.createElement("strong");
+    /* Identity block: make the employer name visually dominant and separate. */
+    const identity = document.createElement("header");
+    identity.className = "company-card__identity";
+    const title = document.createElement("h3");
+    title.className = "company-card__name";
     title.textContent = company.name || "Unnamed company";
-
     const categoryText = document.createElement("p");
-    categoryText.className = "company-category";
+    categoryText.className = "company-card__category";
     categoryText.textContent = (company.categories || []).join(" · ") || "Category not supplied";
-
-    const headquarters = document.createElement("p");
-    headquarters.className = "company-jobs";
-    headquarters.textContent = company.headquarters
-      ? "Headquarters: " + company.headquarters
-      : "Headquarters: Not provided";
+    identity.append(title, categoryText);
+    card.append(identity);
 
     const companyJobs = jobsForCompany(company);
     const activeCount = companyJobs.filter(job => (job.availability_status || "unverified") === "active").length;
-    const status = document.createElement("span");
-    status.className = "company-status";
-    status.textContent = activeCount > 0
+    const statusText = activeCount > 0
       ? "Active JobRadar listings"
       : company.vacancy_status === "closed"
-        ? "No active listing in the latest successful check"
+        ? "No active listing in latest successful check"
         : company.vacancy_status === "active"
           ? "Active listing reported by company source"
           : "Vacancy status not checked";
+    const status = document.createElement("span");
+    status.className = "company-status";
+    status.textContent = statusText;
+    card.append(status);
 
-    const count = document.createElement("p");
-    count.className = "company-jobs";
-    count.textContent = companyJobs.length > 0
-      ? companyJobs.length + " JobRadar listing(s), " + activeCount + " active"
-      : "No matching JobRadar listings are currently recorded.";
+    /* Labeled facts prevent category, location and verification copy blending together. */
+    const facts = document.createElement("dl");
+    facts.className = "company-card__facts";
+    function addFact(label, value) {
+      const row = document.createElement("div");
+      row.className = "company-card__fact";
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const detail = document.createElement("dd");
+      detail.textContent = value;
+      row.append(term, detail);
+      facts.append(row);
+    }
+    addFact("Headquarters", company.headquarters || "Not provided");
+    addFact("JobRadar listings", companyJobs.length > 0
+      ? companyJobs.length + " recorded · " + activeCount + " active"
+      : "No matching listings recorded");
+    addFact("Profile verification", company.verification_status === "verified"
+      ? "Verified"
+      : "Not independently verified");
+    if (company.description) addFact("About", company.description);
+    card.append(facts);
 
-    const verification = document.createElement("p");
-    verification.className = "company-jobs";
-    verification.textContent = company.verification_status === "verified"
-      ? "Company profile verified"
-      : "Company profile not independently verified";
-
-    card.append(title, categoryText, headquarters, status, count, verification);
-
+    const actions = document.createElement("div");
+    actions.className = "company-card__actions";
     const profileButton = document.createElement("button");
     profileButton.type = "button";
     profileButton.className = "company-profile-button";
@@ -1803,7 +1848,7 @@ function renderCompanies() {
         showView("company-profile");
       }
     };
-    card.append(profileButton);
+    actions.append(profileButton);
 
     const careersUrl = String(company.official_careers_url || "").trim();
     if (/^https:\/\//i.test(careersUrl)) {
@@ -1813,30 +1858,31 @@ function renderCompanies() {
       careersLink.rel = "noopener noreferrer";
       careersLink.textContent = "Official careers website";
       careersLink.className = "secondary";
-      card.append(careersLink);
+      actions.append(careersLink);
     } else {
-      const missingCareers = document.createElement("p");
-      missingCareers.className = "company-jobs";
-      missingCareers.textContent = "Official careers URL not added yet.";
-      card.append(missingCareers);
+      const missingCareers = document.createElement("span");
+      missingCareers.className = "company-card__missing-link";
+      missingCareers.textContent = "Official careers URL not added";
+      actions.append(missingCareers);
     }
 
     if (activeCount > 0) {
-      const button = document.createElement("button");
-      button.className = "secondary";
-      button.textContent = "View JobRadar listings";
-      button.onclick = () => {
+      const listingsButton = document.createElement("button");
+      listingsButton.type = "button";
+      listingsButton.className = "secondary";
+      listingsButton.textContent = "View JobRadar listings";
+      listingsButton.onclick = () => {
         $("companyFilter").value = company.name;
         selectedRegion = "All";
         selectedCategory = "All";
         $("searchInput").value = "";
         $("statusFilter").value = "active";
         renderJobs();
-        if(location.hash!=="#jobs") location.hash="jobs"; else showView("jobs",false);
+        if(location.hash !== "#jobs") location.hash = "jobs"; else showView("jobs", false);
       };
-      card.append(button);
+      actions.append(listingsButton);
     }
-
+    card.append(actions);
     box.append(card);
   });
 }
