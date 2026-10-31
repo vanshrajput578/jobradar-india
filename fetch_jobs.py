@@ -7,7 +7,7 @@ import urllib.parse
 from pathlib import Path
 from datetime import datetime, timezone
 
-ROOT = Path(file).resolve().parent
+ROOT = Path(__file__).resolve().parent
 SOURCES_FILE = ROOT / "sources.json"
 JOBS_FILE = ROOT / "jobs.json"
 DUPLICATE_AUDIT_FILE = ROOT / "duplicate_audit.json"
@@ -456,5 +456,6 @@ print("Duplicate candidate pairs:", duplicate_audit["candidate_pairs"])
 print("Report saved to:", DUPLICATE_AUDIT_FILE.name)  
 print("--------------------------------")
 
-if name == "main":
+if __name__ == "__main__":
+    main()
 main()
