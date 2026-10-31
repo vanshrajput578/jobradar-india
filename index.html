@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#111d3d">
 <meta name="description" content="Discover verified job opportunities, track applications and prepare for your next career move with JobRadar India.">
+<base href="/jobradar-india/">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>JobRadar India — Discover. Track. Apply.</title>
@@ -1187,109 +1188,160 @@ function clearFilters() {
 
 async function loadJobs() {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
   $("jobCount").textContent = "Loading jobs...";
   $("jobList").innerHTML = '<div class="empty">Loading job database...</div>';
+
   try {
-    const response = await fetch("./jobs.json", {cache:"no-store", signal:controller.signal});
-    if(!response.ok) throw new Error("HTTP " + response.status);
+    const feedUrl = new URL("./jobs_public.json", document.baseURI);
+    let response = await fetch(feedUrl.href, {cache:"no-store", signal:controller.signal});
+
+    // Backward-compatible fallback until the first compact feed has been published.
+    if(response.status === 404) {
+      response = await fetch(new URL("./jobs.json", document.baseURI).href, {
+        cache:"no-store",
+        signal:controller.signal
+      });
+    }
+    if(!response.ok) throw new Error("HTTP " + response.status + " while loading the job feed");
 
     const data = await response.json();
-    if(!Array.isArray(data.jobs)) throw new Error("jobs array missing");
+    if(!data || !Array.isArray(data.jobs)) throw new Error("Job feed JSON is missing its jobs array");
+    if(data.total_jobs != null && Number(data.total_jobs) !== data.jobs.length) {
+      throw new Error("Job feed count does not match its records");
+    }
 
     allJobs = data.jobs;
-
     stats();
     filtersInit();
     render();
     renderCompanies();
 
-    $("lastUpdated").textContent =
-      "Last database update: " + (data.last_updated || "Not available");
+    $("lastUpdated").textContent = "Last database update: " + (data.last_updated || "Not available");
     $("verificationUpdated").textContent = "Last data refresh: " + (data.last_updated || "Not available");
-    fetch("./expiry_audit.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(a => {
-      if(!a) return;
-      const ok = (a.source_results || []).filter(s => s.status === "success").length;
-      const bad = (a.source_results || []).filter(s => s.status !== "success").length;
-      const detail=(a.source_results || []).map(s => (s.company || s.source_id) + ": " + s.status).join(" · ");
-      $("sourceHealth").textContent = "Source checks: " + ok + " successful, " + bad + " failed. " + detail + " | " + (a.generated_at || "");
-    }).catch(() => {});
 
+    fetch(new URL("./expiry_audit.json", document.baseURI).href, {cache:"no-store"})
+      .then(r => r.ok ? r.json() : null)
+      .then(a => {
+        if(!a) return;
+        const ok = (a.source_results || []).filter(item => item.status === "success").length;
+        const bad = (a.source_results || []).filter(item => item.status !== "success").length;
+        const detail = (a.source_results || []).map(item => (item.company || item.source_id) + ": " + item.status).join(" · ");
+        $("sourceHealth").textContent = "Source checks: " + ok + " successful, " + bad + " failed. " + detail + " | " + (a.generated_at || "");
+      })
+      .catch(error => console.warn("Source health report unavailable:", error));
+
+    $("jobCount").textContent = allJobs.length + " jobs loaded";
   } catch(error) {
     console.error("JobRadar loading error:", error);
-    const message = error.name === "AbortError" ? "The job feed took too long to respond." : error.message;
+    const message = error.name === "AbortError"
+      ? "The job feed did not finish downloading within 60 seconds."
+      : error.message;
     $("jobCount").textContent = "Jobs unavailable";
     $("jobList").innerHTML = "";
     const empty = document.createElement("div");
     empty.className = "empty";
     const detail = document.createElement("p");
-    detail.textContent = "Could not load jobs.json: " + message;
+    detail.textContent = "Could not load the job feed: " + message;
     const retry = document.createElement("button");
     retry.type = "button";
     retry.textContent = "Retry loading jobs";
     retry.onclick = loadJobs;
     empty.append(detail, retry);
     $("jobList").append(empty);
-    renderApps();
   } finally {
     clearTimeout(timeoutId);
   }
 }
 
-
-/* Hash router: each route displays one grouped view while preserving the existing app state. */
+/* Hash router: one grouped view is visible at a time. */
 const VIEW_ROUTES = {
- home:"view-home", jobs:"view-jobs", saved:"view-saved", tracker:"view-tracker",
- tools:"view-tools", "career-tools":"view-tools", companies:"view-companies",
- verification:"view-verification", about:"view-about",
- "market-insights":"view-home", "interview-calendar":"view-tracker", "saved-searches":"view-tracker"
+  home:"view-home",
+  jobs:"view-jobs",
+  saved:"view-saved",
+  tracker:"view-tracker",
+  tools:"view-tools",
+  companies:"view-companies",
+  verification:"view-verification",
+  about:"view-about",
+  "career-tools":"view-tools",
+  "market-insights":"view-home",
+  "interview-calendar":"view-tracker",
+  "saved-searches":"view-tracker"
 };
-function showView(route, updateHash=false){
- const aliases={"career-tools":"tools","market-insights":"home","interview-calendar":"tracker","saved-searches":"tracker"};
- const key=aliases[route] || route;
- const safeKey=VIEW_ROUTES[key] ? key : "home";
- const viewId=VIEW_ROUTES[safeKey];
- document.querySelectorAll(".view").forEach(view=>view.classList.toggle("active",view.id===viewId));
- document.querySelectorAll("[data-view]").forEach(link=>{
-  const active=link.dataset.view===safeKey;
-  link.classList.toggle("active",active);
-  if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
- });
- const moreActive=["tools","companies","verification","about"].includes(safeKey);
- $("moreBtn")?.classList.toggle("active",moreActive);
- $("moreMenu")?.setAttribute("hidden","");
- $("moreBtn")?.setAttribute("aria-expanded","false");
- $("navigation").classList.remove("open");
- $("menuBtn").setAttribute("aria-expanded","false");
- if(updateHash && location.hash!=="#"+safeKey) history.pushState(null,"","#"+safeKey);
- window.scrollTo({top:0,behavior:"auto"});
+
+function showView(route) {
+  const aliases = {
+    "career-tools":"tools",
+    "market-insights":"home",
+    "interview-calendar":"tracker",
+    "saved-searches":"tracker"
+  };
+  const requested = aliases[route] || route;
+  const activeRoute = VIEW_ROUTES[requested] ? requested : "home";
+  const activeViewId = VIEW_ROUTES[activeRoute];
+
+  document.querySelectorAll(".view").forEach(view => {
+    const active = view.id === activeViewId;
+    view.classList.toggle("active", active);
+    view.setAttribute("aria-hidden", String(!active));
+    if("inert" in view) view.inert = !active;
+  });
+
+  document.querySelectorAll("[data-view]").forEach(link => {
+    const active = link.dataset.view === activeRoute;
+    link.classList.toggle("active", active);
+    if(active) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
+
+  const moreActive = ["tools","companies","verification","about"].includes(activeRoute);
+  $("moreBtn").classList.toggle("active", moreActive);
+  $("moreMenu").setAttribute("hidden", "");
+  $("moreBtn").setAttribute("aria-expanded", "false");
+
+  $("navigation").classList.remove("open");
+  $("menuBtn").setAttribute("aria-expanded", "false");
+  window.scrollTo({top:0, behavior:"auto"});
 }
-function routeFromHash(){
- const route=decodeURIComponent(location.hash.replace(/^#/,"")).toLowerCase();
- if(!route || !VIEW_ROUTES[route]){
-  history.replaceState(null,"",location.pathname+location.search+"#home");
-  showView("home",false);
-  return;
- }
- showView(route,false);
+
+function routeFromHash() {
+  let route = "";
+  try {
+    route = decodeURIComponent(location.hash.slice(1)).trim().toLowerCase();
+  } catch(error) {
+    console.warn("Invalid navigation hash:", error);
+  }
+
+  if(!route || !VIEW_ROUTES[route]) {
+    history.replaceState(null, "", location.pathname + location.search + "#home");
+    route = "home";
+  }
+  showView(route);
 }
-window.addEventListener("hashchange",routeFromHash);
-document.querySelectorAll("[data-view]").forEach(link=>{
- link.addEventListener("click",event=>{
-  event.preventDefault();
-  const route=link.dataset.view;
-  if(location.hash==="#"+route)showView(route,false);
-  else location.hash=route;
- });
+
+window.addEventListener("hashchange", routeFromHash);
+
+document.querySelectorAll("[data-view]").forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    const route = link.dataset.view;
+    if(location.hash === "#" + route) showView(route);
+    else location.hash = route;
+  });
 });
-$("moreBtn").onclick=()=>{
- const menu=$("moreMenu"),open=menu.hasAttribute("hidden");
- if(open)menu.removeAttribute("hidden");else menu.setAttribute("hidden","");
- $("moreBtn").setAttribute("aria-expanded",String(open));
+
+$("moreBtn").onclick = () => {
+  const menu = $("moreMenu");
+  const open = menu.hasAttribute("hidden");
+  if(open) menu.removeAttribute("hidden");
+  else menu.setAttribute("hidden", "");
+  $("moreBtn").setAttribute("aria-expanded", String(open));
 };
+
 routeFromHash();
 
-$("searchBtn").onclick = () => { renderJobs(); if(location.hash!=="#jobs") location.hash="jobs"; else showView("jobs",false); };
+$("searchBtn").onclick = () => { renderJobs(); if(location.hash !== "#jobs") location.hash = "jobs"; else showView("jobs"); };
 $("searchInput").addEventListener("keydown", event => { if(event.key === "Enter") $("searchBtn").click(); });
 $("searchInput").oninput = renderJobs;
 
