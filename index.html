@@ -808,6 +808,7 @@ function renderCompanies() {
   const box = $("companyGrid");
   if (!box) return;
   box.innerHTML = "";
+
   if (!companyDirectoryReady) {
     box.innerHTML = '<div class="empty">Loading company directory...</div>';
     return;
@@ -835,22 +836,60 @@ function renderCompanies() {
   rows.forEach(company => {
     const card = document.createElement("article");
     card.className = "company-card";
+
     const title = document.createElement("strong");
     title.textContent = company.name || "Unnamed company";
+
     const categoryText = document.createElement("p");
     categoryText.className = "company-category";
     categoryText.textContent = (company.categories || []).join(" · ") || "Category not supplied";
 
+    const headquarters = document.createElement("p");
+    headquarters.className = "company-jobs";
+    headquarters.textContent = company.headquarters
+      ? "Headquarters: " + company.headquarters
+      : "Headquarters: Not provided";
+
     const activeCount = activeCounts.get(String(company.name || "").trim().toLowerCase()) || 0;
     const status = document.createElement("span");
     status.className = "company-status";
-    status.textContent = activeCount > 0 ? "Listings in JobRadar" : "Vacancies not checked";
+    status.textContent = activeCount > 0
+      ? "Active JobRadar listings"
+      : company.vacancy_status === "closed"
+        ? "No active listing in the latest successful check"
+        : company.vacancy_status === "active"
+          ? "Active listing reported by company source"
+          : "Vacancy status not checked";
+
     const count = document.createElement("p");
     count.className = "company-jobs";
     count.textContent = activeCount > 0
-      ? activeCount + " verified active JobRadar listing(s)"
-      : "No verified active listings in the connected JobRadar feeds.";
-    card.append(title, categoryText, status, count);
+      ? activeCount + " active JobRadar listing(s)"
+      : "No verified active JobRadar listing is currently recorded.";
+
+    const verification = document.createElement("p");
+    verification.className = "company-jobs";
+    verification.textContent = company.verification_status === "verified"
+      ? "Company profile verified"
+      : "Company profile not independently verified";
+
+    card.append(title, categoryText, headquarters, status, count, verification);
+
+    const careersUrl = String(company.official_careers_url || "").trim();
+    if (/^https:\/\//i.test(careersUrl)) {
+      const careersLink = document.createElement("a");
+      careersLink.href = careersUrl;
+      careersLink.target = "_blank";
+      careersLink.rel = "noopener noreferrer";
+      careersLink.textContent = "Official careers website";
+      careersLink.className = "secondary";
+      card.append(careersLink);
+    } else {
+      const missingCareers = document.createElement("p");
+      missingCareers.className = "company-jobs";
+      missingCareers.textContent = "Official careers URL not added yet.";
+      card.append(missingCareers);
+    }
 
     if (activeCount > 0) {
       const button = document.createElement("button");
@@ -867,6 +906,7 @@ function renderCompanies() {
       };
       card.append(button);
     }
+
     box.append(card);
   });
 }
