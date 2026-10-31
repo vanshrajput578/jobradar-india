@@ -48,6 +48,14 @@ class LocationIntelligenceTests(unittest.TestCase):
     def test_existing_region_work_mode_api_remains_compatible(self):
         self.assertEqual(detect_location("Remote - Bengaluru, India"), ("India", "Remote"))
 
+    def test_remote_without_india_evidence_is_unclear(self):
+        result = classify_india_eligibility("Remote", "Work remotely with a distributed team.")
+        self.assertEqual(result["india_eligibility"], "unclear")
+
+    def test_india_location_is_eligible(self):
+        result = classify_india_eligibility("Bengaluru, India", "")
+        self.assertEqual(result["india_eligibility"], "eligible")
+
     def test_make_job_includes_structured_location_fields(self):
         job = make_job(
             {"id": "sample", "company": "Sample Co", "board_token": "sample"},
