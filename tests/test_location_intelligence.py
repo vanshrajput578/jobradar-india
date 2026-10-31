@@ -1,6 +1,6 @@
 import unittest
 
-from fetch_jobs import detect_location, detect_location_details, make_job
+from fetch_jobs import classify_india_eligibility, detect_location, detect_location_details, make_job
 
 
 class LocationIntelligenceTests(unittest.TestCase):
