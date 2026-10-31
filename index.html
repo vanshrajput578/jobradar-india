@@ -1079,6 +1079,34 @@ function addProfileLine(container, label, value) {
   container.append(row);
 }
 
+function normalizeCompanyKey(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\\s+/g, " ");
+}
+
+function companyMatchesJob(company, job) {
+  const canonicalId = String(job.company_id || "").trim();
+  if (canonicalId) return canonicalId === String(company.company_id || "").trim();
+
+  const sourceId = String(job.source_id || "").trim();
+  const sourceIds = Array.isArray(company.source_ids) ? company.source_ids : [];
+  if (sourceId && sourceIds.includes(sourceId)) return true;
+
+  const acceptedNames = [company.name, ...(company.aliases || [])]
+    .map(normalizeCompanyKey).filter(Boolean);
+  return acceptedNames.includes(normalizeCompanyKey(job.company));
+}
+
+function jobsForCompany(company) {
+  return allJobs.filter(job => companyMatchesJob(company, job));
+}
+
 function renderCompanyProfile() {
   const company = companyMaster.find(item => item.company_id === selectedCompanyId);
   if (!company) {
@@ -1130,8 +1158,7 @@ function renderCompanyProfile() {
     actions.append(note);
   }
 
-  const names = [company.name, ...(company.aliases || [])].map(name => String(name || "").trim().toLowerCase()).filter(Boolean);
-  const matchingJobs = allJobs.filter(job => names.includes(String(job.company || "").trim().toLowerCase()));
+  const matchingJobs = jobsForCompany(company);
   const jobsBox = $("companyProfileJobs");
   jobsBox.innerHTML = "";
   if (!matchingJobs.length) {
@@ -1187,12 +1214,6 @@ function renderCompanies() {
     return;
   }
 
-  const activeCounts = new Map();
-  allJobs.filter(job => job.availability_status === "active").forEach(job => {
-    const name = String(job.company || "").trim().toLowerCase();
-    if (name) activeCounts.set(name, (activeCounts.get(name) || 0) + 1);
-  });
-
   rows.forEach(company => {
     const card = document.createElement("article");
     card.className = "company-card";
@@ -1210,7 +1231,8 @@ function renderCompanies() {
       ? "Headquarters: " + company.headquarters
       : "Headquarters: Not provided";
 
-    const activeCount = activeCounts.get(String(company.name || "").trim().toLowerCase()) || 0;
+    const companyJobs = jobsForCompany(company);
+    const activeCount = companyJobs.filter(job => (job.availability_status || "unverified") === "active").length;
     const status = document.createElement("span");
     status.className = "company-status";
     status.textContent = activeCount > 0
@@ -1223,9 +1245,9 @@ function renderCompanies() {
 
     const count = document.createElement("p");
     count.className = "company-jobs";
-    count.textContent = activeCount > 0
-      ? activeCount + " active JobRadar listing(s)"
-      : "No verified active JobRadar listing is currently recorded.";
+    count.textContent = companyJobs.length > 0
+      ? companyJobs.length + " JobRadar listing(s), " + activeCount + " active"
+      : "No matching JobRadar listings are currently recorded.";
 
     const verification = document.createElement("p");
     verification.className = "company-jobs";
