@@ -138,25 +138,186 @@ def detect_work_mode(location):
     return "Not specified"
 
 
-def detect_location(location):
-    """Return (region, work_mode). Region is independent of work mode."""
+INDIA_STATE_ALIASES = {
+    "Andhra Pradesh": ["andhra pradesh"],
+    "Arunachal Pradesh": ["arunachal pradesh"],
+    "Assam": ["assam"],
+    "Bihar": ["bihar"],
+    "Chhattisgarh": ["chhattisgarh", "chattisgarh"],
+    "Goa": ["goa"],
+    "Gujarat": ["gujarat"],
+    "Haryana": ["haryana"],
+    "Himachal Pradesh": ["himachal pradesh"],
+    "Jharkhand": ["jharkhand"],
+    "Karnataka": ["karnataka"],
+    "Kerala": ["kerala"],
+    "Madhya Pradesh": ["madhya pradesh"],
+    "Maharashtra": ["maharashtra"],
+    "Manipur": ["manipur"],
+    "Meghalaya": ["meghalaya"],
+    "Mizoram": ["mizoram"],
+    "Nagaland": ["nagaland"],
+    "Odisha": ["odisha", "orissa"],
+    "Punjab": ["punjab"],
+    "Rajasthan": ["rajasthan"],
+    "Sikkim": ["sikkim"],
+    "Tamil Nadu": ["tamil nadu"],
+    "Telangana": ["telangana"],
+    "Tripura": ["tripura"],
+    "Uttar Pradesh": ["uttar pradesh", "up"],
+    "Uttarakhand": ["uttarakhand", "uttaranchal"],
+    "West Bengal": ["west bengal"],
+    "Andaman and Nicobar Islands": ["andaman and nicobar", "andaman & nicobar"],
+    "Chandigarh": ["chandigarh"],
+    "Dadra and Nagar Haveli and Daman and Diu": ["dadra and nagar haveli", "daman and diu"],
+    "Delhi": ["new delhi", "delhi", "nct of delhi"],
+    "Jammu and Kashmir": ["jammu and kashmir", "j&k", "jammu kashmir"],
+    "Ladakh": ["ladakh"],
+    "Lakshadweep": ["lakshadweep"],
+    "Puducherry": ["puducherry", "pondicherry"],
+}
+
+INDIA_CITY_STATE = {
+    "bengaluru": ("Bengaluru", "Karnataka"), "bangalore": ("Bengaluru", "Karnataka"),
+    "mysuru": ("Mysuru", "Karnataka"), "mysore": ("Mysuru", "Karnataka"),
+    "mangaluru": ("Mangaluru", "Karnataka"), "mangalore": ("Mangaluru", "Karnataka"),
+    "hubli": ("Hubballi", "Karnataka"), "hubballi": ("Hubballi", "Karnataka"),
+    "belgaum": ("Belagavi", "Karnataka"), "belagavi": ("Belagavi", "Karnataka"),
+    "mumbai": ("Mumbai", "Maharashtra"), "bombay": ("Mumbai", "Maharashtra"),
+    "pune": ("Pune", "Maharashtra"), "nagpur": ("Nagpur", "Maharashtra"),
+    "nashik": ("Nashik", "Maharashtra"), "thane": ("Thane", "Maharashtra"),
+    "aurangabad": ("Chhatrapati Sambhajinagar", "Maharashtra"),
+    "hyderabad": ("Hyderabad", "Telangana"), "warangal": ("Warangal", "Telangana"),
+    "chennai": ("Chennai", "Tamil Nadu"), "madras": ("Chennai", "Tamil Nadu"),
+    "coimbatore": ("Coimbatore", "Tamil Nadu"), "madurai": ("Madurai", "Tamil Nadu"),
+    "tiruchirappalli": ("Tiruchirappalli", "Tamil Nadu"), "trichy": ("Tiruchirappalli", "Tamil Nadu"),
+    "salem": ("Salem", "Tamil Nadu"), "kochi": ("Kochi", "Kerala"),
+    "cochin": ("Kochi", "Kerala"), "thiruvananthapuram": ("Thiruvananthapuram", "Kerala"),
+    "trivandrum": ("Thiruvananthapuram", "Kerala"), "kozhikode": ("Kozhikode", "Kerala"),
+    "calicut": ("Kozhikode", "Kerala"), "thrissur": ("Thrissur", "Kerala"),
+    "ahmedabad": ("Ahmedabad", "Gujarat"), "surat": ("Surat", "Gujarat"),
+    "vadodara": ("Vadodara", "Gujarat"), "baroda": ("Vadodara", "Gujarat"),
+    "rajkot": ("Rajkot", "Gujarat"), "gandhinagar": ("Gandhinagar", "Gujarat"),
+    "jaipur": ("Jaipur", "Rajasthan"), "jodhpur": ("Jodhpur", "Rajasthan"),
+    "udaipur": ("Udaipur", "Rajasthan"), "kota": ("Kota", "Rajasthan"),
+    "lucknow": ("Lucknow", "Uttar Pradesh"), "kanpur": ("Kanpur", "Uttar Pradesh"),
+    "noida": ("Noida", "Uttar Pradesh"), "greater noida": ("Greater Noida", "Uttar Pradesh"),
+    "ghaziabad": ("Ghaziabad", "Uttar Pradesh"), "meerut": ("Meerut", "Uttar Pradesh"),
+    "agra": ("Agra", "Uttar Pradesh"), "varanasi": ("Varanasi", "Uttar Pradesh"),
+    "prayagraj": ("Prayagraj", "Uttar Pradesh"), "allahabad": ("Prayagraj", "Uttar Pradesh"),
+    "gorakhpur": ("Gorakhpur", "Uttar Pradesh"), "bareilly": ("Bareilly", "Uttar Pradesh"),
+    "gurugram": ("Gurugram", "Haryana"), "gurgaon": ("Gurugram", "Haryana"),
+    "faridabad": ("Faridabad", "Haryana"), "panipat": ("Panipat", "Haryana"),
+    "new delhi": ("New Delhi", "Delhi"), "delhi": ("Delhi", "Delhi"),
+    "kolkata": ("Kolkata", "West Bengal"), "calcutta": ("Kolkata", "West Bengal"),
+    "siliguri": ("Siliguri", "West Bengal"), "durgapur": ("Durgapur", "West Bengal"),
+    "bhubaneswar": ("Bhubaneswar", "Odisha"), "cuttack": ("Cuttack", "Odisha"),
+    "patna": ("Patna", "Bihar"), "gaya": ("Gaya", "Bihar"),
+    "ranchi": ("Ranchi", "Jharkhand"), "jamshedpur": ("Jamshedpur", "Jharkhand"),
+    "bhopal": ("Bhopal", "Madhya Pradesh"), "indore": ("Indore", "Madhya Pradesh"),
+    "gwalior": ("Gwalior", "Madhya Pradesh"), "jabalpur": ("Jabalpur", "Madhya Pradesh"),
+    "raipur": ("Raipur", "Chhattisgarh"), "bilaspur": ("Bilaspur", "Chhattisgarh"),
+    "dehradun": ("Dehradun", "Uttarakhand"), "haridwar": ("Haridwar", "Uttarakhand"),
+    "chandigarh": ("Chandigarh", "Chandigarh"), "ludhiana": ("Ludhiana", "Punjab"),
+    "amritsar": ("Amritsar", "Punjab"), "jalandhar": ("Jalandhar", "Punjab"),
+    "guwahati": ("Guwahati", "Assam"), "shillong": ("Shillong", "Meghalaya"),
+    "imphal": ("Imphal", "Manipur"), "aizawl": ("Aizawl", "Mizoram"),
+    "kohima": ("Kohima", "Nagaland"), "gangtok": ("Gangtok", "Sikkim"),
+    "agartala": ("Agartala", "Tripura"), "itanagar": ("Itanagar", "Arunachal Pradesh"),
+    "visakhapatnam": ("Visakhapatnam", "Andhra Pradesh"), "vizag": ("Visakhapatnam", "Andhra Pradesh"),
+    "vijayawada": ("Vijayawada", "Andhra Pradesh"), "tirupati": ("Tirupati", "Andhra Pradesh"),
+    "amaravati": ("Amaravati", "Andhra Pradesh"), "mysore": ("Mysuru", "Karnataka"),
+}
+
+COUNTRY_ALIASES = {
+    "United States": ["united states", "united states of america", "usa", "u.s.a.", "us", "u.s."],
+    "United Kingdom": ["united kingdom", "uk", "u.k."],
+    "United Arab Emirates": ["united arab emirates", "uae"],
+    "Netherlands": ["netherlands", "the netherlands"],
+    "South Korea": ["south korea", "republic of korea"],
+    "Türkiye": ["turkey", "türkiye"],
+    "Czechia": ["czechia", "czech republic"],
+    "India": ["india", "bharat"],
+}
+for _country in GLOBAL_COUNTRIES:
+    if _country not in {alias for values in COUNTRY_ALIASES.values() for alias in values}:
+        COUNTRY_ALIASES[_country.title()] = [_country]
+
+def _find_alias(text, aliases):
+    for alias in sorted(aliases, key=len, reverse=True):
+        if contains_keyword(text, [alias]):
+            return alias
+    return None
+
+def detect_location_details(location):
+    """Return conservative structured location fields without guessing ambiguous places."""
     text = normalize_location_text(location)
-    if not text or text in {"not specified", "unknown", "n/a", "none", "null"}:
-        return "Unspecified", "Not specified"
-
     work_mode = detect_work_mode(text)
-    has_india = contains_keyword(text, INDIA_KEYWORDS)
-    has_global = contains_keyword(text, GLOBAL_COUNTRIES)
+    result = {
+        "region": "Unspecified",
+        "work_mode": work_mode,
+        "country": None,
+        "state": None,
+        "city": None,
+        "location_confidence": "low",
+    }
+    if not text or text in {"not specified", "unknown", "n/a", "none", "null"}:
+        result["work_mode"] = "Not specified"
+        return result
 
-    # Prefer India when India is explicitly among the listed eligible locations.
-    # A multi-country role including India remains discoverable in the India filter.
-    if has_india:
-        return "India", work_mode
-    if has_global:
-        return "Global", work_mode
-    if work_mode == "Remote":
-        return "Remote", "Remote"
-    return "Unspecified", work_mode
+    city_matches = [
+        (alias, canonical, state)
+        for alias, (canonical, state) in INDIA_CITY_STATE.items()
+        if contains_keyword(text, [alias])
+    ]
+    if city_matches:
+        alias, city, state = sorted(city_matches, key=lambda item: len(item[0]), reverse=True)[0]
+        result.update(country="India", state=state, city=city, location_confidence="high")
+
+    state_aliases = {
+        alias: state
+        for state, aliases in INDIA_STATE_ALIASES.items()
+        for alias in aliases
+    }
+    state_match = _find_alias(text, state_aliases.keys())
+    if state_match:
+        result["country"] = "India"
+        result["state"] = state_aliases[state_match]
+        result["location_confidence"] = "high"
+
+    country_match = None
+    for canonical, aliases in COUNTRY_ALIASES.items():
+        if _find_alias(text, aliases):
+            country_match = canonical
+            break
+    if country_match:
+        result["country"] = country_match
+        result["location_confidence"] = "high"
+
+    if result["country"] == "India":
+        result["region"] = "India"
+    elif result["country"]:
+        result["region"] = "Global"
+    elif work_mode == "Remote":
+        result["region"] = "Remote"
+        result["location_confidence"] = "medium"
+
+    # An explicit country/state/city wins over remote wording for region.
+    if result["country"] is None and result["state"] is None and result["city"] is None:
+        if contains_keyword(text, INDIA_KEYWORDS):
+            result["country"] = "India"
+            result["region"] = "India"
+            result["location_confidence"] = "medium"
+        elif contains_keyword(text, GLOBAL_COUNTRIES):
+            result["region"] = "Global"
+            result["location_confidence"] = "medium"
+
+    return result
+
+def detect_location(location):
+    """Backward-compatible region/work-mode detector."""
+    details = detect_location_details(location)
+    return details["region"], details["work_mode"]
 
 
 def classify(title, departments):
@@ -369,7 +530,9 @@ def make_job(source, posting, previous):
             for item in departments_data if isinstance(item, dict)
         ]
 
-    region, work_mode = detect_location(location)
+    location_details = detect_location_details(location)
+    region = location_details["region"]
+    work_mode = location_details["work_mode"]
     board_token = str(source.get("board_token", "")).strip()
     absolute_url = str(posting.get("absolute_url") or "").strip()
     if absolute_url and not absolute_url.startswith(("https://", "http://")):
@@ -382,6 +545,10 @@ def make_job(source, posting, previous):
         "company": source["company"],
         "location": location,
         "region": region,
+        "country": location_details["country"],
+        "state": location_details["state"],
+        "city": location_details["city"],
+        "location_confidence": location_details["location_confidence"],
         "category": classify(title, departments),
         "industry": previous.get("industry", "Not specified"),
         "job_type": previous.get("job_type", "Not specified"),
