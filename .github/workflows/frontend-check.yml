@@ -6,6 +6,8 @@ on:
     paths:
       - "index.html"
       - "jobs.json"
+      - "jobs_public.json"
+      - "build_public_feed.py"
       - "sw.js"
       - ".github/workflows/frontend-check.yml"
   workflow_dispatch:
@@ -60,7 +62,7 @@ jobs:
           missing = set(expected) - found
           if missing:
               raise SystemExit(f"Missing views: {sorted(missing)}")
-          if 'function routeFromHash()' not in html or 'addEventListener("hashchange",routeFromHash)' not in html:
+          if 'function routeFromHash()' not in html or 'addEventListener("hashchange", routeFromHash)' not in html:
               raise SystemExit("Hash router or hashchange listener missing")
           print("All 8 navigation views and hash router found.")
           PY
