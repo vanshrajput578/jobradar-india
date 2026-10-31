@@ -24,6 +24,14 @@ body.dark{
  --red:#ff9999;--red-bg:#482727;--shadow:0 12px 35px rgba(0,0,0,.18)
 }
 *{box-sizing:border-box}
+:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.skip-link{position:fixed;left:12px;top:-60px;z-index:100;background:var(--surface);color:var(--text);padding:12px 16px;border:2px solid var(--primary);border-radius:10px;font-weight:800}
+.skip-link:focus{top:12px}
+button,.apply,.filter,.theme{min-height:42px;touch-action:manipulation}
+button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.field{min-height:44px}
+::selection{background:var(--soft);color:var(--text)}
+
 html{scroll-behavior:smooth;scroll-padding-top:88px}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:background .2s,color .2s}
 button,input,select,textarea{font:inherit}
@@ -31,7 +39,7 @@ button{border:0;border-radius:11px;padding:11px 16px;background:var(--primary);c
 button:hover{filter:brightness(1.06);transform:translateY(-1px)}
 button:active{transform:translateY(0)}
 a{color:var(--primary)}
-header{height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 max(24px,calc((100% - 1320px)/2));background:color-mix(in srgb,var(--surface) 92%,transparent);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:15;backdrop-filter:blur(16px)}
+header{min-height:76px;height:auto;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 max(24px,calc((100% - 1320px)/2));background:color-mix(in srgb,var(--surface) 92%,transparent);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:15;backdrop-filter:blur(16px)}
 .logo{font-size:19px;font-weight:850;letter-spacing:-.7px;white-space:nowrap;display:flex;align-items:center;gap:10px}
 .logo:before{content:"";width:11px;height:11px;border-radius:4px;background:linear-gradient(135deg,#6b8aff,#314bd0);box-shadow:0 0 0 5px var(--soft)}
 nav{display:flex;gap:5px;align-items:center;justify-content:flex-end}
@@ -53,7 +61,7 @@ nav a:hover{background:var(--soft);color:var(--primary)}
 .container>h2:after{content:"";display:block;width:34px;height:3px;background:var(--primary);border-radius:5px;margin-top:10px}
 .muted{color:var(--muted)}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:22px 0}
-.stat,.job,.panel,.company-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.stat,.job,.panel,.company-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}\n.stat,.panel,.company-card{box-shadow:0 5px 22px rgba(25,42,80,.035)}
 .stat{position:relative;overflow:hidden}
 .stat:after{content:"";position:absolute;width:64px;height:64px;border-radius:50%;background:var(--soft);right:-20px;top:-24px}
 .stat strong{position:relative;z-index:1;display:block;font-size:27px;line-height:1.2;letter-spacing:-1px;font-weight:850}
@@ -69,7 +77,7 @@ nav a:hover{background:var(--soft);color:var(--primary)}
 .section-head,.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 12px}
 .section-head .muted{font-size:13px;font-weight:700}
 .jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.job{padding:20px;transition:transform .18s,border-color .18s,box-shadow .18s;min-width:0}
+.job{padding:22px;transition:transform .18s,border-color .18s,box-shadow .18s;min-width:0}
 .job:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--primary) 45%,var(--border));box-shadow:0 18px 38px rgba(25,42,80,.10)}
 .job h3{margin:13px 0 4px;font-size:17px;line-height:1.35;letter-spacing:-.3px}
 .company{color:var(--muted);font-weight:700;font-size:13px}
@@ -175,11 +183,12 @@ footer{text-align:center;padding:38px 20px;background:var(--surface);border-top:
  .mobile-dock a:hover{background:var(--soft);color:var(--primary)}
  footer{padding-bottom:90px}
 }
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media(max-width:380px){.hero h1{font-size:32px}.stats{gap:7px}.stat{padding:12px}.company-grid{grid-template-columns:1fr}.mobile-dock{left:6px;right:6px}}\n@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 </style>
 </head>
 <body>
+<a class="skip-link" href="#jobs">Skip to job listings</a>
 
 <header>
 <div class="logo">JobRadar India</div>
@@ -201,7 +210,7 @@ footer{text-align:center;padding:38px 20px;background:var(--surface);border-top:
 <h1>Find work that moves you forward.</h1>
 <p>Explore employer-listed roles, verify availability, and manage your job search in one focused workspace.</p>
 <div class="search" role="search">
-<input id="searchInput" placeholder="Job title, skill or company...">
+<input id="searchInput" aria-label="Search jobs by title, skill or company" placeholder="Job title, skill or company...">
 <button id="searchBtn">Search Jobs</button>
 </div>
 </section>
