@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-31T12:19:09.031994+00:00",
+  "generated_at": "2026-10-31T12:42:16.567939+00:00",
   "policy": "Only a missing job ID from a successfully fetched source is marked closed. Failed sources never close jobs. Records are retained.",
   "source_results": [
     {
       "source_id": "groww",
       "company": "Groww",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 9,
       "valid_jobs": 9
     },
@@ -14,7 +14,7 @@
       "source_id": "razorpay",
       "company": "Razorpay",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 31,
       "valid_jobs": 31
     },
@@ -22,7 +22,7 @@
       "source_id": "6sense",
       "company": "6sense",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 31,
       "valid_jobs": 31
     },
@@ -30,7 +30,7 @@
       "source_id": "alphasense",
       "company": "AlphaSense India",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 30,
       "valid_jobs": 30
     },
@@ -38,7 +38,7 @@
       "source_id": "deepintent",
       "company": "DeepIntent",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 14,
       "valid_jobs": 14
     },
@@ -46,7 +46,7 @@
       "source_id": "gitlab",
       "company": "GitLab",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 238,
       "valid_jobs": 238
     },
@@ -54,7 +54,7 @@
       "source_id": "neo4j",
       "company": "Neo4j",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 65,
       "valid_jobs": 65
     },
@@ -62,7 +62,7 @@
       "source_id": "commerceiq",
       "company": "CommerceIQ",
       "status": "success",
-      "checked_at": "2026-10-31T12:19:09.031994+00:00",
+      "checked_at": "2026-10-31T12:42:16.567939+00:00",
       "fetched_jobs": 13,
       "valid_jobs": 13
     }
