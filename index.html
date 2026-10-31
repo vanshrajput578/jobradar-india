@@ -322,6 +322,8 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 
 /* Home, saved, tracker and career tools finishing pass */
 .hero{min-height:390px;display:flex;flex-direction:column;justify-content:center}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;margin-top:26px;padding:12px 17px;border:1px solid #ffffff55;border-radius:11px;background:#ffffff16;color:#fff;text-decoration:none;font-size:13px;font-weight:800;transition:transform .18s,background .18s}
+.hero-cta:hover{transform:translateY(-2px);background:#ffffff25}
 .hero-video{pointer-events:none}
 .tracker-toolbar{display:grid;grid-template-columns:minmax(0,2fr) minmax(150px,1fr) auto;gap:10px;margin:18px 0 12px;align-items:center}
 #tracker .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -1184,8 +1186,12 @@ function clearFilters() {
 }
 
 async function loadJobs() {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  $("jobCount").textContent = "Loading jobs...";
+  $("jobList").innerHTML = '<div class="empty">Loading job database...</div>';
   try {
-    const response = await fetch("./jobs.json", {cache:"no-store"});
+    const response = await fetch("./jobs.json", {cache:"no-store", signal:controller.signal});
     if(!response.ok) throw new Error("HTTP " + response.status);
 
     const data = await response.json();
@@ -1211,10 +1217,22 @@ async function loadJobs() {
 
   } catch(error) {
     console.error("JobRadar loading error:", error);
-    $("jobCount").textContent = "Could not load jobs";
-    $("jobList").innerHTML =
-      '<div class="empty">Job database could not be loaded: ' + error.message + '</div>';
+    const message = error.name === "AbortError" ? "The job feed took too long to respond." : error.message;
+    $("jobCount").textContent = "Jobs unavailable";
+    $("jobList").innerHTML = "";
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    const detail = document.createElement("p");
+    detail.textContent = "Could not load jobs.json: " + message;
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.textContent = "Retry loading jobs";
+    retry.onclick = loadJobs;
+    empty.append(detail, retry);
+    $("jobList").append(empty);
     renderApps();
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -1227,7 +1245,8 @@ const VIEW_ROUTES = {
  "market-insights":"view-home", "interview-calendar":"view-tracker", "saved-searches":"view-tracker"
 };
 function showView(route, updateHash=false){
- const key=route==="career-tools"?"tools":route;
+ const aliases={"career-tools":"tools","market-insights":"home","interview-calendar":"tracker","saved-searches":"tracker"};
+ const key=aliases[route] || route;
  const safeKey=VIEW_ROUTES[key] ? key : "home";
  const viewId=VIEW_ROUTES[safeKey];
  document.querySelectorAll(".view").forEach(view=>view.classList.toggle("active",view.id===viewId));
