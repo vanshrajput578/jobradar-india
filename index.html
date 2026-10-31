@@ -569,7 +569,15 @@ function card(job) {
   const tags = document.createElement("div");
   tags.className = "tags";
 
-  [job.location, job.category, job.job_type, job.work_mode, job.experience]
+  [
+    job.location,
+    [job.city, job.state].filter(Boolean).join(", "),
+    job.country,
+    job.category,
+    job.job_type,
+    job.work_mode,
+    job.experience
+  ]
     .filter(value => value && value !== "Not specified")
     .forEach(value => {
       const tag = document.createElement("span");
