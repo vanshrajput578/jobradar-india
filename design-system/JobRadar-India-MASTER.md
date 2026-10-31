@@ -65,6 +65,16 @@ The current page remains plain HTML/CSS/JS. No framework, package, backend, paid
 - All nine existing page views and hash routing validation passed.
 - Latest Pages deployment and live-browser checks are being completed against the post-refresh commit.
 
+## Full workspace refresh — 2026-10-31
+
+- Replaced the inconsistent accumulated surface styles with a final unified visual layer across Home, Jobs, Saved, Tracker, Verification, Career Workspace, Company Directory and Company Profile.
+- First-visit appearance is dark-first; an explicit saved light preference is respected. Theme selection remains stored in the existing `jobradar-theme` key.
+- Jobs are rendered 12 at a time with accessible previous/number/next controls. Company directory uses the same 12-item pagination and adds sorting by name or active JobRadar listing count.
+- Saved Jobs now has an actionable empty state that takes users to discovery.
+- Company directory uses calmer copy when an official careers URL is absent; no fabricated logos or URLs are added.
+- Bumped the service-worker shell cache to v10 so the refreshed UI is not held behind the prior cached shell.
+- Added frontend contract coverage for pagination, company sorting, empty-state navigation, dark-first theme, and reduced-motion support.
+
 ## Known data limitations
 
 - Current connected source feeds provide no populated job_type or experience fields; those controls remain unavailable until source data contains values.
