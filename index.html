@@ -531,6 +531,10 @@ footer{background:var(--surface);border-color:var(--border)}
  .search{flex-direction:row;gap:6px;margin-top:18px;padding:6px}
  .search input{min-height:44px;padding:10px 11px;font-size:13px}
  .search button{min-width:auto;min-height:44px;padding:9px 12px;font-size:11px;white-space:nowrap}
+/* Keep the text field visible beside the search action on narrow screens. */
+.search input{display:block;flex:1 1 0;width:1%;min-width:0;max-width:none;opacity:1;visibility:visible}
+.search button{display:block;flex:0 0 auto;width:auto;min-width:112px}
+
  .jobs-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:17px 0 8px}
  .jobs-overview .stat{min-height:78px;padding:13px;border-radius:13px}
  .jobs-overview .stat strong{font-size:25px}
