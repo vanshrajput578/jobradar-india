@@ -1,0 +1,10 @@
+{
+  "name": "JobRadar India",
+  "short_name": "JobRadar",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#101827",
+  "description": "Discover, verify and track job opportunities."
+}

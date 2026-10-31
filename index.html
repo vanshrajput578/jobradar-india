@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101827">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>JobRadar India | Career Opportunities</title>
 <style>
 :root{--bg:#f4f6fb;--card:#fff;--text:#172033;--muted:#64748b;--border:#e2e8f0;--primary:#2563eb;--soft:#eaf1ff}
@@ -82,6 +84,18 @@ nav.open a{display:block;width:100%;padding:7px}
 .jobs{grid-template-columns:1fr}
 .container{padding:0 13px}
 }
+
+.verification-grid,.tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.status-pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;font-weight:700;background:#dcfce7;color:#166534}
+.status-closed{background:#fee2e2;color:#991b1b}
+.status-unverified{background:#fef3c7;color:#92400e}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px}
+.tool-card textarea,.tool-card input{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);margin:6px 0 10px}
+.tool-card textarea{min-height:100px}
+.tool-output{white-space:pre-wrap;background:var(--bg);border:1px solid var(--border);padding:12px;border-radius:8px;min-height:55px;margin-top:10px;font-size:13px}
+@media(max-width:800px){.verification-grid,.tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.verification-grid,.tool-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -95,6 +109,8 @@ nav.open a{display:block;width:100%;padding:7px}
 <a href="#companies">Companies</a>
 <a href="#saved">Saved Jobs</a>
 <a href="#tracker">My Applications</a>
+<a href="#verification">Verification</a>
+<a href="#career-tools">Career Tools</a>
 <a href="#about">About</a>
 <button class="theme" id="themeBtn">☾ Theme</button>
 </nav>
@@ -118,6 +134,9 @@ nav.open a{display:block;width:100%;padding:7px}
 <div class="stat"><strong id="statIndia">0</strong><span>India jobs</span></div>
 <div class="stat"><strong id="statGlobal">0</strong><span>Global jobs</span></div>
 <div class="stat"><strong id="statRemote">0</strong><span>Remote jobs</span></div>
+<div class="stat"><strong id="statActive">0</strong><span>Verified active</span></div>
+<div class="stat"><strong id="statClosed">0</strong><span>Closed / unavailable</span></div>
+<div class="stat"><strong id="statUnverified">0</strong><span>Unverified</span></div>
 </div>
 
 <div class="filter-section">
@@ -149,6 +168,7 @@ nav.open a{display:block;width:100%;padding:7px}
 <option value="">All work modes</option>
 <option>Remote</option><option>Hybrid</option><option>On-site</option><option>Not specified</option>
 </select>
+<select class="field" id="statusFilter"><option value="all">Open + unverified</option><option value="active">Verified active only</option><option value="closed">Closed jobs</option><option value="unverified">Unverified</option></select>
 <select class="field" id="sortFilter">
 <option value="latest">Latest detected</option>
 <option value="company">Company A-Z</option>
@@ -196,6 +216,110 @@ nav.open a{display:block;width:100%;padding:7px}
 <tbody id="applicationRows"></tbody>
 </table>
 </div>
+</div>
+</section>
+
+
+<section class="container" id="interview-calendar">
+<div class="panel">
+<h2>Interview Calendar & Follow-ups</h2>
+<p class="muted">Dates are based on the interview dates you enter in My Applications.</p>
+<div id="calendarEvents" class="tool-output">No interview dates saved.</div>
+</div>
+</section>
+
+<section class="container" id="saved-searches">
+<div class="panel">
+<h2>Saved Searches & Alerts</h2>
+<p class="muted">Save a search on this device. Alerts are checked when you open the website; there is no background notification service on static hosting.</p>
+<div class="controls">
+<input class="field" id="alertQuery" placeholder="Role or skill">
+<select class="field" id="alertRegion"><option>All</option><option>India</option><option>Global</option><option>Remote</option></select>
+<button id="saveSearch">Save search</button>
+</div>
+<div id="savedSearchList" class="tool-output">No saved searches yet.</div>
+</div>
+</section>
+
+<section class="container" id="verification">
+<div class="panel">
+<h2>Job Verification Center</h2>
+<p class="muted">Status is based on the latest successful check of each connected employer board. A missing listing is marked closed, not deleted. Failed checks remain unverified.</p>
+<div class="verification-grid">
+<div class="stat"><strong id="verifyActive">0</strong><span>Active on source board</span></div>
+<div class="stat"><strong id="verifyClosed">0</strong><span>Not listed on latest check</span></div>
+<div class="stat"><strong id="verifyUnknown">0</strong><span>Unverified / legacy</span></div>
+</div>
+<p class="muted" id="sourceHealth">Source health report will appear after the next automated collection.</p>
+<p class="muted" id="verificationUpdated"></p>
+</div>
+</section>
+
+<section class="container" id="career-tools">
+<h2>Career Workspace</h2>
+<p class="muted">These tools run locally in your browser. They do not send your personal information to an AI service.</p>
+<div class="tool-grid">
+<div class="tool-card">
+<h3>Resume Builder</h3>
+<input id="resumeName" placeholder="Full name">
+<input id="resumeContact" placeholder="Email / phone / LinkedIn">
+<textarea id="resumeSummary" placeholder="Professional summary"></textarea>
+<textarea id="resumeSkills" placeholder="Skills (comma separated)"></textarea>
+<textarea id="resumeEducation" placeholder="Education and experience"></textarea>
+<button id="buildResume">Generate resume</button>
+<button class="secondary" id="downloadResume">Download TXT</button>
+<div class="tool-output" id="resumeOutput">Your resume preview will appear here.</div>
+</div>
+<div class="tool-card">
+<h3>Job Match Analyzer</h3>
+<textarea id="matchSkills" placeholder="Paste your skills / experience"></textarea>
+<textarea id="matchDescription" placeholder="Paste job description"></textarea>
+<button id="analyzeMatch">Calculate keyword match</button>
+<div class="tool-output" id="matchOutput">A transparent keyword overlap estimate—not an ATS score.</div>
+</div>
+<div class="tool-card">
+<h3>Cover Letter Builder</h3>
+<input id="coverName" placeholder="Your name">
+<input id="coverRole" placeholder="Job title">
+<input id="coverCompany" placeholder="Company">
+<textarea id="coverEvidence" placeholder="Your relevant skills, projects and achievements"></textarea>
+<button id="buildCover">Generate draft</button>
+<div class="tool-output" id="coverOutput">Add your details to generate a draft.</div>
+</div>
+<div class="tool-card">
+<h3>Interview Practice</h3>
+<select id="interviewRole" class="field"><option>Software Engineer</option><option>Data Analyst</option><option>Frontend Developer</option><option>Backend Developer</option><option>Intern</option></select>
+<button id="newQuestion">Generate practice question</button>
+<div class="tool-output" id="interviewQuestion">Press the button for a practice question.</div>
+</div>
+<div class="tool-card">
+<h3>Skill Gap Checklist</h3>
+<textarea id="requiredSkills" placeholder="Skills required by target role, comma separated"></textarea>
+<textarea id="mySkills" placeholder="Your current skills, comma separated"></textarea>
+<button id="skillGap">Find missing skills</button>
+<div class="tool-output" id="skillGapOutput">Enter required and current skills.</div>
+</div>
+<div class="tool-card">
+<h3>Backup & Privacy</h3>
+<p class="muted">Export or restore locally stored saved jobs and applications. This backup stays on your device.</p>
+<button id="exportBackup">Export personal data</button>
+<input type="file" id="restoreBackup" accept="application/json">
+<button class="secondary" id="clearPersonalData">Clear personal data</button>
+<div class="tool-output" id="backupOutput">Your personal data remains in this browser until cleared.</div>
+</div>
+</div>
+</section>
+
+<section class="container" id="market-insights">
+<div class="panel">
+<h2>Job Market Snapshot</h2>
+<p class="muted">Statistics describe only the listings collected by JobRadar, not the entire labour market.</p>
+<div class="verification-grid">
+<div class="stat"><strong id="insightIndia">0</strong><span>India listings</span></div>
+<div class="stat"><strong id="insightRemote">0</strong><span>Remote listings</span></div>
+<div class="stat"><strong id="insightCompanies">0</strong><span>Companies represented</span></div>
+</div>
+<p id="topCategories" class="muted"></p>
 </div>
 </section>
 
@@ -284,6 +408,18 @@ function stats() {
   $("statIndia").textContent = allJobs.filter(j => regionOf(j) === "India").length;
   $("statGlobal").textContent = allJobs.filter(j => regionOf(j) === "Global").length;
   $("statRemote").textContent = allJobs.filter(remote).length;
+  $("statActive").textContent = allJobs.filter(j => j.availability_status === "active").length;
+  $("statClosed").textContent = allJobs.filter(j => j.availability_status === "closed").length;
+  $("statUnverified").textContent = allJobs.filter(j => j.verification_status !== "verified").length;
+  $("verifyActive").textContent = allJobs.filter(j => j.availability_status === "active").length;
+  $("verifyClosed").textContent = allJobs.filter(j => j.availability_status === "closed").length;
+  $("verifyUnknown").textContent = allJobs.filter(j => j.verification_status !== "verified").length;
+  $("insightIndia").textContent = allJobs.filter(j => regionOf(j) === "India").length;
+  $("insightRemote").textContent = allJobs.filter(remote).length;
+  $("insightCompanies").textContent = new Set(allJobs.map(j => j.company)).size;
+  const cats = {};
+  allJobs.filter(j => j.availability_status === "active").forEach(j => cats[j.category || "Other"] = (cats[j.category || "Other"] || 0) + 1);
+  $("topCategories").textContent = "Category distribution: " + Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k,v])=>k+" ("+v+")").join(" · ");
 }
 
 function fillSelect(id, values) {
@@ -318,7 +454,9 @@ function card(job) {
 
   const badge = document.createElement("span");
   badge.className = "badge green";
-  badge.textContent = "JOB LISTING";
+  const availability = job.availability_status || "unverified";
+  badge.textContent = availability === "active" ? "VERIFIED ACTIVE" : availability === "closed" ? "CLOSED / NOT LISTED" : "UNVERIFIED";
+  badge.className = "status-pill " + (availability === "closed" ? "status-closed" : availability !== "active" ? "status-unverified" : "");
   article.append(badge);
 
   const region = document.createElement("span");
@@ -349,6 +487,14 @@ function card(job) {
 
   article.append(tags);
 
+  const details = document.createElement("details");
+  const summary = document.createElement("summary");
+  summary.textContent = "View job details";
+  const description = document.createElement("p");
+  description.textContent = String(job.description || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim().slice(0,5000) || "No description supplied by source.";
+  details.append(summary, description);
+  article.append(details);
+
   const date = document.createElement("p");
   date.textContent = "First detected: " + (job.first_detected_at || "Not available");
   article.append(date);
@@ -358,7 +504,7 @@ function card(job) {
 
   const url = job.application_url || job.source_url;
 
-  if(url) {
+  if(url && availability !== "closed") {
     try {
       const parsed = new URL(url);
       if(["https:", "http:"].includes(parsed.protocol)) {
@@ -367,7 +513,7 @@ function card(job) {
         link.href = parsed.href;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
-        link.textContent = "Official application ↗";
+        link.textContent = availability === "active" ? "Official application ↗" : "Check employer site ↗";
         actions.append(link);
       }
     } catch {}
@@ -399,8 +545,14 @@ function renderJobs() {
   const company = $("companyFilter").value;
   const work = $("workFilter").value;
   const sort = $("sortFilter").value;
+  const status = $("statusFilter")?.value || "active";
 
   let rows = allJobs.filter(job => {
+    const availability = job.availability_status || "unverified";
+    if(status === "active" && availability !== "active") return false;
+    if(status === "closed" && availability !== "closed") return false;
+    if(status === "unverified" && job.verification_status === "verified") return false;
+    if(status === "all" && availability === "closed") return false;
     const text = [
       job.title, job.company, job.location, job.category,
       job.work_mode, job.job_type, job.experience
@@ -439,7 +591,7 @@ function renderLatest() {
   const box = $("latestJobs");
   box.innerHTML = "";
 
-  [...allJobs].sort((a,b) => timeOf(b) - timeOf(a)).slice(0,4)
+  allJobs.filter(j => j.availability_status === "active").sort((a,b) => timeOf(b) - timeOf(a)).slice(0,4)
     .forEach(job => box.append(card(job)));
 
   if(!allJobs.length) box.textContent = "No jobs available.";
@@ -458,6 +610,20 @@ function renderSaved() {
   }
 
   rows.forEach(job => box.append(card(job)));
+}
+
+
+function renderCalendar() {
+  const box = $("calendarEvents");
+  if(!box) return;
+  box.innerHTML = "";
+  const events = applications.filter(a => a.interviewDate).sort((a,b)=>a.interviewDate.localeCompare(b.interviewDate));
+  if(!events.length){box.textContent="No interview dates saved.";return;}
+  events.forEach(app=>{
+    const row=document.createElement("div");
+    row.textContent=app.interviewDate+" — "+app.jobTitle+" at "+app.company+" ("+app.status+")";
+    box.append(row);
+  });
 }
 
 function trackerStats() {
@@ -532,7 +698,7 @@ function renderCompanies() {
   const box = $("companyGrid");
   box.innerHTML = "";
 
-  [...new Set(allJobs.map(j => j.company).filter(Boolean))]
+  [...new Set(allJobs.filter(j => j.availability_status === "active").map(j => j.company).filter(Boolean))]
     .sort()
     .slice(0,40)
     .forEach(name => {
@@ -544,7 +710,7 @@ function renderCompanies() {
 
       const count = document.createElement("p");
       count.className = "muted";
-      count.textContent = allJobs.filter(j => j.company === name).length + " open listings";
+      count.textContent = allJobs.filter(j => j.company === name && j.availability_status === "active").length + " verified active listings";
 
       const button = document.createElement("button");
       button.className = "secondary";
@@ -568,6 +734,7 @@ function render() {
   renderLatest();
   renderSaved();
   renderApps();
+  renderCalendar();
 }
 
 function clearFilters() {
@@ -576,6 +743,7 @@ function clearFilters() {
   $("companyFilter").value = "";
   $("workFilter").value = "";
   $("sortFilter").value = "latest";
+  $("statusFilter").value = "all";
   selectedRegion = "All";
   selectedCategory = "All";
 
@@ -607,6 +775,14 @@ async function loadJobs() {
 
     $("lastUpdated").textContent =
       "Last database update: " + (data.last_updated || "Not available");
+    $("verificationUpdated").textContent = "Last data refresh: " + (data.last_updated || "Not available");
+    fetch("./expiry_audit.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(a => {
+      if(!a) return;
+      const ok = (a.source_results || []).filter(s => s.status === "success").length;
+      const bad = (a.source_results || []).filter(s => s.status !== "success").length;
+      const detail=(a.source_results || []).map(s => (s.company || s.source_id) + ": " + s.status).join(" · ");
+      $("sourceHealth").textContent = "Source checks: " + ok + " successful, " + bad + " failed. " + detail + " | " + (a.generated_at || "");
+    }).catch(() => {});
 
   } catch(error) {
     console.error("JobRadar loading error:", error);
@@ -620,7 +796,7 @@ async function loadJobs() {
 $("searchBtn").onclick = renderJobs;
 $("searchInput").oninput = renderJobs;
 
-["locationFilter", "companyFilter", "workFilter", "sortFilter"].forEach(id => {
+["locationFilter", "companyFilter", "workFilter", "sortFilter", "statusFilter"].forEach(id => {
   $(id).onchange = renderJobs;
 });
 
@@ -702,6 +878,75 @@ $("applicationForm").onsubmit = event => {
   renderApps();
 };
 
+
+function downloadText(filename, text) {
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+}
+let generatedResume = "";
+$("buildResume").onclick = () => {
+  generatedResume = [
+    $("resumeName").value, $("resumeContact").value, "",
+    "PROFESSIONAL SUMMARY", $("resumeSummary").value, "",
+    "SKILLS", $("resumeSkills").value, "",
+    "EDUCATION & EXPERIENCE", $("resumeEducation").value
+  ].join("\n");
+  $("resumeOutput").textContent = generatedResume;
+};
+$("downloadResume").onclick = () => {
+  if(!generatedResume) $("buildResume").click();
+  if(generatedResume.trim()) downloadText("JobRadar-Resume.txt", generatedResume);
+};
+$("analyzeMatch").onclick = () => {
+  const words = s => [...new Set(String(s).toLowerCase().match(/[a-z][a-z0-9+#.-]{1,}/g) || [])];
+  const required = words($("matchDescription").value);
+  const mine = new Set(words($("matchSkills").value));
+  const matched = required.filter(x => mine.has(x));
+  const missing = required.filter(x => !mine.has(x));
+  const score = required.length ? Math.round(matched.length / required.length * 100) : 0;
+  $("matchOutput").textContent = "Keyword overlap estimate: " + score + "%\nMatched: " + (matched.join(", ") || "None") + "\nPotential gaps: " + (missing.slice(0,35).join(", ") || "None") + "\nThis is not an ATS score or hiring prediction.";
+};
+$("buildCover").onclick = () => {
+  const name=$("coverName").value.trim() || "[Your name]", role=$("coverRole").value.trim() || "[Role]", company=$("coverCompany").value.trim() || "[Company]", evidence=$("coverEvidence").value.trim() || "[Add specific evidence of your skills and achievements]";
+  $("coverOutput").textContent = "Dear Hiring Team,\n\nI am applying for the " + role + " position at " + company + ". My experience and skills include " + evidence + ". I am interested in contributing these capabilities to your team and would welcome the opportunity to discuss how my background aligns with the role.\n\nThank you for your consideration.\n\nSincerely,\n" + name;
+};
+const interviewQuestions = {
+  "Software Engineer":["Explain the difference between a process and a thread.","How would you design a rate limiter?","Describe time and space complexity with an example."],
+  "Data Analyst":["How do you handle missing data?","Explain the difference between INNER JOIN and LEFT JOIN.","How would you communicate an unexpected KPI drop?"],
+  "Frontend Developer":["Explain event bubbling in JavaScript.","How do you improve web accessibility?","What causes layout shift and how do you prevent it?"],
+  "Backend Developer":["Explain database indexing trade-offs.","How would you design authentication securely?","What is idempotency and where is it useful?"],
+  "Intern":["Describe a project you built and your contribution.","How do you debug a problem you have never seen?","What have you learned independently recently?"]
+};
+$("newQuestion").onclick = () => {
+  const list=interviewQuestions[$("interviewRole").value] || interviewQuestions.Intern;
+  $("interviewQuestion").textContent=list[Math.floor(Math.random()*list.length)];
+};
+$("skillGap").onclick = () => {
+  const parse = s => new Set(s.toLowerCase().split(/[,;\n]/).map(x=>x.trim()).filter(Boolean));
+  const required=parse($("requiredSkills").value), mine=parse($("mySkills").value);
+  const missing=[...required].filter(x=>!mine.has(x));
+  $("skillGapOutput").textContent = missing.length ? "Skills to develop:\n• " + missing.join("\n• ") : "No missing skills detected by exact text comparison. Check synonyms and proficiency manually.";
+};
+$("exportBackup").onclick = () => {
+  const data={exported_at:new Date().toISOString(),savedIds,applications};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="jobradar-personal-backup.json"; a.click(); URL.revokeObjectURL(url);
+  $("backupOutput").textContent="Backup exported.";
+};
+$("restoreBackup").onchange = async event => {
+  const file=event.target.files[0]; if(!file) return;
+  try { const data=JSON.parse(await file.text()); if(!Array.isArray(data.savedIds)||!Array.isArray(data.applications)) throw new Error("Invalid backup");
+    savedIds=data.savedIds; applications=data.applications; persist(); render(); $("backupOutput").textContent="Backup restored.";
+  } catch(e) {$("backupOutput").textContent="Restore failed: "+e.message;}
+};
+$("clearPersonalData").onclick = () => {
+  if(!confirm("Delete saved jobs and application tracker data from this browser? This cannot be undone unless you exported a backup.")) return;
+  savedIds=[]; applications=[]; persist(); render(); $("backupOutput").textContent="Personal data cleared.";
+};
+
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.warn));
 loadJobs();
 </script>
 </body>

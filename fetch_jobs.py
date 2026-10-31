@@ -408,10 +408,116 @@ def count_jobs(jobs):
     }
 
 
+
+EXPIRY_AUDIT_FILE = ROOT / "expiry_audit.json"
+STATUS_HISTORY_LIMIT = 20
+
+
+def append_status_history(job, status, reason, checked_at):
+    history = job.get("status_history")
+    if not isinstance(history, list):
+        history = []
+    previous = history[-1] if history else None
+    if not previous or previous.get("availability_status") != status:
+        history.append({
+            "availability_status": status,
+            "changed_at": checked_at,
+            "reason": reason
+        })
+        job["status_changed_at"] = checked_at
+    job["status_history"] = history[-STATUS_HISTORY_LIMIT:]
+
+
+def reconcile_jobs(existing_jobs, fetched_by_source, successful_source_ids,
+                   failed_source_ids, checked_at):
+    """
+    Reconcile a source snapshot without deleting records.
+    A missing job is closed only when its own source fetch succeeded.
+    Failed sources remain unverified and are never interpreted as expired.
+    """
+    existing = {
+        str(job.get("id")): dict(job)
+        for job in existing_jobs
+        if isinstance(job, dict) and job.get("id") is not None
+    }
+    result = {}
+    events = []
+
+    for source_id in successful_source_ids:
+        fetched = fetched_by_source.get(source_id, {})
+        for job_id, fresh_job in fetched.items():
+            old = existing.get(job_id, {})
+            job = dict(old)
+            job.update(fresh_job)
+            job["availability_status"] = "active"
+            job["verification_status"] = "verified"
+            job["last_verified_at"] = checked_at
+            job["last_check_attempt_at"] = checked_at
+            job["verification_source"] = "Greenhouse public job board"
+            job["verification_reason"] = "Job ID is present in the latest successful source snapshot."
+            job.pop("closed_at", None)
+            old_status = old.get("availability_status", "unknown")
+            append_status_history(job, "active", "present_in_successful_source_snapshot", checked_at)
+            if old_status != "active":
+                events.append({"job_id": job_id, "from": old_status, "to": "active", "at": checked_at})
+            result[job_id] = job
+
+    for job_id, old in existing.items():
+        source_id = str(old.get("source_id") or job_id.split("-", 1)[0])
+        if source_id in successful_source_ids:
+            if job_id in result:
+                continue
+            job = dict(old)
+            old_status = job.get("availability_status", "unknown")
+            job["availability_status"] = "closed"
+            job["verification_status"] = "verified"
+            job["last_verified_at"] = checked_at
+            job["last_check_attempt_at"] = checked_at
+            job["verification_source"] = "Greenhouse public job board"
+            job["verification_reason"] = "Previously known job ID was absent from the latest successful source snapshot; this is a source-board status, not proof of employer intent."
+            job["closed_at"] = job.get("closed_at") or checked_at
+            append_status_history(job, "closed", "absent_from_successful_source_snapshot", checked_at)
+            if old_status != "closed":
+                events.append({"job_id": job_id, "from": old_status, "to": "closed", "at": checked_at})
+            result[job_id] = job
+        elif source_id in failed_source_ids:
+            job = dict(old)
+            job["verification_status"] = "unverified"
+            job["last_check_attempt_at"] = checked_at
+            job["verification_source"] = "Greenhouse public job board"
+            job["verification_reason"] = "The source could not be checked; previous availability status was retained."
+            # Preserve availability_status and last_verified_at on source failure.
+            result[job_id] = job
+        else:
+            # Disabled, unsupported, or not attempted sources are not evidence of closure.
+            job = dict(old)
+            job["verification_status"] = job.get("verification_status", "unverified")
+            result[job_id] = job
+
+    return list(result.values()), events
+
+
+def build_expiry_audit(jobs, checked_at, source_results, events):
+    counts = {"active": 0, "closed": 0, "unverified": 0}
+    for job in jobs:
+        status = job.get("availability_status", "unknown")
+        if status in counts:
+            counts[status] += 1
+        if job.get("verification_status") == "unverified":
+            counts["unverified"] += 1
+    return {
+        "generated_at": checked_at,
+        "policy": "Only a missing job ID from a successfully fetched source is marked closed. Failed sources never close jobs. Records are retained.",
+        "source_results": source_results,
+        "status_counts": counts,
+        "status_events": events,
+        "automatic_deletion_enabled": False
+    }
+
+
 def main():
     sources_data = read_json(SOURCES_FILE, {"sources": []})
     database = read_json(JOBS_FILE, {"last_updated": None, "total_jobs": 0, "jobs": []})
-
     if not isinstance(sources_data, dict):
         raise RuntimeError("sources.json must contain a JSON object")
     sources = sources_data.get("sources", [])
@@ -423,94 +529,90 @@ def main():
     if not isinstance(existing_jobs, list):
         raise RuntimeError("jobs.json 'jobs' field must be a list")
 
-    old_jobs = {
-        str(job["id"]): job
-        for job in existing_jobs
-        if isinstance(job, dict) and job.get("id") is not None
-    }
-
+    checked_at = now_utc()
+    fetched_by_source = {}
     successful_source_ids = set()
-    new_jobs = {}
+    failed_source_ids = set()
+    source_results = []
     successful_sources = 0
-    failed_sources = 0
 
     for raw_source in sources:
         source = normalize_source(raw_source)
-        if source is None:
-            print("Skipping invalid source configuration:", raw_source)
+        if source is None or not source.get("enabled", False):
             continue
-        if not source.get("enabled", False):
+        source_id = source["id"]
+        if source["provider"] != "greenhouse" or not source.get("board_token"):
+            failed_source_ids.add(source_id)
+            source_results.append({
+                "source_id": source_id, "company": source["company"],
+                "status": "failed", "checked_at": checked_at,
+                "reason": "Unsupported provider or missing board token"
+            })
             continue
-        if source["provider"] != "greenhouse":
-            print("Unsupported provider:", source["provider"], "for", source["company"])
-            continue
-        if not source.get("board_token"):
-            print("Missing board_token for:", source["company"])
-            failed_sources += 1
-            continue
-
         print("Checking:", source["company"])
         try:
             postings = fetch_greenhouse(source)
-            successful_sources += 1
-            successful_source_ids.add(source["id"])
+            source_jobs = {}
             valid_count = 0
             for posting in postings:
-                job = make_job(source, posting, old_jobs.get(
-                    source["id"] + "-" + str(posting.get("id", "")) if isinstance(posting, dict) else "", {}
-                ))
+                previous_id = source_id + "-" + str(posting.get("id", "")) if isinstance(posting, dict) else ""
+                previous = next((j for j in existing_jobs if isinstance(j, dict) and str(j.get("id")) == previous_id), {})
+                job = make_job(source, posting, previous)
                 if job is None:
                     continue
-                new_jobs[job["id"]] = job
+                source_jobs[job["id"]] = job
                 valid_count += 1
+            fetched_by_source[source_id] = source_jobs
+            successful_source_ids.add(source_id)
+            successful_sources += 1
+            source_results.append({
+                "source_id": source_id, "company": source["company"],
+                "status": "success", "checked_at": checked_at,
+                "fetched_jobs": len(postings), "valid_jobs": valid_count
+            })
             print("Fetched", len(postings), "records; saved", valid_count, "valid jobs for", source["company"])
         except Exception as error:
-            failed_sources += 1
+            failed_source_ids.add(source_id)
+            source_results.append({
+                "source_id": source_id, "company": source["company"],
+                "status": "failed", "checked_at": checked_at,
+                "reason": repr(error)
+            })
             print("Source failed:", source["company"], repr(error))
 
     if successful_sources == 0:
         raise RuntimeError("All enabled job sources failed. Existing jobs.json was not changed.")
 
-    # Preserve records from sources that failed or were not refreshed this run.
-    # A successfully fetched source is authoritative for its current job list.
-    for job_id, old_job in old_jobs.items():
-        source_id = str(old_job.get("source_id") or job_id.split("-", 1)[0])
-        if source_id not in successful_source_ids:
-            preserved = dict(old_job)
-            region, work_mode = detect_location(preserved.get("location", ""))
-            preserved["region"] = region
-            preserved["work_mode"] = work_mode
-            new_jobs[job_id] = preserved
-
-    jobs_list = list(new_jobs.values())
+    jobs_list, status_events = reconcile_jobs(
+        existing_jobs, fetched_by_source, successful_source_ids,
+        failed_source_ids, checked_at
+    )
     jobs_list.sort(key=lambda job: str(job.get("first_detected_at", "")), reverse=True)
-
     duplicate_audit = build_duplicate_audit(jobs_list)
     counts = count_jobs(jobs_list)
     result = {
-        "last_updated": now_utc(),
+        "last_updated": checked_at,
         "total_jobs": len(jobs_list),
         **counts,
+        "active_jobs": sum(j.get("availability_status") == "active" for j in jobs_list),
+        "closed_jobs": sum(j.get("availability_status") == "closed" for j in jobs_list),
+        "unverified_jobs": sum(j.get("verification_status") == "unverified" for j in jobs_list),
         "jobs": jobs_list
     }
+    expiry_audit = build_expiry_audit(jobs_list, checked_at, source_results, status_events)
 
-    # Write the report first; only then replace the main database atomically.
+    # Reports and database are each written atomically. No job record is deleted.
     atomic_write_json(DUPLICATE_AUDIT_FILE, duplicate_audit)
+    atomic_write_json(EXPIRY_AUDIT_FILE, expiry_audit)
     atomic_write_json(JOBS_FILE, result)
 
     print("--------------------------------")
     print("JobRadar update complete.")
     print("Successful sources:", successful_sources)
-    print("Failed sources:", failed_sources)
-    print("Total jobs saved:", result["total_jobs"])
-    print("India jobs:", counts["india_jobs"])
-    print("Global jobs:", counts["global_jobs"])
-    print("Remote jobs (all regions):", counts["remote_jobs"])
-    print("Hybrid jobs:", counts["hybrid_jobs"])
-    print("On-site jobs:", counts["onsite_jobs"])
-    print("Unspecified region jobs:", counts["unspecified_jobs"])
+    print("Failed sources:", len(failed_source_ids))
+    print("Total records retained:", result["total_jobs"])
+    print("Active:", result["active_jobs"], "| Closed:", result["closed_jobs"], "| Unverified:", result["unverified_jobs"])
     print("Duplicate candidate pairs:", duplicate_audit["candidate_pairs"])
-    print("Duplicate report saved to:", DUPLICATE_AUDIT_FILE.name)
     print("--------------------------------")
 
 
