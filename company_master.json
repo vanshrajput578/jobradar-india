@@ -4,7 +4,7 @@
   "generated_from": "JobRadar_India_Company_Master_List.docx",
   "generated_at": null,
   "source_entry_count": 364,
-  "unique_company_count": 359,
+  "unique_company_count": 365,
   "category_count": 20,
   "categories": [
     {
@@ -96,6 +96,27 @@
     "important_note": "A company in this directory is not evidence of a current vacancy. Null fields mean not supplied or not verified; they must not be displayed as confirmed facts."
   },
   "companies": [
+    {
+      "company_id": "co_6sense",
+      "name": "6sense",
+      "aliases": [],
+      "categories": [
+        "Semiconductor, AI & Cybersecurity"
+      ],
+      "organization_type": "company_or_employer",
+      "official_careers_url": null,
+      "headquarters": null,
+      "hiring_locations": [],
+      "description": null,
+      "open_job_count": null,
+      "vacancy_status": "not_checked",
+      "verification_status": "not_verified",
+      "last_checked_at": null,
+      "source_document": "JobRadar active source registry",
+      "source_ids": [
+        "6sense"
+      ]
+    },
     {
       "company_id": "co_abb",
       "name": "ABB",
@@ -365,6 +386,27 @@
       "verification_status": "not_verified",
       "last_checked_at": null,
       "source_document": "JobRadar_India_Company_Master_List.docx"
+    },
+    {
+      "company_id": "co_alphasense_india",
+      "name": "AlphaSense India",
+      "aliases": [],
+      "categories": [
+        "Semiconductor, AI & Cybersecurity"
+      ],
+      "organization_type": "company_or_employer",
+      "official_careers_url": null,
+      "headquarters": null,
+      "hiring_locations": [],
+      "description": null,
+      "open_job_count": null,
+      "vacancy_status": "not_checked",
+      "verification_status": "not_verified",
+      "last_checked_at": null,
+      "source_document": "JobRadar active source registry",
+      "source_ids": [
+        "alphasense"
+      ]
     },
     {
       "company_id": "co_amazon",
@@ -1592,6 +1634,27 @@
       "source_document": "JobRadar_India_Company_Master_List.docx"
     },
     {
+      "company_id": "co_commerceiq",
+      "name": "CommerceIQ",
+      "aliases": [],
+      "categories": [
+        "E-commerce & Retail"
+      ],
+      "organization_type": "company_or_employer",
+      "official_careers_url": null,
+      "headquarters": null,
+      "hiring_locations": [],
+      "description": null,
+      "open_job_count": null,
+      "vacancy_status": "not_checked",
+      "verification_status": "not_verified",
+      "last_checked_at": null,
+      "source_document": "JobRadar active source registry",
+      "source_ids": [
+        "commerceiq"
+      ]
+    },
+    {
       "company_id": "co_continental",
       "name": "Continental",
       "aliases": [],
@@ -1752,6 +1815,27 @@
       "verification_status": "not_verified",
       "last_checked_at": null,
       "source_document": "JobRadar_India_Company_Master_List.docx"
+    },
+    {
+      "company_id": "co_deepintent",
+      "name": "DeepIntent",
+      "aliases": [],
+      "categories": [
+        "Semiconductor, AI & Cybersecurity"
+      ],
+      "organization_type": "company_or_employer",
+      "official_careers_url": null,
+      "headquarters": null,
+      "hiring_locations": [],
+      "description": null,
+      "open_job_count": null,
+      "vacancy_status": "not_checked",
+      "verification_status": "not_verified",
+      "last_checked_at": null,
+      "source_document": "JobRadar active source registry",
+      "source_ids": [
+        "deepintent"
+      ]
     },
     {
       "company_id": "co_delhivery",
@@ -2349,6 +2433,27 @@
       "source_document": "JobRadar_India_Company_Master_List.docx"
     },
     {
+      "company_id": "co_gitlab",
+      "name": "GitLab",
+      "aliases": [],
+      "categories": [
+        "Global Technology & Product Companies"
+      ],
+      "organization_type": "company_or_employer",
+      "official_careers_url": null,
+      "headquarters": null,
+      "hiring_locations": [],
+      "description": null,
+      "open_job_count": null,
+      "vacancy_status": "not_checked",
+      "verification_status": "not_verified",
+      "last_checked_at": null,
+      "source_document": "JobRadar active source registry",
+      "source_ids": [
+        "gitlab"
+      ]
+    },
+    {
       "company_id": "co_glance",
       "name": "Glance",
       "aliases": [],
@@ -2526,7 +2631,10 @@
       "vacancy_status": "not_checked",
       "verification_status": "not_verified",
       "last_checked_at": null,
-      "source_document": "JobRadar_India_Company_Master_List.docx"
+      "source_document": "JobRadar_India_Company_Master_List.docx",
+      "source_ids": [
+        "groww"
+      ]
     },
     {
       "company_id": "co_hal_recruitment",
@@ -4203,6 +4311,27 @@
       "source_document": "JobRadar_India_Company_Master_List.docx"
     },
     {
+      "company_id": "co_neo4j",
+      "name": "Neo4j",
+      "aliases": [],
+      "categories": [
+        "Global Technology & Product Companies"
+      ],
+      "organization_type": "company_or_employer",
+      "official_careers_url": null,
+      "headquarters": null,
+      "hiring_locations": [],
+      "description": null,
+      "open_job_count": null,
+      "vacancy_status": "not_checked",
+      "verification_status": "not_verified",
+      "last_checked_at": null,
+      "source_document": "JobRadar active source registry",
+      "source_ids": [
+        "neo4j"
+      ]
+    },
+    {
       "company_id": "co_nestle_india",
       "name": "Nestlé India",
       "aliases": [],
@@ -4958,7 +5087,10 @@
       "vacancy_status": "not_checked",
       "verification_status": "not_verified",
       "last_checked_at": null,
-      "source_document": "JobRadar_India_Company_Master_List.docx"
+      "source_document": "JobRadar_India_Company_Master_List.docx",
+      "source_ids": [
+        "razorpay"
+      ]
     },
     {
       "company_id": "co_rbl_bank",
@@ -6630,5 +6762,19 @@
         }
       ]
     }
-  ]
+  ],
+  "source_mapping": {
+    "strategy": "Stable source_id to company_id mapping; exact normalized names and verified aliases are fallback only.",
+    "mapped_source_count": 8,
+    "mapped_company_ids": [
+      "co_groww",
+      "co_razorpay",
+      "co_6sense",
+      "co_alphasense_india",
+      "co_deepintent",
+      "co_gitlab",
+      "co_neo4j",
+      "co_commerceiq"
+    ]
+  }
 }
