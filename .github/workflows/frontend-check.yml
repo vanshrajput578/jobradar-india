@@ -1,6 +1,19 @@
 name: JobRadar Frontend Validation
 
 on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "index.html"
+      - "jobs.json"
+      - "jobs_public.json"
+      - "build_public_feed.py"
+      - "fetch_jobs.py"
+      - "company_master.json"
+      - "sources.json"
+      - "tests/**"
+      - "sw.js"
+      - ".github/workflows/frontend-check.yml"
   push:
     branches: ["main"]
     paths:
