@@ -1320,6 +1320,20 @@ $("clearPersonalData").onclick = () => {
     });
   },{threshold:.65}):null;
   if(counterObserver)document.querySelectorAll(".stat strong").forEach(node=>counterObserver.observe(node));
+  // Job counts arrive asynchronously; animate again when the data loader replaces initial zeroes.
+  if(!reduceMotion&&"MutationObserver" in window){
+    document.querySelectorAll(".stat strong").forEach(node=>{
+      new MutationObserver(()=>{
+        if(node.dataset.countAnimating==="1")return;
+        const target=Number(node.textContent.replace(/[^0-9]/g,""))||0;
+        if(!target)return;
+        node.dataset.countAnimating="1";
+        const start=performance.now(),duration=700;
+        const tick=now=>{const p=Math.min(1,(now-start)/duration);node.textContent=Math.round(target*(1-Math.pow(1-p,3))).toLocaleString("en-IN");if(p<1)requestAnimationFrame(tick);else node.dataset.countAnimating="0";};
+        node.textContent="0";requestAnimationFrame(tick);
+      }).observe(node,{childList:true,characterData:true,subtree:true});
+    });
+  }
   const list=document.getElementById("jobList");
   if(list&&"MutationObserver" in window){
     new MutationObserver(()=>{if(!reduceMotion&&"IntersectionObserver" in window){list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*45,270)+"ms";requestAnimationFrame(()=>el.classList.add("is-visible"));});}}).observe(list,{childList:true,subtree:true});
