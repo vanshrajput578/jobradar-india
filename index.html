@@ -1348,8 +1348,12 @@ $("clearPersonalData").onclick = () => {
  if(reduceMotion||!("IntersectionObserver" in window)){targets.forEach(el=>el.classList.add("is-visible"));return;}
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target);}}),{threshold:.08,rootMargin:"0px 0px -28px 0px"});
  targets.forEach(el=>{el.classList.add("motion-reveal");observer.observe(el);});
- const list=document.getElementById("jobList");
- if(list&&"MutationObserver" in window)new MutationObserver(()=>list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*35,210)+"ms";requestAnimationFrame(()=>el.classList.add("is-visible"));})).observe(list,{childList:true});
+ document.querySelectorAll(".jobs").forEach(list=>{
+  if("MutationObserver" in window)new MutationObserver(()=>list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{
+   el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*35,210)+"ms";
+   requestAnimationFrame(()=>el.classList.add("is-visible"));
+  })).observe(list,{childList:true});
+ });
 })();
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.warn));
 loadJobs();
