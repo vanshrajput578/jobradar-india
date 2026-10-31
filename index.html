@@ -319,6 +319,32 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 }
 @media(max-width:600px){.hero-video{opacity:.22}.hero-video-shade{background:linear-gradient(100deg,rgba(9,18,39,.94),rgba(14,28,59,.76))}}
 
+
+/* Home, saved, tracker and career tools finishing pass */
+.hero{min-height:390px;display:flex;flex-direction:column;justify-content:center}
+.hero-video{pointer-events:none}
+.tracker-toolbar{display:grid;grid-template-columns:minmax(0,2fr) minmax(150px,1fr) auto;gap:10px;margin:18px 0 12px;align-items:center}
+#tracker .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+#applicationRows td:last-child{white-space:nowrap}
+#applicationRows button{min-height:36px;padding:8px 11px;font-size:11px}
+#saved .panel{overflow:hidden}
+#savedJobs .job{height:100%}
+#career-tools .tool-grid{align-items:stretch}
+#career-tools .tool-card{display:flex;flex-direction:column;gap:5px}
+#career-tools .tool-card .tool-output{margin-top:auto;min-height:72px}
+#career-tools .tool-card button{align-self:flex-start}
+.status-pill{white-space:nowrap}
+@media(max-width:700px){
+ .hero{min-height:350px}
+ .tracker-toolbar{grid-template-columns:1fr 1fr}
+ .tracker-toolbar input,.tracker-toolbar button{grid-column:1/-1}
+ .tracker-toolbar button{width:100%}
+ #tracker .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #tracker .panel{overflow:hidden}
+ #applicationRows td{padding:10px 8px;font-size:11px}
+ #applicationRows button{padding:7px 8px;margin:2px 0!important}
+}
+
 </style>
 </head>
 <body>
@@ -433,7 +459,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <div class="stat"><strong id="offerCount">0</strong><span>Offers</span></div>
 <div class="stat"><strong id="rejectedCount">0</strong><span>Rejected</span></div>
 </div>
-<button id="addApplication">+ Add application manually</button>
+<div class="tracker-toolbar"><input class="field" id="trackerSearch" type="search" placeholder="Search tracked roles or companies" aria-label="Search tracked applications"><select class="field" id="trackerStatus" aria-label="Filter applications by status"><option value="">All statuses</option><option>Saved</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option></select><button id="addApplication">+ Add application</button></div>
 <div class="table-wrap">
 <table>
 <thead><tr><th>Job</th><th>Company</th><th>Status</th><th>Applied date</th><th>Action</th></tr></thead>
@@ -585,7 +611,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <div class="modal-content">
 <h2 id="modalTitle">Add Application</h2>
 <form id="applicationForm">
-<input type="hidden" id="applicationId">
+<input type="hidden" id="applicationId"><input type="hidden" id="applicationJobId">
 <label>Job title</label><input id="appJob" required>
 <label>Company</label><input id="appCompany" required>
 <label>Status</label>
@@ -776,7 +802,7 @@ function card(job) {
   const track = document.createElement("button");
   track.className = "secondary";
   track.textContent = applications.some(a => a.jobId === id) ? "Tracked" : "+ Track";
-  track.onclick = () => openModal(null, job);
+  track.onclick = () => { const existing = applications.find(a => a.jobId === id); openModal(existing || null, existing ? null : job); };
   actions.append(track);
 
   article.append(actions);
@@ -799,7 +825,7 @@ function renderJobs() {
     if(status === "all" && availability === "closed") return false;
     const text = [
       job.title, job.company, job.location, job.category,
-      job.work_mode, job.job_type, job.experience
+      job.work_mode, job.job_type, job.experience, job.city, job.state, job.country, job.description
     ].join(" ").toLowerCase();
 
     if(query && !text.includes(query)) return false;
@@ -882,17 +908,23 @@ function renderApps() {
   body.innerHTML = "";
   trackerStats();
 
-  if(!applications.length) {
+  const query = ($("trackerSearch")?.value || "").trim().toLowerCase();
+  const statusFilter = $("trackerStatus")?.value || "";
+  const visibleApplications = applications.filter(app => {
+    const haystack = [app.jobTitle, app.company, app.status, app.notes].join(" ").toLowerCase();
+    return (!query || haystack.includes(query)) && (!statusFilter || app.status === statusFilter);
+  });
+  if(!visibleApplications.length) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 5;
-    cell.textContent = "No applications tracked yet.";
+    cell.textContent = applications.length ? "No applications match these filters." : "No applications yet. Track a job or add one manually.";
     row.append(cell);
     body.append(row);
     return;
   }
 
-  applications.forEach(app => {
+  visibleApplications.forEach(app => {
     const row = document.createElement("tr");
 
     [app.jobTitle, app.company, app.status, app.applicationDate || "—"].forEach(value => {
@@ -915,8 +947,7 @@ function renderApps() {
     remove.onclick = () => {
       applications = applications.filter(x => x.id !== app.id);
       persist();
-      renderApps();
-      renderJobs();
+      render();
     };
 
     cell.append(edit, remove);
@@ -928,6 +959,7 @@ function renderApps() {
 function openModal(app = null, job = null) {
   $("applicationForm").reset();
   $("applicationId").value = app?.id || "";
+  $("applicationJobId").value = app?.jobId || (job ? idOf(job) : "");
   $("appJob").value = app?.jobTitle || job?.title || "";
   $("appCompany").value = app?.company || job?.company || "";
   $("appStatus").value = app?.status || "Saved";
@@ -1142,7 +1174,8 @@ async function loadJobs() {
   }
 }
 
-$("searchBtn").onclick = renderJobs;
+$("searchBtn").onclick = () => { renderJobs(); $("jobs").scrollIntoView({behavior:"smooth",block:"start"}); };
+$("searchInput").addEventListener("keydown", event => { if(event.key === "Enter") $("searchBtn").click(); });
 $("searchInput").oninput = renderJobs;
 
 ["locationFilter", "companyFilter", "workFilter", "sortFilter", "statusFilter"].forEach(id => {
@@ -1183,13 +1216,15 @@ if(localStorage.getItem("jobradar-theme") === "dark") {
   document.body.classList.add("dark");
 }
 
-$("menuBtn").onclick = () => $("navigation").classList.toggle("open");
+$("menuBtn").onclick = () => { const open=$("navigation").classList.toggle("open"); $("menuBtn").setAttribute("aria-expanded",String(open)); };
 
 document.querySelectorAll("#navigation a").forEach(link => {
-  link.onclick = () => $("navigation").classList.remove("open");
+  link.onclick = () => { $("navigation").classList.remove("open"); $("menuBtn").setAttribute("aria-expanded","false"); };
 });
 
 $("addApplication").onclick = () => openModal();
+$("trackerSearch").oninput = renderApps;
+$("trackerStatus").onchange = renderApps;
 
 $("closeModal").onclick = () =>
   $("applicationModal").classList.remove("show");
@@ -1208,7 +1243,7 @@ $("applicationForm").onsubmit = event => {
 
   const record = {
     id,
-    jobId: old?.jobId || "",
+    jobId: old?.jobId || $("applicationJobId").value || "",
     jobTitle: $("appJob").value.trim(),
     company: $("appCompany").value.trim(),
     status: $("appStatus").value,
@@ -1224,18 +1259,22 @@ $("applicationForm").onsubmit = event => {
 
   persist();
   $("applicationModal").classList.remove("show");
-  renderApps();
+  render();
 };
 
 
 function downloadText(filename, text) {
   const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=filename; a.click();
-  URL.revokeObjectURL(url);
+  const a = document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 let generatedResume = "";
 $("buildResume").onclick = () => {
+  if(!$("resumeName").value.trim() || !$("resumeContact").value.trim() || !$("resumeSummary").value.trim()) {
+    $("resumeOutput").textContent = "Add at least your name, contact details and professional summary before generating your resume.";
+    return;
+  }
   generatedResume = [
     $("resumeName").value, $("resumeContact").value, "",
     "PROFESSIONAL SUMMARY", $("resumeSummary").value, "",
@@ -1249,7 +1288,7 @@ $("downloadResume").onclick = () => {
   if(generatedResume.trim()) downloadText("JobRadar-Resume.txt", generatedResume);
 };
 $("analyzeMatch").onclick = () => {
-  const words = s => [...new Set(String(s).toLowerCase().match(/[a-z][a-z0-9+#.-]{1,}/g) || [])];
+  const words = s => [...new Set((String(s).toLowerCase().match(/c\+\+|c#|\.net|node\.js|react\.js|[a-z][a-z0-9+#.-]*/g) || []).filter(w => w.length > 1 || ["c","r","go"].includes(w)))];
   const required = words($("matchDescription").value);
   const mine = new Set(words($("matchSkills").value));
   const matched = required.filter(x => mine.has(x));
@@ -1296,50 +1335,16 @@ $("clearPersonalData").onclick = () => {
 };
 
 
-/* Scroll reveal + count-up stats; no external animation library required */
+/* Stable reveal animation; avoids observing and rewriting statistic counters. */
 (function initJobRadarMotion(){
-  const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const revealTargets=()=>document.querySelectorAll(".container,.panel,.filter-section,.job,.tool-card,.company-card,.stats");
-  const observeReveals=()=>{
-    const targets=revealTargets();
-    if(reduceMotion||!("IntersectionObserver" in window)){targets.forEach(el=>el.classList.add("is-visible"));return;}
-    const observer=new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target);}});
-    },{threshold:.08,rootMargin:"0px 0px -35px 0px"});
-    targets.forEach(el=>{if(!el.classList.contains("motion-reveal"))el.classList.add("motion-reveal");observer.observe(el);});
-  };
-  observeReveals();
-  const counterObserver=("IntersectionObserver" in window&&!reduceMotion)?new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(!entry.isIntersecting)return;
-      const node=entry.target,target=Number(node.textContent.replace(/[^0-9]/g,""))||0;
-      node.dataset.countTarget=String(target);
-      const start=performance.now(),duration=850;
-      const tick=now=>{const p=Math.min(1,(now-start)/duration);node.textContent=Math.round(target*(1-Math.pow(1-p,3))).toLocaleString("en-IN");if(p<1)requestAnimationFrame(tick);};
-      requestAnimationFrame(tick);counterObserver.unobserve(node);
-    });
-  },{threshold:.65}):null;
-  if(counterObserver)document.querySelectorAll(".stat strong").forEach(node=>counterObserver.observe(node));
-  // Job counts arrive asynchronously; animate again when the data loader replaces initial zeroes.
-  if(!reduceMotion&&"MutationObserver" in window){
-    document.querySelectorAll(".stat strong").forEach(node=>{
-      new MutationObserver(()=>{
-        if(node.dataset.countAnimating==="1")return;
-        const target=Number(node.textContent.replace(/[^0-9]/g,""))||0;
-        if(!target)return;
-        node.dataset.countAnimating="1";
-        const start=performance.now(),duration=700;
-        const tick=now=>{const p=Math.min(1,(now-start)/duration);node.textContent=Math.round(target*(1-Math.pow(1-p,3))).toLocaleString("en-IN");if(p<1)requestAnimationFrame(tick);else node.dataset.countAnimating="0";};
-        node.textContent="0";requestAnimationFrame(tick);
-      }).observe(node,{childList:true,characterData:true,subtree:true});
-    });
-  }
-  const list=document.getElementById("jobList");
-  if(list&&"MutationObserver" in window){
-    new MutationObserver(()=>{if(!reduceMotion&&"IntersectionObserver" in window){list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*45,270)+"ms";requestAnimationFrame(()=>el.classList.add("is-visible"));});}}).observe(list,{childList:true,subtree:true});
-  }
+ const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const targets=document.querySelectorAll(".container,.filter-section,.job,.tool-card,.company-card");
+ if(reduceMotion||!("IntersectionObserver" in window)){targets.forEach(el=>el.classList.add("is-visible"));return;}
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target);}}),{threshold:.08,rootMargin:"0px 0px -28px 0px"});
+ targets.forEach(el=>{el.classList.add("motion-reveal");observer.observe(el);});
+ const list=document.getElementById("jobList");
+ if(list&&"MutationObserver" in window)new MutationObserver(()=>list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*35,210)+"ms";requestAnimationFrame(()=>el.classList.add("is-visible"));})).observe(list,{childList:true});
 })();
-
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.warn));
 loadJobs();
 loadCompanyMaster();
