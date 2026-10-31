@@ -31,7 +31,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
 
       # 3. Confirm required files exist
       - name: Check required project files
@@ -52,14 +51,15 @@ jobs:
       # 5. Run automated verification tests
       - name: Run verification tests
         run: |
-          if [ -f tests/test_verification.py ]; then
-            python -m unittest discover \
-              -s tests \
-              -p "test_*.py" \
-              -v
-          else
-            echo "::warning::tests/test_verification.py is not present. Automated verification tests were not run."
+          if [ ! -f tests/test_verification.py ]; then
+            echo "::error::tests/test_verification.py is missing."
+            exit 1
           fi
+
+          python -m unittest discover \
+            -s tests \
+            -p "test_*.py" \
+            -v
 
       # 6. Collect jobs and reconcile their availability
       - name: Collect and verify job vacancies
@@ -81,6 +81,7 @@ jobs:
 
           for filename in required:
               path = Path(filename)
+
               if not path.is_file():
                   raise SystemExit(f"Missing generated file: {filename}")
 
@@ -88,7 +89,9 @@ jobs:
                   data = json.load(file)
 
               if not isinstance(data, dict):
-                  raise SystemExit(f"{filename} must contain a JSON object")
+                  raise SystemExit(
+                      f"{filename} must contain a JSON object"
+                  )
 
               print(f"Valid JSON: {filename}")
 
@@ -99,13 +102,17 @@ jobs:
               raise SystemExit("jobs.json must contain a jobs list")
 
           if database.get("total_jobs") != len(database["jobs"]):
-              raise SystemExit("total_jobs does not match jobs list length")
+              raise SystemExit(
+                  "total_jobs does not match jobs list length"
+              )
 
           with open("duplicate_audit.json", encoding="utf-8") as file:
               duplicate_audit = json.load(file)
 
           if "candidates" not in duplicate_audit:
-              raise SystemExit("Duplicate audit is missing candidates")
+              raise SystemExit(
+                  "Duplicate audit is missing candidates"
+              )
 
           with open("expiry_audit.json", encoding="utf-8") as file:
               expiry_audit = json.load(file)
@@ -125,7 +132,9 @@ jobs:
                   )
 
           if expiry_audit["automatic_deletion_enabled"] is not False:
-              raise SystemExit("Automatic deletion must remain disabled")
+              raise SystemExit(
+                  "Automatic deletion must remain disabled"
+              )
 
           print("All generated data checks passed.")
           PY
