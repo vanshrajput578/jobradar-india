@@ -106,6 +106,18 @@ th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8p
 .company-card .company-category{font-size:11px;color:var(--muted);min-height:34px}
 .company-card .company-jobs{font-size:12px;color:var(--muted);margin:8px 0}
 .company-card .company-status{display:inline-flex;font-size:10px;font-weight:800;padding:5px 8px;border-radius:20px;background:var(--amber-bg);color:var(--amber);margin:4px 0 8px}
+.company-card{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.company-card .company-profile-button{margin-top:auto;width:100%;background:var(--soft);color:var(--primary);border:1px solid var(--border)}
+.company-profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.company-profile-head h2{margin:0}
+.company-profile-meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.company-profile-section{margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+.company-profile-jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.company-profile-job{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:15px;min-width:0}
+.company-profile-job h3{font-size:15px;margin:0 0 5px}
+.company-profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.company-profile-actions a{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:9px;text-decoration:none;font-size:12px;font-weight:800}
+@media(max-width:600px){.company-profile-jobs{grid-template-columns:1fr}}
 .company-card strong{display:block;margin-bottom:8px;font-size:14px}
 .modal{display:none;position:fixed;inset:0;background:#050b18b8;z-index:30;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(5px)}
 .modal.show{display:flex}
@@ -632,6 +644,29 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </section>
 </div>
 
+<div class="view" id="view-company-profile">
+<section class="container" id="company-profile">
+<div class="panel">
+<div class="company-profile-head">
+<div><p class="muted">COMPANY PROFILE</p><h2 id="companyProfileName">Company</h2></div>
+<button type="button" class="secondary" id="backToCompanies">← Back to companies</button>
+</div>
+<div class="company-profile-meta" id="companyProfileMeta"></div>
+<p class="muted" id="companyProfileDescription"></p>
+<div class="company-profile-section">
+<h3>Company information</h3>
+<div id="companyProfileInfo" class="muted"></div>
+<div class="company-profile-actions" id="companyProfileActions"></div>
+</div>
+<div class="company-profile-section">
+<h3>JobRadar vacancies</h3>
+<p class="muted" id="companyProfileJobNote">Listings collected by JobRadar. Check the employer page before applying.</p>
+<div class="company-profile-jobs" id="companyProfileJobs"></div>
+</div>
+</div>
+</section>
+</div>
+
 <div class="view" id="view-about">
 <section class="container" id="about">
 <div class="panel">
@@ -1036,6 +1071,99 @@ function initCompanyDirectory() {
   renderCompanies();
 }
 
+let selectedCompanyId = "";
+
+function addProfileLine(container, label, value) {
+  const row = document.createElement("p");
+  row.textContent = label + ": " + (value || "Not provided");
+  container.append(row);
+}
+
+function renderCompanyProfile() {
+  const company = companyMaster.find(item => item.company_id === selectedCompanyId);
+  if (!company) {
+    $("companyProfileName").textContent = "Company not found";
+    $("companyProfileMeta").textContent = "";
+    $("companyProfileDescription").textContent = "This company profile is not available in the current directory.";
+    $("companyProfileInfo").textContent = "";
+    $("companyProfileActions").innerHTML = "";
+    $("companyProfileJobs").innerHTML = '<div class="empty">No company profile found.</div>';
+    return;
+  }
+
+  $("companyProfileName").textContent = company.name || "Company";
+  $("companyProfileMeta").innerHTML = "";
+  const addBadge = value => {
+    if (!value) return;
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = value;
+    $("companyProfileMeta").append(badge);
+  };
+  (company.categories || []).forEach(addBadge);
+  addBadge(company.organization_type ? company.organization_type.replaceAll("_", " ") : "");
+  addBadge(company.verification_status === "verified" ? "Profile verified" : "Profile not independently verified");
+
+  $("companyProfileDescription").textContent = company.description || "A detailed company description has not been added to the JobRadar directory yet.";
+  const info = $("companyProfileInfo");
+  info.innerHTML = "";
+  addProfileLine(info, "Headquarters", company.headquarters);
+  addProfileLine(info, "Hiring locations", (company.hiring_locations || []).join(", "));
+  addProfileLine(info, "Last checked", company.last_checked_at);
+  addProfileLine(info, "Vacancy status", String(company.vacancy_status || "not_checked").replaceAll("_", " "));
+
+  const actions = $("companyProfileActions");
+  actions.innerHTML = "";
+  const careersUrl = String(company.official_careers_url || "").trim();
+  if (/^https:\/\//i.test(careersUrl)) {
+    const link = document.createElement("a");
+    link.href = careersUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.className = "apply";
+    link.textContent = "Visit official careers page";
+    actions.append(link);
+  } else {
+    const note = document.createElement("span");
+    note.className = "muted";
+    note.textContent = "Official careers URL has not been added or verified.";
+    actions.append(note);
+  }
+
+  const names = [company.name, ...(company.aliases || [])].map(name => String(name || "").trim().toLowerCase()).filter(Boolean);
+  const matchingJobs = allJobs.filter(job => names.includes(String(job.company || "").trim().toLowerCase()));
+  const jobsBox = $("companyProfileJobs");
+  jobsBox.innerHTML = "";
+  if (!matchingJobs.length) {
+    jobsBox.innerHTML = '<div class="empty">No matching JobRadar listings are currently recorded for this company. This does not prove the company has no vacancies.</div>';
+    return;
+  }
+
+  matchingJobs.sort((a,b) => timeOf(b) - timeOf(a)).forEach(job => {
+    const card = document.createElement("article");
+    card.className = "company-profile-job";
+    const heading = document.createElement("h3");
+    heading.textContent = job.title || "Untitled role";
+    const companyLine = document.createElement("p");
+    companyLine.className = "muted";
+    companyLine.textContent = [job.location || "Location not specified", job.work_mode || ""].filter(Boolean).join(" · ");
+    const status = document.createElement("p");
+    status.className = "muted";
+    status.textContent = "Status: " + String(job.availability_status || "not verified").replaceAll("_", " ");
+    card.append(heading, companyLine, status);
+    if (/^https:\/\//i.test(String(job.application_url || ""))) {
+      const apply = document.createElement("a");
+      apply.href = job.application_url;
+      apply.target = "_blank";
+      apply.rel = "noopener noreferrer";
+      apply.className = "apply";
+      apply.textContent = "View application";
+      card.append(apply);
+    }
+    jobsBox.append(card);
+  });
+}
+
 function renderCompanies() {
   const box = $("companyGrid");
   if (!box) return;
@@ -1106,6 +1234,20 @@ function renderCompanies() {
       : "Company profile not independently verified";
 
     card.append(title, categoryText, headquarters, status, count, verification);
+
+    const profileButton = document.createElement("button");
+    profileButton.type = "button";
+    profileButton.className = "company-profile-button";
+    profileButton.textContent = "View company profile";
+    profileButton.onclick = () => {
+      if (location.hash !== "#company/" + encodeURIComponent(company.company_id)) {
+        location.hash = "company/" + encodeURIComponent(company.company_id);
+      } else {
+        selectedCompanyId = company.company_id;
+        showView("company-profile");
+      }
+    };
+    card.append(profileButton);
 
     const careersUrl = String(company.official_careers_url || "").trim();
     if (/^https:\/\//i.test(careersUrl)) {
@@ -1264,6 +1406,7 @@ const VIEW_ROUTES = {
   tracker:"view-tracker",
   tools:"view-tools",
   companies:"view-companies",
+  "company-profile":"view-company-profile",
   verification:"view-verification",
   about:"view-about",
   "career-tools":"view-tools",
@@ -1282,6 +1425,8 @@ function showView(route) {
   const requested = aliases[route] || route;
   const activeRoute = VIEW_ROUTES[requested] ? requested : "home";
   const activeViewId = VIEW_ROUTES[activeRoute];
+  const navRoute = activeRoute === "company-profile" ? "companies" : activeRoute;
+  if (activeRoute === "company-profile") renderCompanyProfile();
 
   document.querySelectorAll(".view").forEach(view => {
     const active = view.id === activeViewId;
@@ -1291,13 +1436,13 @@ function showView(route) {
   });
 
   document.querySelectorAll("[data-view]").forEach(link => {
-    const active = link.dataset.view === activeRoute;
+    const active = link.dataset.view === navRoute;
     link.classList.toggle("active", active);
     if(active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
 
-  const moreActive = ["tools","companies","verification","about"].includes(activeRoute);
+  const moreActive = ["tools","companies","company-profile","verification","about"].includes(activeRoute);
   $("moreBtn").classList.toggle("active", moreActive);
   $("moreMenu").setAttribute("hidden", "");
   $("moreBtn").setAttribute("aria-expanded", "false");
@@ -1315,14 +1460,27 @@ function routeFromHash() {
     console.warn("Invalid navigation hash:", error);
   }
 
+  const companyRoute = route.match(/^company\/([^/]+)$/);
+  if (companyRoute) {
+    try {
+      selectedCompanyId = decodeURIComponent(companyRoute[1]);
+      route = "company-profile";
+    } catch(error) {
+      selectedCompanyId = "";
+      route = "companies";
+    }
+  }
+
   if(!route || !VIEW_ROUTES[route]) {
     history.replaceState(null, "", location.pathname + location.search + "#home");
     route = "home";
   }
+  if (route === "company-profile" && !selectedCompanyId) route = "companies";
   showView(route);
 }
 
 window.addEventListener("hashchange", routeFromHash);
+$("backToCompanies").onclick = () => { selectedCompanyId = ""; location.hash = "companies"; };
 
 document.querySelectorAll("[data-view]").forEach(link => {
   link.addEventListener("click", event => {
