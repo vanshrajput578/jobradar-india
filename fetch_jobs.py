@@ -731,6 +731,14 @@ def reconcile_jobs(existing_jobs, fetched_by_source, successful_source_ids,
             job["verification_status"] = job.get("verification_status", "unverified")
             result[job_id] = job
 
+    # Backfill every retained record, including legacy and disabled-source jobs.
+    # This prevents older records from escaping the public eligibility filter.
+    for job in result.values():
+        details = detect_location_details(job.get("location"))
+        job.update(classify_india_eligibility(
+            job.get("location"), job.get("description"), details
+        ))
+
     return list(result.values()), events
 
 
