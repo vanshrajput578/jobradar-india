@@ -190,9 +190,7 @@ def build_duplicate_audit(jobs):
         ids = sorted([str(a.get("id", "")), str(b.get("id", ""))])
         if not ids[0] or ids[0] == ids[1] or tuple(ids) in seen_pairs:
             return
-
         seen_pairs.add(tuple(ids))
-
         item = {
             "job_a_id": ids[0],
             "job_b_id": ids[1],
@@ -208,14 +206,11 @@ def build_duplicate_audit(jobs):
             "review_required": True,
             "automatic_action": "none"
         }
-
         if similarity is not None:
             item["description_similarity"] = round(similarity, 4)
-
         candidates.append(item)
 
     url_groups = {}
-
     for job in jobs:
         url = canonicalize_application_url(job.get("application_url"))
         if url:
@@ -225,20 +220,16 @@ def build_duplicate_audit(jobs):
         if len(grouped_jobs) > 1:
             first = grouped_jobs[0]
             for other in grouped_jobs[1:]:
-                add_candidate(
-                    first, other, "same_canonical_application_url"
-                )
+                add_candidate(first, other, "same_canonical_application_url")
 
+    # Compare only jobs sharing normalized company, title, and location.
     identity_groups = {}
-
     for job in jobs:
         company = normalize_duplicate_text(job.get("company"))
         title = normalize_duplicate_text(job.get("title"))
         location = normalize_duplicate_text(job.get("location"))
-
         if not company or not title:
             continue
-
         key = (company, title, location)
         identity_groups.setdefault(key, []).append(job)
 
@@ -248,7 +239,6 @@ def build_duplicate_audit(jobs):
 
         for index, first in enumerate(grouped_jobs):
             text_a = normalize_duplicate_text(first.get("description"))
-
             for second in grouped_jobs[index + 1:]:
                 text_b = normalize_duplicate_text(second.get("description"))
 
@@ -294,7 +284,6 @@ def fetch_greenhouse(source):
         "https://boards-api.greenhouse.io/v1/boards/"
         + token + "/jobs?content=true"
     )
-
     request = urllib.request.Request(
         url,
         headers={
@@ -314,19 +303,16 @@ def fetch_greenhouse(source):
 
 def main():
     sources_data = read_json(SOURCES_FILE, {"sources": []})
-
     database = read_json(
         JOBS_FILE,
         {"last_updated": None, "total_jobs": 0, "jobs": []}
     )
 
     sources = sources_data.get("sources", [])
-
     if not isinstance(sources, list) or not sources:
         raise RuntimeError("No job sources configured.")
 
     existing_jobs = database.get("jobs", [])
-
     if not isinstance(existing_jobs, list):
         existing_jobs = []
 
@@ -360,13 +346,11 @@ def main():
 
         try:
             postings = fetch_greenhouse(source)
-
             successful_sources += 1
             successful_source_ids.add(source_id)
 
             for posting in postings:
                 external_id = str(posting.get("id", ""))
-
                 if not external_id:
                     continue
 
@@ -423,26 +407,22 @@ def main():
     # Preserve old jobs from sources that failed during this run.
     for job_id, job in old_jobs.items():
         source_id = job.get("source_id")
-
         if not source_id:
             source_id = job_id.split("-", 1)[0]
 
         if source_id not in successful_source_ids:
             preserved_job = dict(job)
-
             region, work_mode = detect_location(
                 preserved_job.get("location", "Not specified")
             )
-
             preserved_job["region"] = region
             preserved_job["work_mode"] = work_mode
             new_jobs[job_id] = preserved_job
 
     jobs_list = list(new_jobs.values())
 
-    # Generate review-only duplicate report.
+    # Create a separate review report. No job is deleted or merged.
     duplicate_audit = build_duplicate_audit(jobs_list)
-
     with DUPLICATE_AUDIT_FILE.open("w", encoding="utf-8") as file:
         json.dump(
             duplicate_audit,
@@ -451,18 +431,9 @@ def main():
             ensure_ascii=False
         )
 
-    india_count = sum(
-        job.get("region") == "India" for job in jobs_list
-    )
-
-    global_count = sum(
-        job.get("region") == "Global" for job in jobs_list
-    )
-
-    remote_count = sum(
-        job.get("region") == "Remote" for job in jobs_list
-    )
-
+    india_count = sum(job.get("region") == "India" for job in jobs_list)
+    global_count = sum(job.get("region") == "Global" for job in jobs_list)
+    remote_count = sum(job.get("region") == "Remote" for job in jobs_list)
     unspecified_count = sum(
         job.get("region") == "Unspecified" for job in jobs_list
     )
@@ -496,166 +467,6 @@ def main():
     print("Report saved to:", DUPLICATE_AUDIT_FILE.name)
     print("--------------------------------")
 
-
-if __name__ == "__main__":
-    main()
- sources:  
-    raise RuntimeError("No job sources configured.")  
-
-existing_jobs = database.get("jobs", [])  
-if not isinstance(existing_jobs, list):  
-    existing_jobs = []  
-
-old_jobs = {  
-    str(job["id"]): job  
-    for job in existing_jobs  
-    if isinstance(job, dict) and job.get("id") is not None  
-}  
-
-successful_sources = 0  
-successful_source_ids = set()  
-new_jobs = {}  
-
-for source in sources:  
-    if not source.get("enabled", False):  
-        continue  
-
-    if source.get("provider") != "greenhouse":  
-        print("Unsupported provider:", source.get("company", "Unknown"))  
-        continue  
-
-    company = source.get("company", "Unknown")  
-    source_id = source.get("id", "")  
-    board_token = source.get("board_token", "")  
-
-    if not source_id or not board_token:  
-        print("Invalid source configuration:", company)  
-        continue  
-
-    print("Checking:", company)  
-
-    try:  
-        postings = fetch_greenhouse(source)  
-        successful_sources += 1  
-        successful_source_ids.add(source_id)  
-
-        for posting in postings:  
-            external_id = str(posting.get("id", ""))  
-            if not external_id:  
-                continue  
-
-            job_id = source_id + "-" + external_id  
-            previous = old_jobs.get(job_id, {})  
-            title = posting.get("title", "Untitled")  
-
-            location_data = posting.get("location") or {}  
-            location = location_data.get("name") or "Not specified"  
-
-            departments = [  
-                item.get("name", "")  
-                for item in posting.get("departments", [])  
-                if isinstance(item, dict)  
-            ]  
-
-            category = classify(title, departments)  
-            region, work_mode = detect_location(location)  
-
-            new_jobs[job_id] = {  
-                "id": job_id,  
-                "source_id": source_id,  
-                "title": title,  
-                "company": company,  
-                "location": location,  
-                "region": region,  
-                "category": category,  
-                "industry": "Not specified",  
-                "job_type": "Not specified",  
-                "experience": "Not specified",  
-                "work_mode": work_mode,  
-                "demo": False,  
-                "first_detected_at": (  
-                    previous.get("first_detected_at") or now_utc()  
-                ),  
-                "posted_at": posting.get("updated_at"),  
-                "application_url": posting.get("absolute_url", ""),  
-                "source_url": (  
-                    "https://boards.greenhouse.io/" + board_token  
-                ),  
-                "description": posting.get("content", "")  
-            }  
-
-        print("Found", len(postings), "listings for", company)  
-
-    except Exception as error:  
-        print("Source failed:", company, str(error))  
-
-if successful_sources == 0:  
-    raise RuntimeError(  
-        "All job sources failed. Existing jobs.json was not changed."  
-    )  
-
-# Preserve old jobs from sources that failed during this run.  
-for job_id, job in old_jobs.items():  
-    source_id = job.get("source_id")  
-    if not source_id:  
-        source_id = job_id.split("-", 1)[0]  
-
-    if source_id not in successful_source_ids:  
-        preserved_job = dict(job)  
-        region, work_mode = detect_location(  
-            preserved_job.get("location", "Not specified")  
-        )  
-        preserved_job["region"] = region  
-        preserved_job["work_mode"] = work_mode  
-        new_jobs[job_id] = preserved_job  
-
-jobs_list = list(new_jobs.values())  
-
-# Create a separate review report. No job is deleted or merged.  
-duplicate_audit = build_duplicate_audit(jobs_list)  
-with DUPLICATE_AUDIT_FILE.open("w", encoding="utf-8") as file:  
-    json.dump(  
-        duplicate_audit,  
-        file,  
-        indent=2,  
-        ensure_ascii=False  
-    )  
-
-india_count = sum(job.get("region") == "India" for job in jobs_list)  
-global_count = sum(job.get("region") == "Global" for job in jobs_list)  
-remote_count = sum(job.get("region") == "Remote" for job in jobs_list)  
-unspecified_count = sum(  
-    job.get("region") == "Unspecified" for job in jobs_list  
-)  
-
-result = {  
-    "last_updated": now_utc(),  
-    "total_jobs": len(jobs_list),  
-    "india_jobs": india_count,  
-    "global_jobs": global_count,  
-    "remote_jobs": remote_count,  
-    "unspecified_jobs": unspecified_count,  
-    "jobs": sorted(  
-        jobs_list,  
-        key=lambda job: job.get("first_detected_at", ""),  
-        reverse=True  
-    )  
-}  
-
-with JOBS_FILE.open("w", encoding="utf-8") as file:  
-    json.dump(result, file, indent=2, ensure_ascii=False)  
-
-print("--------------------------------")  
-print("JobRadar update complete.")  
-print("Successful sources:", successful_sources)  
-print("Total jobs saved:", result["total_jobs"])  
-print("India jobs:", india_count)  
-print("Global jobs:", global_count)  
-print("Remote jobs:", remote_count)  
-print("Unspecified jobs:", unspecified_count)  
-print("Duplicate candidate pairs:", duplicate_audit["candidate_pairs"])  
-print("Report saved to:", DUPLICATE_AUDIT_FILE.name)  
-print("--------------------------------")
 
 if __name__ == "__main__":
     main()
