@@ -366,7 +366,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 .view.active{display:block}
 .view.active>.hero{display:flex}
 .view.active>.container{display:block}
-.view.active .motion-reveal{opacity:1;transform:none}
+/* Legacy .motion-reveal override removed: unified .rv observer controls visibility. */
 #navigation a.active{background:var(--soft);color:var(--primary)}
 .mobile-dock a.active{background:var(--soft);color:var(--primary)}
 .mobile-dock button#moreBtn{background:transparent;color:var(--muted);padding:4px 1px;min-height:42px;font-size:9px;font-weight:750}
@@ -2202,20 +2202,8 @@ $("clearPersonalData").onclick = () => {
 };
 
 
-/* Stable reveal animation; avoids observing and rewriting statistic counters. */
-(function initJobRadarMotion(){
- const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
- const targets=document.querySelectorAll(".container,.filter-section,.job,.tool-card,.company-card");
- if(reduceMotion||!("IntersectionObserver" in window)){targets.forEach(el=>el.classList.add("is-visible"));return;}
- const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target);}}),{threshold:.08,rootMargin:"0px 0px -28px 0px"});
- targets.forEach(el=>{el.classList.add("motion-reveal");observer.observe(el);});
- document.querySelectorAll(".jobs").forEach(list=>{
-  if("MutationObserver" in window)new MutationObserver(()=>list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{
-   el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*35,210)+"ms";
-   requestAnimationFrame(()=>el.classList.add("is-visible"));
-  })).observe(list,{childList:true});
- });
-})();
+/* Motion is managed by the unified flagship observer below. The previous
+   observer conflicted with .rv opacity/transform and made job cards appear static. */
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.warn));
 loadJobs();
 loadCompanyMaster();
