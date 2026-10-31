@@ -2,19 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101827">
-<meta name="description" content="Discover job opportunities from companies worldwide.">
-<title>JobRadar India | Find Your Next Opportunity</title>
+<meta name="description" content="Discover, save and track job opportunities with JobRadar India.">
+<title>JobRadar India | Career Opportunities</title>
 
 <style>
 :root {
-  --bg:#f5f7fb;
-  --card:#ffffff;
+  --bg:#f4f6fb;
+  --card:#fff;
   --text:#172033;
   --muted:#64748b;
   --border:#e2e8f0;
   --primary:#2563eb;
+  --soft:#eaf1ff;
+  --success:#15803d;
+  --danger:#dc2626;
 }
 
 body.dark {
@@ -24,15 +27,12 @@ body.dark {
   --muted:#a3b1c5;
   --border:#28364b;
   --primary:#60a5fa;
+  --soft:#1c3150;
 }
 
-* {
-  box-sizing:border-box;
-}
+* {box-sizing:border-box}
 
-html {
-  scroll-behavior:smooth;
-}
+html {scroll-behavior:smooth}
 
 body {
   margin:0;
@@ -42,38 +42,7 @@ body {
   transition:.2s;
 }
 
-header {
-  position:relative;
-  width:100%;
-  z-index:1;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:16px 6%;
-  background:var(--card);
-  border-bottom:1px solid var(--border);
-}
-
-.logo {
-  font-size:21px;
-  font-weight:bold;
-}
-
-.logo span {
-  color:var(--primary);
-}
-
-nav {
-  display:flex;
-  align-items:center;
-  gap:20px;
-}
-
-nav a {
-  color:var(--muted);
-  text-decoration:none;
-  font-size:14px;
-}
+button,input,select,textarea {font:inherit}
 
 button {
   border:0;
@@ -81,8 +50,52 @@ button {
   padding:11px 15px;
   background:var(--primary);
   color:white;
-  font-weight:bold;
+  font-weight:600;
   cursor:pointer;
+}
+
+button:disabled {
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+a {color:var(--primary)}
+
+header {
+  position:relative;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 5%;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  gap:12px;
+}
+
+.logo {
+  font-size:21px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.logo span {color:var(--primary)}
+
+nav {
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+nav a {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:13px;
+}
+
+.secondary {
+  background:var(--soft);
+  color:var(--primary);
+  border:1px solid var(--border);
 }
 
 .theme {
@@ -90,6 +103,8 @@ button {
   color:var(--text);
   border:1px solid var(--border);
 }
+
+.menu-button {display:none}
 
 .hero {
   background:linear-gradient(135deg,#101827,#1d3b70);
@@ -99,12 +114,13 @@ button {
 }
 
 .hero h1 {
-  font-size:clamp(32px,6vw,52px);
+  font-size:clamp(32px,6vw,54px);
   margin:0 0 14px;
 }
 
 .hero p {
   color:#cbd5e1;
+  font-size:17px;
 }
 
 .search {
@@ -114,49 +130,62 @@ button {
   margin:30px auto 0;
   padding:10px;
   background:white;
-  border-radius:13px;
+  border-radius:14px;
 }
 
 .search input {
   flex:1;
   min-width:0;
-  padding:12px;
+  padding:13px;
   border:0;
   outline:0;
   color:#172033;
-  font-size:15px;
 }
 
 .container {
-  max-width:1150px;
+  max-width:1200px;
   margin:35px auto;
   padding:0 20px;
 }
 
-.section-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
+.section-title {
+  font-size:25px;
+  margin:0 0 8px;
 }
 
-h2 {
-  font-size:23px;
-}
+.muted {color:var(--muted)}
 
-.muted {
-  color:var(--muted);
-}
-
-.filter-section {
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
   margin:25px 0;
 }
 
+.stat {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:19px;
+}
+
+.stat strong {
+  display:block;
+  font-size:27px;
+  margin-bottom:7px;
+}
+
+.stat span {
+  color:var(--muted);
+  font-size:13px;
+}
+
+.filter-section {margin:24px 0}
+
 .filter-title {
-  font-size:14px;
   font-weight:bold;
-  margin-bottom:12px;
+  font-size:14px;
+  margin-bottom:11px;
 }
 
 .filters {
@@ -169,19 +198,29 @@ h2 {
   background:var(--card);
   color:var(--muted);
   border:1px solid var(--border);
+  font-size:13px;
   font-weight:normal;
-  padding:10px 13px;
 }
 
 .filter.active {
   background:var(--primary);
   color:white;
-  border-color:var(--primary);
 }
 
-.filter:disabled {
-  opacity:.55;
-  cursor:not-allowed;
+.controls {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:20px 0;
+}
+
+.field {
+  width:100%;
+  padding:12px;
+  border-radius:9px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--text);
 }
 
 .jobs {
@@ -193,12 +232,13 @@ h2 {
 .job {
   background:var(--card);
   border:1px solid var(--border);
-  padding:21px;
   border-radius:14px;
+  padding:20px;
+  min-width:0;
 }
 
 .job h3 {
-  margin:0 0 8px;
+  margin:10px 0 7px;
   font-size:18px;
 }
 
@@ -207,50 +247,59 @@ h2 {
   font-size:14px;
 }
 
-.tags {
+.badges,.tags {
   display:flex;
   flex-wrap:wrap;
   gap:7px;
-  margin:17px 0;
+  margin:14px 0;
 }
 
-.tag {
-  padding:6px 9px;
-  border-radius:6px;
-  background:var(--bg);
-  color:var(--muted);
-  font-size:12px;
-}
-
-.status {
+.badge {
   display:inline-block;
-  font-size:11px;
   padding:5px 8px;
-  border-radius:5px;
+  border-radius:6px;
+  font-size:11px;
+  background:var(--soft);
+  color:var(--primary);
+}
+
+.badge.green {
   background:#dcfce7;
   color:#166534;
-  margin-bottom:12px;
 }
 
-.region-tag {
-  background:#dbeafe;
-  color:#1e40af;
+.badge.gray {
+  background:var(--bg);
+  color:var(--muted);
 }
 
-body.dark .region-tag {
-  background:#1e3a5f;
-  color:#bfdbfe;
+.job p {
+  font-size:12px;
+  color:var(--muted);
 }
 
-.demo {
-  background:#fef3c7;
-  color:#92400e;
+.job-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
 }
 
-.job a {
-  color:var(--primary);
-  font-weight:bold;
+.job-actions button {
+  font-size:12px;
+  padding:9px 11px;
+}
+
+.apply {
   text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  background:var(--primary);
+  color:white;
+  padding:9px 12px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
 }
 
 .empty {
@@ -263,9 +312,116 @@ body.dark .region-tag {
   border-radius:14px;
 }
 
+.panel {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:20px;
+  margin:20px 0;
+}
+
+.panel-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+.panel h2 {margin:0}
+
+.table-wrap {overflow-x:auto}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+th,td {
+  padding:13px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+
+th {color:var(--muted)}
+
+.small-button {
+  padding:7px 10px;
+  font-size:12px;
+}
+
+.company-grid {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+
+.company-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:15px;
+}
+
+.company-card strong {display:block;margin-bottom:6px}
+
+.modal {
+  position:fixed;
+  inset:0;
+  background:#0009;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:100;
+}
+
+.modal.show {display:flex}
+
+.modal-content {
+  background:var(--card);
+  color:var(--text);
+  border-radius:15px;
+  padding:22px;
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+}
+
+.modal-content h2 {margin-top:0}
+
+.modal-content label {
+  display:block;
+  font-size:13px;
+  margin:13px 0 6px;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width:100%;
+  padding:11px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.modal-content textarea {min-height:85px}
+
+.modal-actions {
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:18px;
+}
+
 footer {
   margin-top:60px;
-  padding:30px 20px;
+  padding:35px 20px;
   text-align:center;
   background:var(--card);
   border-top:1px solid var(--border);
@@ -273,39 +429,41 @@ footer {
   font-size:13px;
 }
 
-@media(max-width:650px) {
-  header {
-    padding:15px 5%;
-  }
+footer a {
+  color:var(--primary);
+  text-decoration:none;
+}
 
+@media(max-width:850px) {
+  nav a {display:none}
+  .controls {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .company-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:600px) {
+  header {padding:13px 4%}
+  .logo {font-size:18px}
+  .menu-button {display:block}
   nav {
-    gap:8px;
-  }
-
-  nav a {
     display:none;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    padding:15px;
+    z-index:5;
+    flex-wrap:wrap;
   }
-
-  .hero {
-    padding:48px 17px;
-  }
-
-  .search {
-    flex-direction:column;
-  }
-
-  .search input {
-    width:100%;
-  }
-
-  .jobs {
-    grid-template-columns:1fr;
-  }
-
-  .filter {
-    font-size:12px;
-    padding:9px 11px;
-  }
+  nav.open {display:flex}
+  nav a {display:block;width:100%;padding:8px}
+  .hero {padding:48px 16px}
+  .search {flex-direction:column}
+  .stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .jobs {grid-template-columns:1fr}
+  .controls {grid-template-columns:1fr 1fr}
+  .container {padding:0 14px}
 }
 </style>
 </head>
@@ -315,9 +473,14 @@ footer {
 <header>
   <div class="logo"><span>◉</span> JobRadar India</div>
 
-  <nav>
+  <button class="menu-button secondary" id="menuBtn">☰</button>
+
+  <nav id="navigation">
     <a href="#home">Home</a>
     <a href="#jobs">Find Jobs</a>
+    <a href="#companies">Companies</a>
+    <a href="#saved">Saved Jobs</a>
+    <a href="#tracker">My Applications</a>
     <a href="#about">About</a>
     <button class="theme" id="themeBtn">☾ Theme</button>
   </nav>
@@ -325,83 +488,90 @@ footer {
 
 <section class="hero" id="home">
   <h1>Find Your Next Opportunity.</h1>
-  <p>Discover opportunities from companies across the world.</p>
+  <p>Discover, save and track opportunities from companies worldwide.</p>
 
   <div class="search">
-    <input
-      id="searchInput"
-      type="search"
-      placeholder="Job title, skill or company..."
-    >
+    <input id="searchInput" type="search"
+      placeholder="Job title, skill, company or location...">
     <button id="searchBtn">Search Jobs</button>
   </div>
 </section>
 
 <main class="container" id="jobs">
 
-  <div class="section-head">
-    <div>
-      <h2>Explore Opportunities</h2>
-      <p class="muted">Find jobs that match your career goals.</p>
-    </div>
-
-    <span class="muted" id="jobCount">Loading jobs...</span>
+  <div>
+    <h2 class="section-title">Explore Opportunities</h2>
+    <p class="muted">Find opportunities that match your career goals.</p>
   </div>
 
-  <!-- REGION FILTERS -->
+  <div class="stats">
+    <div class="stat">
+      <strong id="statAll">0</strong>
+      <span>Total jobs</span>
+    </div>
+    <div class="stat">
+      <strong id="statIndia">0</strong>
+      <span>India jobs</span>
+    </div>
+    <div class="stat">
+      <strong id="statGlobal">0</strong>
+      <span>Global jobs</span>
+    </div>
+    <div class="stat">
+      <strong id="statRemote">0</strong>
+      <span>Remote jobs</span>
+    </div>
+  </div>
 
   <div class="filter-section">
     <div class="filter-title">Filter by Region</div>
-
     <div class="filters" id="regionFilters">
-
-      <button class="filter active" data-region="All">
-        All Regions <span id="countAll">0</span>
-      </button>
-
-      <button class="filter" data-region="India">
-        India <span id="countIndia">0</span>
-      </button>
-
-      <button class="filter" data-region="Global">
-        Global <span id="countGlobal">0</span>
-      </button>
-
-      <button class="filter" data-region="Unspecified">
-        Unspecified <span id="countUnspecified">0</span>
-      </button>
-
+      <button class="filter active" data-region="All">All Regions</button>
+      <button class="filter" data-region="India">India</button>
+      <button class="filter" data-region="Global">Global</button>
+      <button class="filter" data-region="Remote">Remote</button>
+      <button class="filter" data-region="Unspecified">Unspecified</button>
     </div>
   </div>
 
-  <!-- CATEGORY FILTERS -->
-
   <div class="filter-section">
     <div class="filter-title">Filter by Category</div>
-
     <div class="filters" id="categoryFilters">
-
-      <button class="filter active" data-category="All">
-        All Categories
-      </button>
-
-      <button class="filter" data-category="Technology">
-        Technology
-      </button>
-
-      <button class="filter" data-category="Finance">
-        Finance
-      </button>
-
-      <button class="filter" data-category="Engineering">
-        Engineering
-      </button>
-
-      <button class="filter" data-category="Internships">
-        Internships
-      </button>
-
+      <button class="filter active" data-category="All">All Categories</button>
+      <button class="filter" data-category="Technology">Technology</button>
+      <button class="filter" data-category="Finance">Finance</button>
+      <button class="filter" data-category="Engineering">Engineering</button>
+      <button class="filter" data-category="Internships">Internships</button>
     </div>
+  </div>
+
+  <div class="controls">
+    <select class="field" id="locationFilter">
+      <option value="">All locations</option>
+    </select>
+
+    <select class="field" id="companyFilter">
+      <option value="">All companies</option>
+    </select>
+
+    <select class="field" id="workFilter">
+      <option value="">All work modes</option>
+      <option value="Remote">Remote</option>
+      <option value="Hybrid">Hybrid</option>
+      <option value="On-site">On-site</option>
+      <option value="Not specified">Not specified</option>
+    </select>
+
+    <select class="field" id="sortFilter">
+      <option value="latest">Latest detected</option>
+      <option value="company">Company A-Z</option>
+      <option value="title">Job title A-Z</option>
+    </select>
+  </div>
+
+  <div class="section-head">
+    <p class="muted" id="jobCount">Loading jobs...</p>
+    <button class="secondary" id="clearFilters">Clear filters</button>
   </div>
 
   <div class="jobs" id="jobList">
@@ -410,14 +580,107 @@ footer {
 
 </main>
 
+<!-- LATEST JOBS -->
+
+<section class="container">
+  <h2 class="section-title">Latest Jobs</h2>
+  <p class="muted">Recently detected opportunities.</p>
+  <div class="jobs" id="latestJobs"></div>
+</section>
+
+<!-- SAVED JOBS -->
+
+<section class="container" id="saved">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Saved Jobs</h2>
+        <p class="muted">Your personally saved opportunities.</p>
+      </div>
+      <span id="savedCount" class="muted">0 saved</span>
+    </div>
+
+    <div class="jobs" id="savedJobs"></div>
+  </div>
+</section>
+
+<!-- APPLICATION TRACKER -->
+
+<section class="container" id="tracker">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>My Applications</h2>
+        <p class="muted">Track your job application progress.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <strong id="appliedCount">0</strong>
+        <span>Applied</span>
+      </div>
+      <div class="stat">
+        <strong id="interviewCount">0</strong>
+        <span>Interviews</span>
+      </div>
+      <div class="stat">
+        <strong id="offerCount">0</strong>
+        <span>Offers</span>
+      </div>
+      <div class="stat">
+        <strong id="rejectedCount">0</strong>
+        <span>Rejected</span>
+      </div>
+    </div>
+
+    <button id="addApplication">+ Add application manually</button>
+
+    <div class="table-wrap" style="margin-top:20px">
+      <table>
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Company</th>
+            <th>Status</th>
+            <th>Applied date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="applicationRows"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- COMPANIES -->
+
+<section class="container" id="companies">
+  <h2 class="section-title">Explore Companies</h2>
+  <p class="muted">Companies currently connected to JobRadar.</p>
+  <div class="company-grid" id="companyGrid"></div>
+</section>
+
+<!-- ABOUT -->
+
 <section class="container" id="about">
-  <h2>About JobRadar</h2>
-  <p class="muted">
-    JobRadar India helps people discover job opportunities
-    from official company sources. Our goal is to detect
-    new vacancies and direct applicants to official
-    application pages.
-  </p>
+  <div class="panel">
+    <h2>About JobRadar India</h2>
+    <p class="muted">
+      JobRadar India helps people discover opportunities
+      through connected company job boards. Listings link
+      applicants to employer application pages.
+    </p>
+    <h3>Data and verification</h3>
+    <p class="muted">
+      Job information is collected from configured company
+      sources. Availability and application requirements
+      can change. Always verify the vacancy on the employer's
+      official website before applying.
+    </p>
+    <p class="muted" id="lastUpdated">Last database update: Not available</p>
+    <p class="muted">JobRadar India — Discover. Track. Apply.</p>
+  </div>
 </section>
 
 <footer>
@@ -425,17 +688,72 @@ footer {
   <p>Discover. Track. Apply.</p>
   <p>© 2026 JobRadar India.</p>
   <p>Always verify vacancies on the employer's official website.</p>
+  <p>Personal saved jobs and tracker data are stored locally in this browser.</p>
 </footer>
 
+<!-- APPLICATION MODAL -->
+
+<div class="modal" id="applicationModal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Add Application</h2>
+
+    <form id="applicationForm">
+      <input type="hidden" id="applicationId">
+
+      <label for="appJob">Job title</label>
+      <input id="appJob" required>
+
+      <label for="appCompany">Company</label>
+      <input id="appCompany" required>
+
+      <label for="appStatus">Application status</label>
+      <select id="appStatus">
+        <option>Saved</option>
+        <option>Applied</option>
+        <option>Interview</option>
+        <option>Offer</option>
+        <option>Rejected</option>
+      </select>
+
+      <label for="appDate">Application date</label>
+      <input type="date" id="appDate">
+
+      <label for="interviewDate">Interview date</label>
+      <input type="date" id="interviewDate">
+
+      <label for="appNotes">Personal notes</label>
+      <textarea id="appNotes" placeholder="Add notes..."></textarea>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="closeModal">Cancel</button>
+        <button type="submit">Save application</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
+const $ = id => document.getElementById(id);
 
 let allJobs = [];
 let selectedRegion = "All";
 let selectedCategory = "All";
+let savedIds = loadStorage("jobradar-saved", []);
+let applications = loadStorage("jobradar-applications", []);
 
-const jobList = document.getElementById("jobList");
-const searchInput = document.getElementById("searchInput");
-const jobCount = document.getElementById("jobCount");
+function loadStorage(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveStorage() {
+  localStorage.setItem("jobradar-saved", JSON.stringify(savedIds));
+  localStorage.setItem("jobradar-applications", JSON.stringify(applications));
+}
 
 function safe(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -447,240 +765,150 @@ function safe(value) {
   })[char]);
 }
 
-function updateRegionCounts() {
+function dateValue(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.getTime();
+}
 
-  const counts = {
-    All: allJobs.length,
-    India: 0,
-    Global: 0,
-    Unspecified: 0
-  };
+function getRegion(job) {
+  return job.region || "Unspecified";
+}
 
-  allJobs.forEach(job => {
-    const region = job.region || "Unspecified";
+function isRemote(job) {
+  return String(job.work_mode || "").toLowerCase().includes("remote");
+}
 
-    if (counts[region] !== undefined) {
-      counts[region]++;
-    } else {
-      counts.Unspecified++;
-    }
+function updateStats() {
+  $("statAll").textContent = allJobs.length;
+  $("statIndia").textContent = allJobs.filter(j => getRegion(j) === "India").length;
+  $("statGlobal").textContent = allJobs.filter(j => getRegion(j) === "Global").length;
+  $("statRemote").textContent = allJobs.filter(isRemote).length;
+}
+
+function populateSelect(id, values) {
+  const select = $(id);
+  const oldValue = select.value;
+
+  select.innerHTML = '<option value="">All ' +
+    (id === "locationFilter" ? "locations" : "companies") +
+    '</option>';
+
+  values.forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
   });
 
-  document.getElementById("countAll").textContent =
-    counts.All;
+  if (values.includes(oldValue)) select.value = oldValue;
+}
 
-  document.getElementById("countIndia").textContent =
-    counts.India;
+function populateFilters() {
+  const locations = [...new Set(
+    allJobs.map(j => j.location).filter(
+      x => x && x !== "Not specified"
+    )
+  )].sort();
 
-  document.getElementById("countGlobal").textContent =
-    counts.Global;
+  const companies = [...new Set(
+    allJobs.map(j => j.company).filter(Boolean)
+  )].sort();
 
-  document.getElementById("countUnspecified").textContent =
-    counts.Unspecified;
+  populateSelect("locationFilter", locations);
+  populateSelect("companyFilter", companies);
+}
+
+function makeJobCard(job) {
+  const id = String(job.id);
+  const saved = savedIds.includes(id);
+  const tracked = applications.some(a => a.jobId === id);
+
+  const article = document.createElement("article");
+  article.className = "job";
+
+  const status = document.createElement("span");
+  status.className = "badge green";
+  status.textContent = "JOB LISTING";
+  article.appendChild(status);
+
+  const region = document.createElement("span");
+  region.className = "badge";
+  region.textContent = getRegion(job);
+  article.appendChild(region);
+
+  const title = document.createElement("h3");
+  title.textContent = job.title || "Untitled job";
+  article.appendChild(title);
+
+  const company = document.createElement("div");
+  company.className = "company";
+  company.textContent = job.company || "Unknown company";
+  article.appendChild(company);
+
+  const tags = document.createElement("div");
+  tags.className = "tags";
+
+  [
+    job.location,
+    job.category,
+    job.job_type,
+    job.work_mode,
+    job.experience
+  ].filter(x => x && x !== "Not specified").forEach(value => {
+    const tag = document.createElement("span");
+    tag.className = "badge gray";
+    tag.textContent = value;
+    tags.appendChild(tag);
+  });
+
+  article.appendChild(tags);
+
+  const date = document.createElement("p");
+  date.textContent = "First detected: " +
+    (job.first_detected_at || "Not available");
+  article.appendChild(date);
+
+  const actions = document.createElement("div");
+  actions.className = "job-actions";
+
+  const url = job.application_url || job.source_url;
+
+  if (url) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === "https:" || parsed.protocol === "http:") {
+        const link = document.createElement("a");
+        link.href = parsed.href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.className = "apply";
+        link.textContent = "Official application ↗";
+        actions.appendChild(link);
+      }
+    } catch {}
+  }
+
+  const saveButton = document.createElement("button");
+  saveButton.className = "secondary";
+  saveButton.textContent = saved ? "♥ Saved" : "♡ Save";
+  saveButton.addEventListener("click", () => toggleSaved(id));
+  actions.appendChild(saveButton);
+
+  const trackButton = document.createElement("button");
+  trackButton.className = "secondary";
+  trackButton.textContent = tracked ? "Tracked" : "+ Track";
+  trackButton.addEventListener("click", () => addJobToTracker(job));
+  actions.appendChild(trackButton);
+
+  article.appendChild(actions);
+
+  return article;
 }
 
 function renderJobs() {
-
-  const query = searchInput.value.toLowerCase().trim();
-
-  const filtered = allJobs.filter(job => {
-
-    const text = [
-      job.title,
-      job.company,
-      job.location,
-      job.category,
-      job.industry,
-      job.job_type,
-      job.experience,
-      job.region
-    ].join(" ").toLowerCase();
-
-    const matchesSearch = text.includes(query);
-
-    const region = job.region || "Unspecified";
-
-    const matchesRegion =
-      selectedRegion === "All" ||
-      region === selectedRegion;
-
-    const matchesCategory =
-      selectedCategory === "All" ||
-      job.category === selectedCategory ||
-      job.industry === selectedCategory ||
-      job.job_type === selectedCategory;
-
-    return (
-      matchesSearch &&
-      matchesRegion &&
-      matchesCategory
-    );
-  });
-
-  jobCount.textContent =
-    filtered.length + " jobs found";
-
-  if (filtered.length === 0) {
-
-    jobList.innerHTML =
-      '<div class="empty"><h3>No jobs found</h3><p>Try changing your filters or search.</p></div>';
-
-    return;
-  }
-
-  jobList.innerHTML = filtered.map(job => {
-
-    const isDemo = job.demo === true;
-    const region = job.region || "Unspecified";
-
-    return `
-      <article class="job">
-
-        <span class="status ${isDemo ? "demo" : ""}">
-          ${isDemo ? "DEMO LISTING" : "JOB LISTING"}
-        </span>
-
-        <span class="status region-tag">
-          ${safe(region)}
-        </span>
-
-        <h3>${safe(job.title)}</h3>
-
-        <div class="company">
-          ${safe(job.company)}
-        </div>
-
-        <div class="tags">
-          <span class="tag">${safe(job.location)}</span>
-          <span class="tag">${safe(job.job_type)}</span>
-          <span class="tag">${safe(job.category || job.industry)}</span>
-          <span class="tag">${safe(job.work_mode)}</span>
-        </div>
-
-        <p class="muted" style="font-size:12px">
-          ${isDemo ? "Illustrative listing." :
-          "First detected: " + safe(job.first_detected_at || "Not available")}
-        </p>
-
-        ${isDemo ? "" :
-          `<a href="${safe(job.application_url || job.source_url || "#")}" target="_blank" rel="noopener noreferrer">Official application ↗</a>`
-        }
-
-      </article>
-    `;
-
-  }).join("");
-}
-
-// REGION FILTER EVENTS
-
-document.querySelectorAll("[data-region]").forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    document.querySelectorAll("[data-region]")
-      .forEach(item => item.classList.remove("active"));
-
-    button.classList.add("active");
-
-    selectedRegion = button.dataset.region;
-
-    renderJobs();
-  });
-
-});
-
-// CATEGORY FILTER EVENTS
-
-document.querySelectorAll("[data-category]").forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    document.querySelectorAll("[data-category]")
-      .forEach(item => item.classList.remove("active"));
-
-    button.classList.add("active");
-
-    selectedCategory = button.dataset.category;
-
-    renderJobs();
-  });
-
-});
-
-// SEARCH
-
-searchInput.addEventListener("input", renderJobs);
-
-document.getElementById("searchBtn")
-  .addEventListener("click", renderJobs);
-
-// THEME
-
-document.getElementById("themeBtn")
-  .addEventListener("click", () => {
-
-    document.body.classList.toggle("dark");
-
-    const dark = document.body.classList.contains("dark");
-
-    document.getElementById("themeBtn").textContent =
-      dark ? "☀ Light" : "☾ Theme";
-
-    localStorage.setItem(
-      "jobradar-theme",
-      dark ? "dark" : "light"
-    );
-
-  });
-
-if (localStorage.getItem("jobradar-theme") === "dark") {
-
-  document.body.classList.add("dark");
-
-  document.getElementById("themeBtn").textContent =
-    "☀ Light";
-}
-
-// LOAD JOB DATABASE
-
-async function loadJobs() {
-
-  try {
-
-    const response = await fetch("./jobs.json", {
-      cache:"no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error("Database unavailable");
-    }
-
-    const database = await response.json();
-
-    if (!Array.isArray(database.jobs)) {
-      throw new Error("Invalid job database");
-    }
-
-    allJobs = database.jobs;
-
-    updateRegionCounts();
-    renderJobs();
-
-  } catch (error) {
-
-    jobCount.textContent = "Database unavailable";
-
-    jobList.innerHTML =
-      '<div class="empty"><h3>Unable to load jobs</h3><p>Please refresh the website and try again.</p></div>';
-
-    console.error("JobRadar:", error);
-  }
-}
-
-loadJobs();
-
-</script>
-
-</body>
-</html>
+  const query = $("searchInput").value.toLowerCase().trim();
+
+  const location = $("locationFilter").value;
+  const company = $("companyFilter").value;
+  const work
