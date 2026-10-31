@@ -908,6 +908,17 @@ function card(job) {
 function renderJobs() {
   const query = $("searchInput").value.toLowerCase().trim();
   const location = $("locationFilter").value;
+  // If the query identifies a company in the master directory, treat it as a
+  // company search. Do not return jobs that merely mention that company in
+  // their descriptions, skills, or unrelated text.
+  const queryCompanyMatches = query
+    ? companyMaster.filter(item => [item.name, ...(item.aliases || [])]
+        .some(name => {
+          const normalized = normalizeCompanyKey(name);
+          return normalized === normalizeCompanyKey(query) ||
+            normalized.startsWith(normalizeCompanyKey(query));
+        }))
+    : [];
   const company = $("companyFilter").value;
   const work = $("workFilter").value;
   const indiaEligibility = $("indiaEligibilityFilter")?.value || "";
@@ -925,7 +936,11 @@ function renderJobs() {
       job.work_mode, job.job_type, job.experience, job.city, job.state, job.country, job.description
     ].join(" ").toLowerCase();
 
-    if(query && !text.includes(query)) return false;
+    if(queryCompanyMatches.length) {
+      if (!queryCompanyMatches.some(item => companyMatchesJob(item, job))) return false;
+    } else if(query && !text.includes(query)) {
+      return false;
+    }
     if(location && job.location !== location) return false;
     if(company && job.company !== company) return false;
     if(work === "Remote" && !remote(job)) return false;
