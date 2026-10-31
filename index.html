@@ -42,7 +42,6 @@ body {
   transition:.2s;
 }
 
-/* FIXED: Navbar no longer overlaps hero */
 header {
   position:relative;
   width:100%;
@@ -150,11 +149,20 @@ h2 {
   color:var(--muted);
 }
 
+.filter-section {
+  margin:25px 0;
+}
+
+.filter-title {
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
 .filters {
   display:flex;
   flex-wrap:wrap;
   gap:9px;
-  margin:20px 0;
 }
 
 .filter {
@@ -162,11 +170,18 @@ h2 {
   color:var(--muted);
   border:1px solid var(--border);
   font-weight:normal;
+  padding:10px 13px;
 }
 
 .filter.active {
   background:var(--primary);
   color:white;
+  border-color:var(--primary);
+}
+
+.filter:disabled {
+  opacity:.55;
+  cursor:not-allowed;
 }
 
 .jobs {
@@ -215,6 +230,16 @@ h2 {
   background:#dcfce7;
   color:#166534;
   margin-bottom:12px;
+}
+
+.region-tag {
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+body.dark .region-tag {
+  background:#1e3a5f;
+  color:#bfdbfe;
 }
 
 .demo {
@@ -276,6 +301,11 @@ footer {
   .jobs {
     grid-template-columns:1fr;
   }
+
+  .filter {
+    font-size:12px;
+    padding:9px 11px;
+  }
 }
 </style>
 </head>
@@ -318,12 +348,60 @@ footer {
     <span class="muted" id="jobCount">Loading jobs...</span>
   </div>
 
-  <div class="filters">
-    <button class="filter active" data-filter="All">All Jobs</button>
-    <button class="filter" data-filter="Technology">Technology</button>
-    <button class="filter" data-filter="Finance">Finance</button>
-    <button class="filter" data-filter="Engineering">Engineering</button>
-    <button class="filter" data-filter="Internship">Internships</button>
+  <!-- REGION FILTERS -->
+
+  <div class="filter-section">
+    <div class="filter-title">Filter by Region</div>
+
+    <div class="filters" id="regionFilters">
+
+      <button class="filter active" data-region="All">
+        All Regions <span id="countAll">0</span>
+      </button>
+
+      <button class="filter" data-region="India">
+        India <span id="countIndia">0</span>
+      </button>
+
+      <button class="filter" data-region="Global">
+        Global <span id="countGlobal">0</span>
+      </button>
+
+      <button class="filter" data-region="Unspecified">
+        Unspecified <span id="countUnspecified">0</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- CATEGORY FILTERS -->
+
+  <div class="filter-section">
+    <div class="filter-title">Filter by Category</div>
+
+    <div class="filters" id="categoryFilters">
+
+      <button class="filter active" data-category="All">
+        All Categories
+      </button>
+
+      <button class="filter" data-category="Technology">
+        Technology
+      </button>
+
+      <button class="filter" data-category="Finance">
+        Finance
+      </button>
+
+      <button class="filter" data-category="Engineering">
+        Engineering
+      </button>
+
+      <button class="filter" data-category="Internships">
+        Internships
+      </button>
+
+    </div>
   </div>
 
   <div class="jobs" id="jobList">
@@ -350,8 +428,10 @@ footer {
 </footer>
 
 <script>
+
 let allJobs = [];
-let selectedFilter = "All";
+let selectedRegion = "All";
+let selectedCategory = "All";
 
 const jobList = document.getElementById("jobList");
 const searchInput = document.getElementById("searchInput");
@@ -367,10 +447,44 @@ function safe(value) {
   })[char]);
 }
 
+function updateRegionCounts() {
+
+  const counts = {
+    All: allJobs.length,
+    India: 0,
+    Global: 0,
+    Unspecified: 0
+  };
+
+  allJobs.forEach(job => {
+    const region = job.region || "Unspecified";
+
+    if (counts[region] !== undefined) {
+      counts[region]++;
+    } else {
+      counts.Unspecified++;
+    }
+  });
+
+  document.getElementById("countAll").textContent =
+    counts.All;
+
+  document.getElementById("countIndia").textContent =
+    counts.India;
+
+  document.getElementById("countGlobal").textContent =
+    counts.Global;
+
+  document.getElementById("countUnspecified").textContent =
+    counts.Unspecified;
+}
+
 function renderJobs() {
+
   const query = searchInput.value.toLowerCase().trim();
 
   const filtered = allJobs.filter(job => {
+
     const text = [
       job.title,
       job.company,
@@ -378,40 +492,63 @@ function renderJobs() {
       job.category,
       job.industry,
       job.job_type,
-      job.experience
+      job.experience,
+      job.region
     ].join(" ").toLowerCase();
 
     const matchesSearch = text.includes(query);
 
-    const matchesCategory =
-      selectedFilter === "All" ||
-      job.category === selectedFilter ||
-      job.industry === selectedFilter ||
-      job.job_type === selectedFilter;
+    const region = job.region || "Unspecified";
 
-    return matchesSearch && matchesCategory;
+    const matchesRegion =
+      selectedRegion === "All" ||
+      region === selectedRegion;
+
+    const matchesCategory =
+      selectedCategory === "All" ||
+      job.category === selectedCategory ||
+      job.industry === selectedCategory ||
+      job.job_type === selectedCategory;
+
+    return (
+      matchesSearch &&
+      matchesRegion &&
+      matchesCategory
+    );
   });
 
-  jobCount.textContent = filtered.length + " jobs found";
+  jobCount.textContent =
+    filtered.length + " jobs found";
 
   if (filtered.length === 0) {
+
     jobList.innerHTML =
-      '<div class="empty"><h3>No jobs found</h3><p>Try another search or category.</p></div>';
+      '<div class="empty"><h3>No jobs found</h3><p>Try changing your filters or search.</p></div>';
+
     return;
   }
 
   jobList.innerHTML = filtered.map(job => {
+
     const isDemo = job.demo === true;
+    const region = job.region || "Unspecified";
 
     return `
       <article class="job">
+
         <span class="status ${isDemo ? "demo" : ""}">
           ${isDemo ? "DEMO LISTING" : "JOB LISTING"}
         </span>
 
+        <span class="status region-tag">
+          ${safe(region)}
+        </span>
+
         <h3>${safe(job.title)}</h3>
 
-        <div class="company">${safe(job.company)}</div>
+        <div class="company">
+          ${safe(job.company)}
+        </div>
 
         <div class="tags">
           <span class="tag">${safe(job.location)}</span>
@@ -428,13 +565,89 @@ function renderJobs() {
         ${isDemo ? "" :
           `<a href="${safe(job.application_url || job.source_url || "#")}" target="_blank" rel="noopener noreferrer">Official application ↗</a>`
         }
+
       </article>
     `;
+
   }).join("");
 }
 
+// REGION FILTER EVENTS
+
+document.querySelectorAll("[data-region]").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    document.querySelectorAll("[data-region]")
+      .forEach(item => item.classList.remove("active"));
+
+    button.classList.add("active");
+
+    selectedRegion = button.dataset.region;
+
+    renderJobs();
+  });
+
+});
+
+// CATEGORY FILTER EVENTS
+
+document.querySelectorAll("[data-category]").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    document.querySelectorAll("[data-category]")
+      .forEach(item => item.classList.remove("active"));
+
+    button.classList.add("active");
+
+    selectedCategory = button.dataset.category;
+
+    renderJobs();
+  });
+
+});
+
+// SEARCH
+
+searchInput.addEventListener("input", renderJobs);
+
+document.getElementById("searchBtn")
+  .addEventListener("click", renderJobs);
+
+// THEME
+
+document.getElementById("themeBtn")
+  .addEventListener("click", () => {
+
+    document.body.classList.toggle("dark");
+
+    const dark = document.body.classList.contains("dark");
+
+    document.getElementById("themeBtn").textContent =
+      dark ? "☀ Light" : "☾ Theme";
+
+    localStorage.setItem(
+      "jobradar-theme",
+      dark ? "dark" : "light"
+    );
+
+  });
+
+if (localStorage.getItem("jobradar-theme") === "dark") {
+
+  document.body.classList.add("dark");
+
+  document.getElementById("themeBtn").textContent =
+    "☀ Light";
+}
+
+// LOAD JOB DATABASE
+
 async function loadJobs() {
+
   try {
+
     const response = await fetch("./jobs.json", {
       cache:"no-store"
     });
@@ -450,9 +663,12 @@ async function loadJobs() {
     }
 
     allJobs = database.jobs;
+
+    updateRegionCounts();
     renderJobs();
 
   } catch (error) {
+
     jobCount.textContent = "Database unavailable";
 
     jobList.innerHTML =
@@ -462,44 +678,8 @@ async function loadJobs() {
   }
 }
 
-document.querySelectorAll(".filter").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".filter")
-      .forEach(item => item.classList.remove("active"));
-
-    button.classList.add("active");
-    selectedFilter = button.dataset.filter;
-
-    renderJobs();
-  });
-});
-
-searchInput.addEventListener("input", renderJobs);
-
-document.getElementById("searchBtn")
-  .addEventListener("click", renderJobs);
-
-document.getElementById("themeBtn")
-  .addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-
-    const dark = document.body.classList.contains("dark");
-
-    document.getElementById("themeBtn").textContent =
-      dark ? "☀ Light" : "☾ Theme";
-
-    localStorage.setItem(
-      "jobradar-theme",
-      dark ? "dark" : "light"
-    );
-  });
-
-if (localStorage.getItem("jobradar-theme") === "dark") {
-  document.body.classList.add("dark");
-  document.getElementById("themeBtn").textContent = "☀ Light";
-}
-
 loadJobs();
+
 </script>
 
 </body>
