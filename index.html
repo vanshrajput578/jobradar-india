@@ -295,6 +295,30 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
  .controls{grid-template-columns:1fr}
 }
 
+
+/* Motion layer: real muted looping hero video + accessible interface animation */
+.hero{position:relative;isolation:isolate;overflow:hidden}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.30;z-index:-2;filter:saturate(.72) contrast(1.08)}
+.hero-video-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,rgba(9,18,39,.96) 0%,rgba(14,28,59,.84) 52%,rgba(24,49,100,.58) 100%)}
+.hero>*:not(.hero-video):not(.hero-video-shade){position:relative;z-index:1}
+.hero h1{animation:jr-title-in .85s cubic-bezier(.2,.75,.25,1) both}
+.hero p{animation:jr-rise .8s .12s both}
+.hero .search{animation:jr-rise .8s .22s both}
+@keyframes jr-title-in{from{opacity:0;transform:translateY(24px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes jr-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.motion-reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1)}
+.motion-reveal.is-visible{opacity:1;transform:translateY(0)}
+.stat strong[data-count-target]{font-variant-numeric:tabular-nums}
+.job,.company-card,.tool-card{will-change:transform}
+.job.motion-reveal{transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1),box-shadow .18s ease}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+ .motion-reveal{opacity:1;transform:none}
+ .hero-video{display:none}
+}
+@media(max-width:600px){.hero-video{opacity:.22}.hero-video-shade{background:linear-gradient(100deg,rgba(9,18,39,.94),rgba(14,28,59,.76))}}
+
 </style>
 </head>
 <body>
@@ -316,7 +340,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </nav>
 </header>
 
-<section class="hero" id="home">
+<section class="hero" id="home"><video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="./icon.svg"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"></video><div class="hero-video-shade" aria-hidden="true"></div>
 <h1>Find work that moves you forward.</h1>
 <p>Explore employer-listed roles, verify availability, and manage your job search in one focused workspace.</p>
 <div class="search" role="search">
@@ -1270,6 +1294,37 @@ $("clearPersonalData").onclick = () => {
   if(!confirm("Delete saved jobs and application tracker data from this browser? This cannot be undone unless you exported a backup.")) return;
   savedIds=[]; applications=[]; persist(); render(); $("backupOutput").textContent="Personal data cleared.";
 };
+
+
+/* Scroll reveal + count-up stats; no external animation library required */
+(function initJobRadarMotion(){
+  const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const revealTargets=()=>document.querySelectorAll(".container,.panel,.filter-section,.job,.tool-card,.company-card,.stats");
+  const observeReveals=()=>{
+    const targets=revealTargets();
+    if(reduceMotion||!("IntersectionObserver" in window)){targets.forEach(el=>el.classList.add("is-visible"));return;}
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target);}});
+    },{threshold:.08,rootMargin:"0px 0px -35px 0px"});
+    targets.forEach(el=>{if(!el.classList.contains("motion-reveal"))el.classList.add("motion-reveal");observer.observe(el);});
+  };
+  observeReveals();
+  const counterObserver=("IntersectionObserver" in window&&!reduceMotion)?new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const node=entry.target,target=Number(node.textContent.replace(/[^0-9]/g,""))||0;
+      node.dataset.countTarget=String(target);
+      const start=performance.now(),duration=850;
+      const tick=now=>{const p=Math.min(1,(now-start)/duration);node.textContent=Math.round(target*(1-Math.pow(1-p,3))).toLocaleString("en-IN");if(p<1)requestAnimationFrame(tick);};
+      requestAnimationFrame(tick);counterObserver.unobserve(node);
+    });
+  },{threshold:.65}):null;
+  if(counterObserver)document.querySelectorAll(".stat strong").forEach(node=>counterObserver.observe(node));
+  const list=document.getElementById("jobList");
+  if(list&&"MutationObserver" in window){
+    new MutationObserver(()=>{if(!reduceMotion&&"IntersectionObserver" in window){list.querySelectorAll(".job:not(.motion-reveal)").forEach((el,i)=>{el.classList.add("motion-reveal");el.style.transitionDelay=Math.min(i*45,270)+"ms";requestAnimationFrame(()=>el.classList.add("is-visible"));});}}).observe(list,{childList:true,subtree:true});
+  }
+})();
 
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.warn));
 loadJobs();
