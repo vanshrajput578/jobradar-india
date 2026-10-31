@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "jobs.json"
+COMPANY_MASTER = ROOT / "company_master.json"
 TARGET = ROOT / "jobs_public.json"
 DESCRIPTION_LIMIT = 2200
 
