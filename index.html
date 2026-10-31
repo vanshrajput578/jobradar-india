@@ -1702,6 +1702,34 @@ function card(job) {
   return article;
 }
 
+function renderPager(containerId, page, total, pageSize, onPage) {
+  const box = $(containerId);
+  if (!box) return;
+  box.innerHTML = "";
+  const pages = Math.ceil(total / pageSize);
+  if (pages <= 1) return;
+  const summary = document.createElement("span");
+  summary.className = "pagination__summary";
+  summary.textContent = "Page " + page + " of " + pages;
+  const controls = document.createElement("div");
+  controls.className = "pagination__controls";
+  const add = (label, target, disabled, current) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "pagination__button" + (current ? " is-current" : "");
+    button.textContent = label;
+    button.disabled = disabled;
+    if (current) button.setAttribute("aria-current", "page");
+    button.addEventListener("click", () => onPage(target));
+    controls.append(button);
+  };
+  add("← Previous", page - 1, page <= 1, false);
+  const first = Math.max(1, Math.min(page - 2, pages - 4));
+  for (let n = first; n <= Math.min(pages, first + 4); n++) add(String(n), n, false, n === page);
+  add("Next →", page + 1, page >= pages, false);
+  box.append(summary, controls);
+}
+
 function renderJobs() {
   const query = $("searchInput").value.toLowerCase().trim();
   const location = $("locationFilter").value;
@@ -1772,7 +1800,15 @@ function renderJobs() {
     return;
   }
 
-  rows.forEach(job => list.append(card(job)));
+  const pages = Math.max(1, Math.ceil(rows.length / JOBS_PER_PAGE));
+  currentJobsPage = Math.min(currentJobsPage, pages);
+  const start = (currentJobsPage - 1) * JOBS_PER_PAGE;
+  rows.slice(start, start + JOBS_PER_PAGE).forEach(job => list.append(card(job)));
+  renderPager("jobPagination", currentJobsPage, rows.length, JOBS_PER_PAGE, page => {
+    currentJobsPage = page;
+    renderJobs();
+    $("jobList").scrollIntoView({behavior: "smooth", block: "start"});
+  });
 }
 
 function renderLatest() {
