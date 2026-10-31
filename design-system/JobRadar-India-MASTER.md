@@ -8,7 +8,7 @@
 
 ## Design direction
 
-Use a restrained, professional recruitment dashboard style. Prioritize scannability, trust, fast job discovery and compact information density. Keep the existing navy/blue identity and semantic status colors; do not introduce a parallel theme system.
+**Selected direction: Minimalism & Swiss Style adapted to a modern recruitment SaaS dashboard.** Prioritize scannability, trust, fast job discovery and compact information density. Use a disciplined grid, strong typographic hierarchy, calm surfaces, restrained shadows and one blue primary action color. Keep semantic status colors distinct and never communicate status by color alone. Avoid glassmorphism, excessive gradients, decorative 3D and visual clutter.
 
 ## Tokens
 
@@ -45,18 +45,17 @@ The current page remains plain HTML/CSS/JS. No framework, package, backend, paid
 
 ## Applied in this pass
 
-- Added a keyboard-accessible skip link to job listings.
-- Added an accessible name to the main search input.
-- Added visible `:focus-visible` styling.
-- Raised general button and field target heights for easier mobile interaction.
-- Added explicit disabled-button feedback.
-- Added a very narrow-screen layout adjustment.
-- Preserved the existing reduced-motion rule and dark theme tokens.
+- Added a keyboard-accessible skip link to job listings and an accessible name to the main search input.
+- Added visible `:focus-visible` styling and larger touch targets.
+- Rethemed the header, hero, search bar, stats, filters, job cards, company cards, workspace tools, tables and mobile dock with a consistent dashboard visual system.
+- Tightened typography, spacing, border radii, shadows and interaction feedback.
+- Improved narrow-screen layouts while preserving the existing HTML IDs and JavaScript interactions.
+- Preserved the dark theme and reduced-motion support.
 
 ## Verification still required
 
 - Run the repository's GitHub Actions tests after the UI commit.
-- Inspect the deployed GitHub Pages site on 375px, 768px, 1024px and desktop widths.
+- Inspect the deployed GitHub Pages site on 360px, 390px, 768px, 1024px and desktop widths.
 - Verify contrast ratios and all interactive states in both light and dark themes.
 - Regression-test search, filters, save/unsave, application tracker, company directory and career tools.
 
