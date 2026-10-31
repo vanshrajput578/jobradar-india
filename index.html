@@ -813,6 +813,15 @@ function card(job) {
   region.textContent = regionOf(job);
   article.append(region);
 
+  if (job.india_eligibility) {
+    const indiaBadge = document.createElement("span");
+    indiaBadge.className = "badge " + (job.india_eligibility === "eligible" ? "green" : "");
+    indiaBadge.textContent = job.india_eligibility === "eligible" ? "OPEN TO INDIA" :
+      job.india_eligibility === "not_eligible" ? "NOT OPEN TO INDIA" : "INDIA ELIGIBILITY UNCLEAR";
+    indiaBadge.title = job.india_eligibility_reason || "Eligibility based on available posting information.";
+    article.append(indiaBadge);
+  }
+
   const title = document.createElement("h3");
   title.textContent = job.title || "Untitled job";
   article.append(title);
@@ -901,6 +910,7 @@ function renderJobs() {
   const location = $("locationFilter").value;
   const company = $("companyFilter").value;
   const work = $("workFilter").value;
+  const indiaEligibility = $("indiaEligibilityFilter")?.value || "";
   const sort = $("sortFilter").value;
   const status = $("statusFilter")?.value || "active";
 
@@ -920,6 +930,7 @@ function renderJobs() {
     if(company && job.company !== company) return false;
     if(work === "Remote" && !remote(job)) return false;
     if(work && work !== "Remote" && String(job.work_mode || "Not specified") !== work) return false;
+    if(indiaEligibility && (job.india_eligibility || "unclear") !== indiaEligibility) return false;
     if(selectedRegion === "Remote" && !remote(job)) return false;
     if(selectedRegion !== "All" && selectedRegion !== "Remote" && regionOf(job) !== selectedRegion) return false;
     if(selectedCategory !== "All" && job.category !== selectedCategory) return false;
@@ -1340,6 +1351,7 @@ function clearFilters() {
   $("locationFilter").value = "";
   $("companyFilter").value = "";
   $("workFilter").value = "";
+  $("indiaEligibilityFilter").value = "";
   $("sortFilter").value = "latest";
   $("statusFilter").value = "all";
   selectedRegion = "All";
@@ -1532,7 +1544,7 @@ $("searchBtn").onclick = () => { renderJobs(); if(location.hash !== "#jobs") loc
 $("searchInput").addEventListener("keydown", event => { if(event.key === "Enter") $("searchBtn").click(); });
 $("searchInput").oninput = renderJobs;
 
-["locationFilter", "companyFilter", "workFilter", "sortFilter", "statusFilter"].forEach(id => {
+["locationFilter", "companyFilter", "workFilter", "indiaEligibilityFilter", "sortFilter", "statusFilter"].forEach(id => {
   $(id).onchange = renderJobs;
 });
 
