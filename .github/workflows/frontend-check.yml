@@ -8,6 +8,10 @@ on:
       - "jobs.json"
       - "jobs_public.json"
       - "build_public_feed.py"
+      - "fetch_jobs.py"
+      - "company_master.json"
+      - "sources.json"
+      - "tests/**"
       - "sw.js"
       - ".github/workflows/frontend-check.yml"
   workflow_dispatch:
@@ -52,6 +56,10 @@ jobs:
               raise SystemExit("Public feed count differs from jobs.json")
           print(f"Valid public feed: {len(public['jobs'])} jobs")
           PY
+
+      - name: Validate company-to-job mappings
+        run: |
+          python -m unittest discover -s tests -v
 
       - name: Validate inline JavaScript syntax
         run: |
