@@ -1878,6 +1878,8 @@ function renderJobs() {
   else if(sort === "title") rows.sort((a,b) => String(a.title).localeCompare(String(b.title)));
   else rows.sort((a,b) => timeOf(b) - timeOf(a));
 
+  const pages = Math.max(1, Math.ceil(rows.length / JOBS_PER_PAGE));
+  currentJobsPage = Math.min(currentJobsPage, pages);
   $("jobCount").textContent = rows.length ? "Showing " + (Math.min((currentJobsPage - 1) * JOBS_PER_PAGE + 1, rows.length)) + "–" + Math.min(currentJobsPage * JOBS_PER_PAGE, rows.length) + " of " + rows.length + " jobs" : "0 jobs found";
 
   const list = $("jobList");
@@ -1892,8 +1894,6 @@ function renderJobs() {
     return;
   }
 
-  const pages = Math.max(1, Math.ceil(rows.length / JOBS_PER_PAGE));
-  currentJobsPage = Math.min(currentJobsPage, pages);
   const start = (currentJobsPage - 1) * JOBS_PER_PAGE;
   rows.slice(start, start + JOBS_PER_PAGE).forEach(job => list.append(card(job)));
   renderPager("jobPagination", currentJobsPage, rows.length, JOBS_PER_PAGE, page => {
@@ -2321,6 +2321,7 @@ function render() {
 }
 
 function clearFilters() {
+  currentJobsPage = 1;
   $("searchInput").value = "";
   $("locationFilter").value = "";
   selectedDiscoveryMode = "";
@@ -2591,16 +2592,17 @@ routeFromHash();
 
 $("searchBtn").onclick = () => { renderJobs(); if(location.hash !== "#jobs") location.hash = "jobs"; else showView("jobs"); };
 $("searchInput").addEventListener("keydown", event => { if(event.key === "Enter") $("searchBtn").click(); });
-$("searchInput").oninput = renderJobs;
+$("searchInput").oninput = () => { currentJobsPage = 1; renderJobs(); };
 
 ["locationFilter", "companyFilter", "workFilter", "jobTypeFilter", "experienceFilter", "indiaEligibilityFilter", "sortFilter", "statusFilter"].forEach(id => {
-  $(id).onchange = renderJobs;
+  $(id).onchange = () => { currentJobsPage = 1; renderJobs(); };
 });
 
 $("clearFilters").onclick = clearFilters;
 
 document.querySelectorAll("[data-region]").forEach(button => {
   button.onclick = () => {
+    currentJobsPage = 1;
     selectedRegion = button.dataset.region;
     document.querySelectorAll("[data-region]").forEach(item =>
       item.classList.toggle("active", item === button)
@@ -2611,6 +2613,7 @@ document.querySelectorAll("[data-region]").forEach(button => {
 
 document.querySelectorAll("[data-category]").forEach(button => {
   button.onclick = () => {
+    currentJobsPage = 1;
     selectedCategory = button.dataset.category;
     document.querySelectorAll("[data-category]").forEach(item =>
       item.classList.toggle("active", item === button)
