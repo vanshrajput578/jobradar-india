@@ -1293,6 +1293,7 @@ async function loadCompanyMaster() {
     if (!Array.isArray(data.companies)) throw new Error("companies array missing");
     companyMaster = data.companies;
     initCompanyDirectory();
+    if (location.hash.startsWith("#company/")) renderCompanyProfile();
   } catch (error) {
     console.error("Company directory loading error:", error);
     companyDirectoryReady = true;
