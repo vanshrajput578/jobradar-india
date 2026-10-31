@@ -22,7 +22,7 @@ PUBLIC_FIELDS = (
 
 def clean_description(value):
     text = html.unescape(str(value or ""))
-    text = re.sub(r"<(script|style)\b[^>]*>[\s\S]*?</\\1>", " ", text, flags=re.I)
+    text = re.sub(r"<(script|style)\b[^>]*>[\s\S]*?</\1>", " ", text, flags=re.I)
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text[:DESCRIPTION_LIMIT]
