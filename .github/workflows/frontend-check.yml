@@ -1,0 +1,66 @@
+name: JobRadar Frontend Validation
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "index.html"
+      - "jobs.json"
+      - "sw.js"
+      - ".github/workflows/frontend-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate jobs database
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("jobs.json").read_text(encoding="utf-8"))
+          if not isinstance(data.get("jobs"), list):
+              raise SystemExit("jobs.json must contain a jobs array")
+          print(f"Valid jobs.json: {len(data['jobs'])} jobs")
+          PY
+
+      - name: Validate inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script\\b[^>]*>(.*?)</script>", html, flags=re.I | re.S)
+          if not scripts:
+              raise SystemExit("No inline JavaScript found")
+          Path("/tmp/jobradar-inline.js").write_text("\\n".join(scripts), encoding="utf-8")
+          PY
+          node --check /tmp/jobradar-inline.js
+
+      - name: Validate navigation views
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          expected = ["home", "jobs", "saved", "tracker", "tools", "companies", "verification", "about"]
+          found = set(re.findall(r'id="view-([^"]+)"', html))
+          missing = set(expected) - found
+          if missing:
+              raise SystemExit(f"Missing views: {sorted(missing)}")
+          if 'function routeFromHash()' not in html or 'addEventListener("hashchange",routeFromHash)' not in html:
+              raise SystemExit("Hash router or hashchange listener missing")
+          print("All 8 navigation views and hash router found.")
+          PY
