@@ -321,7 +321,6 @@ def classify_india_eligibility(location, description, location_details=None):
     or Global labels never imply worldwide hiring or India eligibility.
     """
     details = location_details or detect_location_details(location)
-    location_text = normalize_location_text(location)
     description_text = normalize_location_text(
         re.sub(r"<[^>]+>", " ", html.unescape(str(description or "")))
     )
