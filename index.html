@@ -2632,6 +2632,27 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     var r = ALIASES[route] || route;
     return ORDER.indexOf(r) >= 0 ? r : "home";
   }
+  function replayActiveView(){
+    if(reduce || !revealIO) return;
+    var active = document.querySelector(".view.active");
+    if(!active) return;
+    var selectors = RULES.map(function(rule){ return rule[0].split(",").map(function(sel){ return ".view.active " + sel.trim(); }).join(","); }).join(",");
+    var targets = document.querySelectorAll(selectors);
+    targets.forEach(function(el){
+      if(!active.contains(el)) return;
+      el.classList.remove("is-visible", "in");
+      el.classList.add("rv");
+      el.style.transition = "none";
+      el.style.removeProperty("--rx"); el.style.removeProperty("--ry");
+      el.style.removeProperty("--rs"); el.style.removeProperty("--rd");
+    });
+    void active.offsetWidth;
+    targets.forEach(function(el){
+      if(!active.contains(el)) return;
+      el.style.transition = "";
+      revealIO.observe(el);
+    });
+  }
   if(typeof window.showView === "function"){
     var originalShow = window.showView;
     window.showView = function(route){
@@ -2639,7 +2660,7 @@ $("companyDirectoryCategory").onchange = renderCompanies;
       document.body.setAttribute("data-dir", ORDER.indexOf(next) >= ORDER.indexOf(currentRoute) ? "fwd" : "back");
       var out = originalShow.apply(this, arguments);
       currentRoute = next;
-      requestAnimationFrame(placePill);
+      requestAnimationFrame(function(){ replayActiveView(); placePill(); });
       return out;
     };
   }
