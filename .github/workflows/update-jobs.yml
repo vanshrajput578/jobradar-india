@@ -3,6 +3,13 @@ name: JobRadar Automatic Job Updates
 on:
   workflow_dispatch:
 
+  push:
+    branches: ["main"]
+    paths:
+      - "fetch_jobs.py"
+      - "tests/**"
+      - ".github/workflows/update-jobs.yml"
+
   schedule:
     - cron: "17 */6 * * *"
 
