@@ -938,6 +938,13 @@ nav>a.active,nav>a[aria-current="page"]{background:var(--soft);color:var(--prima
 .home-popular-search:hover{background:rgba(255,255,255,.16)}
 .hero-secondary-link{display:inline-flex;align-items:center;gap:6px;margin-top:17px;color:#d7e1fa;font-size:12px;font-weight:750;text-decoration:none}
 .hero-secondary-link:hover{color:#fff}
+.hero:before,.hero:after{display:none;content:none}
+.nav-more.active>summary{background:var(--soft);color:var(--primary)}
+.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:12px}
+.section-heading h2{margin:0}
+.section-heading .muted{margin:4px 0 0}
+.text-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-size:12px;font-weight:800;text-decoration:none}
+.text-link:hover{text-decoration:underline}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .container{max-width:var(--jr-content);padding-inline:24px}
 .container>h2,.panel h2{font-size:clamp(21px,2vw,25px);line-height:1.2;letter-spacing:-.55px}
@@ -2318,8 +2325,9 @@ function showView(route) {
   });
   $("navMore")?.removeAttribute("open");
 
-  const moreActive = ["saved","tracker","verification","about"].includes(activeRoute);
+  const moreActive = ["tools","companies","company-profile","verification","about"].includes(activeRoute);
   $("moreBtn").classList.toggle("active", moreActive);
+  $("navMore")?.classList.toggle("active", ["saved","tracker","verification","about"].includes(activeRoute));
   $("moreMenu").setAttribute("hidden", "");
   $("moreBtn").setAttribute("aria-expanded", "false");
 
@@ -2368,9 +2376,11 @@ document.querySelectorAll("[data-view]").forEach(link => {
     if (link.dataset.view === "companies" && !link.dataset.navIntent) {
       $("companyDirectoryCategory").value = "";
       $("companyDirectorySearch").value = "";
+      $("companyDirectoryNote").textContent = "Vacancy status is shown separately from directory membership.";
       renderCompanies();
     }
     const route = link.dataset.view;
+    if (route === "jobs" || route === "home") selectedDiscoveryMode = "";
     if(location.hash === "#" + route) showView(route);
     else location.hash = route;
   });
