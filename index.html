@@ -322,7 +322,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 .motion-reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1)}
 .motion-reveal.is-visible{opacity:1;transform:translateY(0)}
 .stat strong[data-count-target]{font-variant-numeric:tabular-nums}
-.job,.company-card,.tool-card{will-change:transform}
+
 .job.motion-reveal{transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1),box-shadow .18s ease}
 @media(prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}
@@ -1117,6 +1117,36 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 @media(max-width:600px){body{font-size:14px;padding-bottom:calc(78px + env(safe-area-inset-bottom))}.hero{padding:42px 17px 38px}.hero h1{max-width:13ch;font-size:clamp(34px,9vw,43px);letter-spacing:-1.4px}.hero-copy{font-size:14px}.hero-search{grid-template-columns:1fr;gap:4px;padding:6px}.hero-search__query,.hero-search__location{min-height:45px;padding-inline:10px;border:0;border-bottom:1px solid #e5eaf2}.hero-search__submit{grid-column:auto;min-height:47px}.home-search-meta{align-items:flex-start;flex-direction:column;gap:8px}.home-popular-searches{max-width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}.home-popular-search{flex:0 0 auto}.container{padding-inline:15px;margin-block:27px}.section-heading{align-items:flex-start}.section-heading h2{font-size:22px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{padding:14px}.stat strong{font-size:24px}.jobs{grid-template-columns:1fr;gap:11px}.job{padding:16px;border-radius:15px}.job h3{font-size:17px}.job-card__top{align-items:flex-start}.job-card__actions{display:grid;grid-template-columns:1fr 1fr}.job-card__actions .apply{grid-column:1/-1}.advanced-filters .controls{grid-template-columns:1fr}.company-directory-tools{grid-template-columns:1fr}.company-directory-tools input{grid-column:auto}.company-grid{grid-template-columns:1fr}.company-profile-jobs{grid-template-columns:1fr}.tool-grid,.verification-grid{grid-template-columns:1fr}.panel{padding:17px}.tracker-toolbar{grid-template-columns:1fr}.pagination{align-items:flex-start;flex-direction:column}.pagination__controls{width:100%}.pagination__button{flex:1 1 auto}.mobile-dock{left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));padding-bottom:max(7px,env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-orbit,.hero-canvas,.rv,.rv.in,.rv-part,.rv-part-in{animation:none!important;transition:none!important;transform:none!important;filter:none!important}.job,.company-card,.tool-card{transition:none!important}}
 
+
+/* Flagship refinement: reduce motion debt, improve control feedback and menu state. */
+:root{--jr-motion-fast:140ms;--jr-motion-base:220ms;--jr-motion-enter:420ms}
+html{scrollbar-gutter:stable}
+::selection{background:var(--soft);color:var(--text)}
+button,a,input,select,textarea{ -webkit-tap-highlight-color:transparent }
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+  outline:3px solid var(--primary);outline-offset:3px
+}
+.job,.company-card,.tool-card{will-change:auto}
+.job{transition:transform var(--jr-motion-base) cubic-bezier(.16,1,.3,1),border-color var(--jr-motion-base),box-shadow var(--jr-motion-base)}
+.job:focus-within,.company-card:focus-within,.tool-card:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--soft),var(--shadow)}
+.job-card__actions button[aria-pressed="true"]{background:var(--soft);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 35%,var(--border))}
+.job-card__actions button:active{transform:scale(.97)}
+.job-card__actions .apply:focus-visible{outline-color:#fff;outline-offset:3px}
+@media(max-width:800px){
+  #navigation{
+    display:flex;max-height:0;padding:0 12px;opacity:0;visibility:hidden;pointer-events:none;
+    overflow:hidden;transform:translateY(-7px);
+    transition:max-height 260ms cubic-bezier(.16,1,.3,1),opacity 160ms ease,transform 220ms ease,padding 220ms ease,visibility 220ms;
+  }
+  #navigation.open{
+    max-height:min(72dvh,560px);padding:12px;opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .job,.company-card,.tool-card,button,a{transition-duration:.01ms!important}
+  #navigation{transition:none!important;transform:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1773,7 +1803,10 @@ function card(job) {
 
   const save = document.createElement("button");
   save.className = "secondary";
-  save.textContent = savedIds.includes(id) ? "♥ Saved" : "♡ Save";
+  const isSaved = savedIds.includes(id);
+  save.textContent = isSaved ? "♥ Saved" : "♡ Save";
+  save.setAttribute("aria-pressed", String(isSaved));
+  save.setAttribute("aria-label", (isSaved ? "Remove saved job: " : "Save job: ") + (job.title || "Untitled job") + " at " + (job.company || "Unknown company"));
   save.onclick = () => {
     savedIds = savedIds.includes(id) ? savedIds.filter(x => x !== id) : [...savedIds, id];
     persist();
@@ -1783,7 +1816,9 @@ function card(job) {
 
   const track = document.createElement("button");
   track.className = "secondary";
-  track.textContent = applications.some(a => a.jobId === id) ? "Tracked" : "+ Track";
+  const isTracked = applications.some(a => a.jobId === id);
+  track.textContent = isTracked ? "Tracked" : "+ Track";
+  track.setAttribute("aria-label", (isTracked ? "Edit tracked application: " : "Track job: ") + (job.title || "Untitled job") + " at " + (job.company || "Unknown company"));
   track.onclick = () => {
     const existing = applications.find(a => a.jobId === id);
     openModal(existing || null, existing ? null : job);
@@ -2625,17 +2660,25 @@ document.querySelectorAll("[data-category]").forEach(button => {
   };
 });
 
+function syncThemeControl() {
+  const isDark = document.body.classList.contains("dark");
+  $("themeBtn").setAttribute("aria-pressed", String(isDark));
+  $("themeBtn").setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme");
+  $("themeBtn").textContent = isDark ? "☀ Light" : "☾ Dark";
+}
+
 $("themeBtn").onclick = () => {
-  document.body.classList.toggle("dark");
-  localStorage.setItem(
-    "jobradar-theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
+  const isDark = document.body.classList.toggle("dark");
+  try { localStorage.setItem("jobradar-theme", isDark ? "dark" : "light"); } catch(error) {}
+  syncThemeControl();
 };
 
-if(localStorage.getItem("jobradar-theme") !== "light") {
+try {
+  if(localStorage.getItem("jobradar-theme") !== "light") document.body.classList.add("dark");
+} catch(error) {
   document.body.classList.add("dark");
 }
+syncThemeControl();
 
 $("menuBtn").onclick = () => { const open=$("navigation").classList.toggle("open"); $("menuBtn").setAttribute("aria-expanded",String(open)); };
 
@@ -3016,53 +3059,22 @@ $("companyDirectorySort").onchange = () => { currentCompaniesPage = 1; renderCom
      4) Intro (skippable, once per session, never with reduced motion)
      --------------------------------------------------------------- */
   function runIntro(){
+    /* The full-screen intro delayed the primary job-search task on first visit.
+       Keep the authored radar hero, but never block access to search. */
     var intro = byId("jrIntro");
-    if(!intro || !root.classList.contains("intro-on")){ heroGo(); return; }
-    var title = intro.querySelector(".intro-title");
-    if(title){
-      var text = title.getAttribute("data-text") || title.textContent;
-      title.textContent = "";
-      var idx = 0;
-      Array.prototype.forEach.call(text, function(chr){
-        var s = document.createElement("span");
-        s.className = "ch" + (chr === " " ? " sp" : "") + (idx >= 8 ? " gl" : "");
-        s.style.setProperty("--i", String(idx));
-        s.textContent = chr === " " ? "\u00a0" : chr;
-        title.appendChild(s); idx++;
-      });
-      title.setAttribute("aria-label", text);
-    }
-    var finished = false;
-    function end(){
-      if(finished) return; finished = true;
-      intro.classList.add("out");
-      try{ sessionStorage.setItem("jrIntroSeen", "1"); }catch(e){}
-      setTimeout(heroGo, 320);
-      setTimeout(function(){ root.classList.remove("intro-on"); if(intro.parentNode) intro.parentNode.removeChild(intro); }, 1050);
-      document.removeEventListener("keydown", onKey);
-    }
-    function onKey(e){ if(e.key === "Escape" || e.key === "Enter" || e.key === " ") end(); }
-    var skip = intro.querySelector(".intro-skip");
-    if(skip){ skip.addEventListener("click", function(e){ e.stopPropagation(); end(); }); try{ skip.focus({preventScroll:true}); }catch(e){} }
-    intro.addEventListener("click", end);
-    document.addEventListener("keydown", onKey);
-    setTimeout(end, 3700);
+    root.classList.remove("intro-on");
+    if(intro && intro.parentNode) intro.parentNode.removeChild(intro);
+    heroGo();
   }
 
   /* ---------------------------------------------------------------
      5) Directional scroll reveals (up / zoom / left / right)
      --------------------------------------------------------------- */
   var RULES = [
-    /* Global shell and home hero/footer were previously outside .view content rules. */
+    /* Reveal only meaningful page landmarks and listing groups, not every control. */
     ["header, #view-home > .hero, #view-home > footer, .view > .container, .view > main.container", "up"],
-    /* Section headings and explanatory copy */
-    [".container > h1, .container > h2, .container > h3, .container > .muted, .section-heading, .page-heading", "up"],
-    /* Panels, controls, empty states and all common card surfaces */
-    [".filter-section, .controls, .search, .tracker-toolbar, .table-wrap, .company-directory-tools, .panel, .notice, .alert, .empty-state, .empty, .verification-banner, .profile-header, .career-tool-section", "up"],
-    [".view .stat, .view .metric, .view .summary-card, .view .info-card, .view .feature-card, .view .insight-card, .view .tool-card, .view .company-card, .view .job, .view .card", "grid"],
-    [".jobs > .job, .company-grid > .company-card, .tool-grid > .tool-card, .verification-grid > .panel", "grid"],
-    [".view table tr, .view .list-item, .view .timeline-item, .view .step-card, .view .faq-item, .view .accordion-item", "up"],
-    [".view .filter-chip, .view .tag, .view .badge, .view .tab, .view .segmented-control, .view .pagination button", "zoom"]
+    [".container > h1, .container > h2, .section-heading, .page-heading", "up"],
+    [".jobs > .job, .company-grid > .company-card, .tool-grid > .tool-card", "grid"]
   ];
   var revealIO = null;
   function columnsOf(parent){
@@ -3075,19 +3087,8 @@ $("companyDirectorySort").onchange = () => { currentCompaniesPage = 1; renderCom
     el.style.removeProperty("--rx"); el.style.removeProperty("--ry"); el.style.removeProperty("--rs"); el.style.removeProperty("--rd");
   }
   function animateCardContents(el, baseDelay){
-    if(!el || !el.querySelectorAll) return;
-    var parts=el.querySelectorAll("h1,h2,h3,h4,p,span,small,strong,button,a,li,summary,label,input,select,textarea,.badge,.tag,.stat,.panel");
-    var index=0;
-    parts.forEach(function(part){
-      if(part.closest(".intro")) return;
-      if(part.classList.contains("rv-part")) return;
-      part.classList.add("rv-part");
-      part.style.setProperty("--part-delay", Math.min(baseDelay + index*32, 280) + "ms");
-      index++;
-    });
-    requestAnimationFrame(function(){
-      parts.forEach(function(part){ part.classList.add("rv-part-in"); });
-    });
+    /* Keep card contents immediately readable; animate the card as one unit. */
+    return;
   }
   function revealBatch(entries){
     var todo = [];
@@ -3258,10 +3259,7 @@ $("companyDirectorySort").onchange = () => { currentCompaniesPage = 1; renderCom
       var x = (e.clientX - r.left), y = (e.clientY - r.top);
       c.style.setProperty("--mx", x.toFixed(0) + "px");
       c.style.setProperty("--my", y.toFixed(0) + "px");
-      if(tier === "high" && !c.classList.contains("rv") && !c.classList.contains("tool-card")){
-        var rx = (.5 - y / r.height) * 5, ry = (x / r.width - .5) * 6;
-        c.style.transform = "perspective(1000px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg) translateY(-3px)";
-      }
+      /* Spotlight follows the pointer; cards themselves remain stable for reading. */
     }, {passive:true});
     document.documentElement.addEventListener("mouseleave", function(){ resetTilt(hovered); hovered = null; });
 
