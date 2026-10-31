@@ -760,14 +760,15 @@ html.intro-on{overflow:hidden}
 .intro.out .intro-skip{opacity:0;pointer-events:none}
 
 /* ---------- Directional scroll reveals ---------- */
-.rv{opacity:0;transform:translate3d(var(--rx,0),var(--ry,26px),0) scale(var(--rs,1));
- transition:opacity .85s var(--ease),transform .95s var(--ease);transition-delay:var(--rd,0ms)}
-.rv.in{opacity:1;transform:none}
-/* Animate meaningful content inside each revealed card/panel in a short stagger. */
-.rv-part{opacity:0;transform:translate3d(0,18px,0)}
+/* Visibility-first motion: content is ALWAYS visible, even if an observer fails. */
+.rv{opacity:1;transform:none;transition:none}
+.rv.in{animation:jr-card-shell-enter .58s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--rd,0ms)}
+@keyframes jr-card-shell-enter{from{transform:translate3d(var(--rx,0),var(--ry,22px),0) scale(var(--rs,1));filter:blur(1px)}to{transform:translate3d(0,0,0) scale(1);filter:blur(0)}}
+/* Inner content also stays visible before and after its optional stagger. */
+.rv-part{opacity:1;transform:none}
 .rv-part.rv-part-in{animation:jr-card-content-enter .62s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--part-delay,0ms)}
 @keyframes jr-card-content-enter{from{opacity:0;transform:translate3d(0,18px,0);filter:blur(2px)}to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}}
-@media(prefers-reduced-motion:reduce){.rv-part,.rv-part.rv-part-in{opacity:1!important;transform:none!important;animation:none!important;filter:none!important}}
+@media(prefers-reduced-motion:reduce){.rv,.rv.in,.rv-part,.rv-part.rv-part-in{opacity:1!important;transform:none!important;transition:none!important;animation:none!important;filter:none!important}}
 
 /* ---------- View-to-view slide (left / right depending on tab order) ---------- */
 html.js-motion .view.active{animation:jr-view-fwd .6s var(--ease) backwards}
