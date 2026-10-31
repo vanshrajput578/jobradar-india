@@ -185,6 +185,116 @@ footer{text-align:center;padding:38px 20px;background:var(--surface);border-top:
 }
 @media(max-width:380px){.hero h1{font-size:32px}.stats{gap:7px}.stat{padding:12px}.company-grid{grid-template-columns:1fr}.mobile-dock{left:6px;right:6px}}\n@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+
+/* UI UX Pro Max application: JobRadar dashboard system */
+:root{
+ --bg:#f3f6fc;--surface:#fff;--surface-2:#f7f9fe;--text:#14213b;--muted:#65738b;
+ --border:#e3e9f3;--primary:#3157d5;--primary-2:#2346bb;--soft:#edf2ff;
+ --green:#087b55;--green-bg:#e6f6ef;--amber:#8a5a00;--amber-bg:#fff4d9;
+ --red:#b42332;--red-bg:#fff0f0;--shadow:0 8px 28px rgba(20,39,79,.055);--radius:16px
+}
+body.dark{
+ --bg:#0b1220;--surface:#111c2e;--surface-2:#17243a;--text:#edf3ff;--muted:#a0aec4;
+ --border:#293951;--primary:#91a7ff;--primary-2:#b0beff;--soft:#202e4d;
+ --green:#6ee0ae;--green-bg:#15392f;--amber:#ffd477;--amber-bg:#40351d;
+ --red:#ff9ca6;--red-bg:#48232c;--shadow:0 10px 30px rgba(0,0,0,.2)
+}
+body{font-size:15px;line-height:1.6;letter-spacing:-.01em}
+header{height:70px;padding-inline:max(22px,calc((100% - 1240px)/2));border-bottom-color:var(--border);box-shadow:0 2px 14px rgba(20,39,79,.035)}
+.logo{font-size:18px;letter-spacing:-.8px}
+.logo:before{width:12px;height:12px;border-radius:4px}
+nav a{font-size:12px;padding:9px 11px}
+.hero{padding-top:68px;padding-bottom:72px;background:radial-gradient(ellipse at 88% 12%,rgba(111,143,255,.28),transparent 34%),linear-gradient(118deg,#101b35 0%,#172b57 56%,#23418a 100%)}
+.hero:before{font-size:10px;letter-spacing:1.35px}
+.hero h1{font-size:clamp(36px,5.2vw,60px);max-width:720px;letter-spacing:-2.4px;line-height:1.04}
+.hero p{font-size:16px;line-height:1.65}
+.search{border:1px solid #e4e9f3;box-shadow:0 18px 46px rgba(3,12,35,.25);border-radius:14px}
+.search input{font-size:15px}
+.search button{min-width:142px}
+.container{max-width:1240px;margin-top:42px;margin-bottom:42px}
+.container>h2,.panel h2{font-size:22px;letter-spacing:-.65px}
+.container>h2:after{width:30px;height:3px;margin-top:8px}
+.stats{gap:12px;margin:22px 0 26px}
+.stat,.job,.panel,.company-card{border-radius:16px;border-color:var(--border);box-shadow:var(--shadow)}
+.stat{padding:18px}
+.stat strong{font-size:29px;letter-spacing:-1.2px}
+.stat span{font-size:12px;line-height:1.4}
+.filter-section{margin:23px 0}
+.filter-title{font-size:11px;letter-spacing:.8px}
+.filter{padding:9px 14px;border-radius:9px;font-size:12px}
+.filter.active{box-shadow:0 4px 12px rgba(49,87,213,.18)}
+.controls{gap:10px;margin:22px 0}
+.field{min-height:46px;border-radius:10px;padding:12px 13px}
+.field:focus,.tool-card input:focus,.tool-card textarea:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 17%,transparent)}
+.section-head{margin:22px 0 13px}
+.jobs{gap:16px}
+.job{padding:21px;box-shadow:0 5px 20px rgba(20,39,79,.045)}
+.job:hover{transform:translateY(-2px);box-shadow:0 13px 30px rgba(20,39,79,.09)}
+.job h3{font-size:18px;letter-spacing:-.45px;line-height:1.35;margin-top:14px}
+.company{font-size:13px}
+.badge{font-size:10px;padding:5px 9px;border-radius:6px}
+.status-pill{font-size:10px;letter-spacing:.25px}
+.job p{line-height:1.55}
+.job details{line-height:1.6}
+.job-actions{gap:9px}
+.job-actions button,.apply{min-height:40px;padding:9px 13px;font-size:11px;border-radius:9px}
+.secondary{background:var(--surface-2);border-color:var(--border)}
+.panel{padding:26px}
+.panel-head{margin-top:0}
+.table-wrap{border:1px solid var(--border);border-radius:12px}
+table{min-width:600px}
+th{background:var(--surface-2)}
+td,th{padding:14px 13px}
+.company-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.company-card{padding:20px}
+.company-card strong{font-size:15px;letter-spacing:-.2px}
+.company-card .company-category{line-height:1.5}
+.company-card .company-status{border-radius:7px}
+.tool-grid{gap:15px}
+.tool-card{border-radius:16px;padding:21px;box-shadow:var(--shadow)}
+.tool-card h3{font-size:16px;letter-spacing:-.35px}
+.tool-output{border-radius:10px;line-height:1.6}
+.modal-content{border-radius:18px}
+button{border-radius:10px;min-height:42px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+@media(max-width:800px){
+ header{padding-inline:18px}
+ .hero{padding:58px 24px 62px}
+ .company-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .panel{padding:20px}
+}
+@media(max-width:600px){
+ body{font-size:14px;padding-bottom:76px}
+ header{height:64px;padding-inline:14px}
+ .hero{padding:46px 19px 48px}
+ .hero h1{font-size:37px;letter-spacing:-1.6px;max-width:440px}
+ .hero p{font-size:14px}
+ .search{gap:6px}
+ .search button{min-height:46px}
+ .container{margin:28px auto;padding-inline:15px}
+ .stats{gap:9px}
+ .stat{padding:14px;border-radius:13px}
+ .stat strong{font-size:25px}
+ .controls{gap:8px}
+ .controls .field{min-width:0}
+ .jobs{gap:11px}
+ .job{padding:17px;border-radius:14px}
+ .job h3{font-size:17px}
+ .company-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .company-card{padding:14px}
+ .company-card strong{font-size:13px}
+ .panel{padding:17px;border-radius:15px}
+ .tool-card{padding:16px}
+ .mobile-dock{bottom:8px;left:8px;right:8px;padding:8px;border-radius:15px}
+ .mobile-dock a{min-height:42px;font-size:10px}
+}
+@media(max-width:360px){
+ .hero h1{font-size:32px}
+ .company-grid{grid-template-columns:1fr}
+ .controls{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
