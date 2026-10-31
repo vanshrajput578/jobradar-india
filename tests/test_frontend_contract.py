@@ -42,5 +42,32 @@ class FrontendContractTests(unittest.TestCase):
         self.assertIn('addEventListener("hashchange", routeFromHash)', HTML)
 
 
+    def test_job_and_company_results_are_paginated(self):
+        self.assertIn('id="jobPagination"', HTML)
+        self.assertIn('id="companyPagination"', HTML)
+        self.assertIn("const JOBS_PER_PAGE = 12", HTML)
+        self.assertIn("const COMPANIES_PER_PAGE = 12", HTML)
+        self.assertIn("function renderPager(", HTML)
+        self.assertIn("rows.slice(start, start + JOBS_PER_PAGE)", HTML)
+        self.assertIn("rows.slice(start, start + COMPANIES_PER_PAGE)", HTML)
+
+    def test_company_sort_and_search_controls_are_wired(self):
+        self.assertIn('id="companyDirectorySort"', HTML)
+        self.assertIn('value="jobs">Most active listings', HTML)
+        self.assertIn('companyDirectorySort").onchange', HTML)
+        self.assertIn('companyDirectorySearch").oninput', HTML)
+
+    def test_saved_jobs_empty_state_has_a_working_discovery_action(self):
+        self.assertIn("Your shortlist starts here", HTML)
+        self.assertIn('id="browseJobsFromSaved"', HTML)
+        self.assertIn('showView("jobs")', HTML)
+
+    def test_unified_visual_system_and_dark_first_default_are_present(self):
+        self.assertIn("JobRadar India — unified flagship interface layer", HTML)
+        self.assertIn("body.dark{--bg:#080f1d", HTML)
+        self.assertIn('localStorage.getItem("jobradar-theme") !== "light"', HTML)
+        self.assertIn("@media(prefers-reduced-motion:reduce)", HTML.replace(" ", ""))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
