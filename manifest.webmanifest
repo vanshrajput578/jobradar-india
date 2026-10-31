@@ -4,7 +4,7 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f6fb",
-  "theme_color": "#101827",
+  "background_color": "#0e0b30",
+  "theme_color": "#0e0b30",
   "description": "Discover, verify and track job opportunities."
 }

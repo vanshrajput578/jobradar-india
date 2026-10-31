@@ -85,3 +85,13 @@ The current page remains plain HTML/CSS/JS. No framework, package, backend, paid
 ## Upstream skill note
 
 The upstream project contains a CLI, searchable datasets and stack-specific guidance. This repository records the project-specific design decisions and applies selected guidance; it does **not** vendor the complete upstream CLI/data bundle or install a global assistant skill.
+
+
+## v11 redesign — 2026-10-31 (supersedes the tokens above)
+
+- **Identity:** "night radar" hero in deep indigo with a marigold signal colour; calm paper UI below. Light theme by default, dark theme follows the system or the saved `jobradar-theme` value.
+- **Tokens:** ink `#15123a`, paper `#f6f5fb`, brand indigo `#4a3ce0`, marigold `#ffb320`, signal mint `#25d3a6`. Dark surfaces `#0c0a22` / `#15123a`.
+- **Type:** Bricolage Grotesque (display) + Figtree (body), with system fallbacks.
+- **Layout:** desktop-first website structure — sticky header with sliding nav pill, hero with live "Just detected" panel, jobs page with sticky filter sidebar and list-style job cards with company avatars, four-column footer. The Android-style bottom dock is retired; navigation lives in the header (hamburger on mobile).
+- **Motion:** one welcome intro per session (skippable, disabled for reduced motion), radar canvas in the hero, animated counters, staggered card reveals, view slide. All honour `prefers-reduced-motion`.
+- **Unchanged:** every element ID, route, localStorage key, JSON feed contract and verification rule used by the app logic.

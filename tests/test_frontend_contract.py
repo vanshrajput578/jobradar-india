@@ -62,11 +62,20 @@ class FrontendContractTests(unittest.TestCase):
         self.assertIn('id="browseJobsFromSaved"', HTML)
         self.assertIn('showView("jobs")', HTML)
 
-    def test_unified_visual_system_and_dark_first_default_are_present(self):
+    def test_unified_visual_system_theme_and_intro_are_present(self):
         self.assertIn("JobRadar India — unified flagship interface layer", HTML)
-        self.assertIn("body.dark{--bg:#080f1d", HTML)
-        self.assertIn('localStorage.getItem("jobradar-theme") !== "light"', HTML)
+        self.assertIn("body.dark{", HTML)
+        self.assertIn('localStorage.getItem("jobradar-theme")', HTML)
+        self.assertIn("prefers-color-scheme: dark", HTML)
         self.assertIn("@media(prefers-reduced-motion:reduce)", HTML.replace(" ", ""))
+        for hook in ("jrIntro", "heroCanvas", "scrollProgress", "heroFeed", "hmJobs"):
+            with self.subTest(hook=hook):
+                self.assertIn(f'id="{hook}"', HTML)
+
+    def test_jobs_page_has_sidebar_layout_and_company_avatar(self):
+        self.assertIn('class="jobs-layout"', HTML)
+        self.assertIn('class="jobs-filters"', HTML)
+        self.assertIn("job-card__avatar", HTML)
 
 
 if __name__ == "__main__":
