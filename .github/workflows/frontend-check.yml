@@ -38,6 +38,21 @@ jobs:
           print(f"Valid jobs.json: {len(data['jobs'])} jobs")
           PY
 
+      - name: Validate compact public job feed
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          source = json.loads(Path("jobs.json").read_text(encoding="utf-8"))
+          public_path = Path("jobs_public.json")
+          if not public_path.exists():
+              raise SystemExit("jobs_public.json has not been generated")
+          public = json.loads(public_path.read_text(encoding="utf-8"))
+          if len(source.get("jobs", [])) != len(public.get("jobs", [])):
+              raise SystemExit("Public feed count differs from jobs.json")
+          print(f"Valid public feed: {len(public['jobs'])} jobs")
+          PY
+
       - name: Validate inline JavaScript syntax
         run: |
           python - <<'PY'
