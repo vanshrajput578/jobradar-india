@@ -7,6 +7,7 @@ on:
     branches: ["main"]
     paths:
       - "fetch_jobs.py"
+      - "build_public_feed.py"
       - "tests/**"
       - ".github/workflows/update-jobs.yml"
 
@@ -73,7 +74,13 @@ jobs:
         run: |
           python fetch_jobs.py
 
-      # 7. Validate all generated JSON files
+      # 7. Build a smaller feed for fast mobile loading
+      - name: Build compact public feed
+        run: |
+          python -m py_compile build_public_feed.py
+          python build_public_feed.py
+
+      # 8. Validate all generated JSON files
       - name: Validate generated JSON
         run: |
           python - <<'PY'
@@ -82,6 +89,7 @@ jobs:
 
           required = [
               "jobs.json",
+              "jobs_public.json",
               "duplicate_audit.json",
               "expiry_audit.json"
           ]
@@ -112,6 +120,12 @@ jobs:
               raise SystemExit(
                   "total_jobs does not match jobs list length"
               )
+
+          with open("jobs_public.json", encoding="utf-8") as file:
+              public_database = json.load(file)
+
+          if len(public_database.get("jobs", [])) != len(database["jobs"]):
+              raise SystemExit("Public feed job count does not match jobs.json")
 
           with open("duplicate_audit.json", encoding="utf-8") as file:
               duplicate_audit = json.load(file)
@@ -146,7 +160,7 @@ jobs:
           print("All generated data checks passed.")
           PY
 
-      # 8. Publish only generated data and audit reports
+      # 9. Publish generated database, compact feed and audit reports
       - name: Commit updated database and audit reports
         run: |
           set -e
@@ -154,7 +168,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add jobs.json duplicate_audit.json expiry_audit.json
+          git add jobs.json jobs_public.json duplicate_audit.json expiry_audit.json
 
           if git diff --cached --quiet; then
             echo "No generated data changes to commit."
@@ -163,7 +177,7 @@ jobs:
             git push origin HEAD:main
           fi
 
-      # 9. Print final execution summary
+      # 10. Print final execution summary
       - name: JobRadar execution summary
         if: success()
         run: |
@@ -171,7 +185,7 @@ jobs:
           echo "Job database and audit reports checked."
           echo "See this workflow run for detailed source results."
 
-      # 10. Report failures clearly
+      # 11. Report failures clearly
       - name: Report workflow failure
         if: failure()
         run: |
