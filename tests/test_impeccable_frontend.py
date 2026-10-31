@@ -28,6 +28,14 @@ class ImpeccableFrontendTests(unittest.TestCase):
         self.assertIn('job.title', HTML)
         self.assertIn('job.india_eligibility', HTML)
 
+    def test_type_and_experience_filters_are_data_driven(self):
+        self.assertIn('id="jobTypeFilter"', HTML)
+        self.assertIn('id="experienceFilter"', HTML)
+        self.assertIn('jobTypes.length ? "All job types" : "Job type not supplied by current sources"', HTML)
+        self.assertIn('experiences.length ? "All experience levels" : "Experience not supplied by current sources"', HTML)
+        self.assertIn('if(jobType && String(job.job_type || "") !== jobType) return false;', HTML)
+        self.assertIn('if(experience && String(job.experience || "") !== experience) return false;', HTML)
+
     def test_accessibility_and_reduced_motion_contract_remains(self):
         self.assertIn('class="skip-link"', HTML)
         self.assertIn('aria-label="Main navigation"', HTML)
