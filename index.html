@@ -763,6 +763,10 @@ html.intro-on{overflow:hidden}
 .rv{opacity:0;transform:translate3d(var(--rx,0),var(--ry,26px),0) scale(var(--rs,1));
  transition:opacity .85s var(--ease),transform .95s var(--ease);transition-delay:var(--rd,0ms)}
 .rv.in{opacity:1;transform:none}
+/* Animate meaningful content inside each revealed card/panel in a short stagger. */
+.rv-part{opacity:0;transform:translate3d(0,12px,0);transition:opacity .42s var(--ease),transform .5s var(--ease);transition-delay:var(--part-delay,0ms)}
+.rv-part.rv-part-in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv-part,.rv-part.rv-part-in{opacity:1!important;transform:none!important;transition:none!important}}
 
 /* ---------- View-to-view slide (left / right depending on tab order) ---------- */
 html.js-motion .view.active{animation:jr-view-fwd .6s var(--ease) backwards}
@@ -2500,15 +2504,15 @@ $("companyDirectoryCategory").onchange = renderCompanies;
      5) Directional scroll reveals (up / zoom / left / right)
      --------------------------------------------------------------- */
   var RULES = [
-    /* Section headings, explanatory copy and page-level blocks */
+    /* Global shell and home hero/footer were previously outside .view content rules. */
+    ["header, #view-home > .hero, #view-home > footer, .view > .container, .view > main.container", "up"],
+    /* Section headings and explanatory copy */
     [".container > h1, .container > h2, .container > h3, .container > .muted, .section-heading, .page-heading", "up"],
+    /* Panels, controls, empty states and all common card surfaces */
     [".filter-section, .controls, .search, .tracker-toolbar, .table-wrap, .company-directory-tools, .panel, .notice, .alert, .empty-state, .empty, .verification-banner, .profile-header, .career-tool-section", "up"],
-    /* Reusable content surfaces across every view */
-    [".view .stat, .view .metric, .view .summary-card, .view .info-card, .view .feature-card, .view .insight-card, .view .tool-card, .view .company-card, .view .job", "grid"],
-    /* Repeated data and navigation elements */
+    [".view .stat, .view .metric, .view .summary-card, .view .info-card, .view .feature-card, .view .insight-card, .view .tool-card, .view .company-card, .view .job, .view .card", "grid"],
     [".jobs > .job, .company-grid > .company-card, .tool-grid > .tool-card, .verification-grid > .panel", "grid"],
     [".view table tr, .view .list-item, .view .timeline-item, .view .step-card, .view .faq-item, .view .accordion-item", "up"],
-    /* Small controls get a subtle entrance, not a large movement */
     [".view .filter-chip, .view .tag, .view .badge, .view .tab, .view .segmented-control, .view .pagination button", "zoom"]
   ];
   var revealIO = null;
@@ -2520,6 +2524,21 @@ $("companyDirectoryCategory").onchange = renderCompanies;
   function finish(el){
     el.classList.remove("rv", "in");
     el.style.removeProperty("--rx"); el.style.removeProperty("--ry"); el.style.removeProperty("--rs"); el.style.removeProperty("--rd");
+  }
+  function animateCardContents(el, baseDelay){
+    if(!el || !el.querySelectorAll) return;
+    var parts=el.querySelectorAll("h1,h2,h3,h4,p,span,small,strong,button,a,li,summary,label,input,select,textarea,.badge,.tag,.stat,.panel");
+    var index=0;
+    parts.forEach(function(part){
+      if(part.closest(".intro")) return;
+      if(part.classList.contains("rv-part")) return;
+      part.classList.add("rv-part");
+      part.style.setProperty("--part-delay", Math.min(baseDelay + index*32, 280) + "ms");
+      index++;
+    });
+    requestAnimationFrame(function(){
+      parts.forEach(function(part){ part.classList.add("rv-part-in"); });
+    });
   }
   function revealBatch(entries){
     var todo = [];
@@ -2551,6 +2570,7 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     todo.forEach(function(t){
       t.el.style.transition = "";
       t.el.classList.add("in");
+      animateCardContents(t.el, t.delay);
       var done = false;
       var clean = function(){ if(done) return; done = true; finish(t.el); };
       t.el.addEventListener("transitionend", function h(ev){ if(ev.propertyName === "transform"){ t.el.removeEventListener("transitionend", h); clean(); } });
@@ -2646,6 +2666,7 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     targets.forEach(function(el){
       if(!active.contains(el)) return;
       el.classList.remove("is-visible", "in");
+      el.querySelectorAll(".rv-part").forEach(function(part){ part.classList.remove("rv-part-in"); part.style.removeProperty("--part-delay"); });
       el.classList.add("rv");
       el.style.transition = "none";
       el.style.removeProperty("--rx"); el.style.removeProperty("--ry");
