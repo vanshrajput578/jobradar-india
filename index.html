@@ -1413,6 +1413,10 @@ let allJobs = [];
 let selectedRegion = "All";
 let selectedCategory = "All";
 let selectedDiscoveryMode = "";
+let currentJobsPage = 1;
+let currentCompaniesPage = 1;
+const JOBS_PER_PAGE = 12;
+const COMPANIES_PER_PAGE = 12;
 
 function readStore(key, fallback) {
   try {
