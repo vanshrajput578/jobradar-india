@@ -1793,6 +1793,7 @@ function renderJobs() {
   list.innerHTML = "";
 
   if(!rows.length) {
+    $("jobPagination").innerHTML = "";
     const message = selectedDiscoveryMode === "internships"
       ? "No internship titles are currently present in the connected employer feeds. This section will populate when a source provides internship listings."
       : "No matching jobs found. Try changing your filters.";
@@ -2073,18 +2074,25 @@ function renderCompanies() {
 
   const query = ($("companyDirectorySearch")?.value || "").trim().toLowerCase();
   const category = $("companyDirectoryCategory")?.value || "";
+  const sort = $("companyDirectorySort")?.value || "name";
   const rows = companyMaster.filter(company => {
     const searchable = [company.name, ...(company.aliases || []), ...(company.categories || [])].join(" ").toLowerCase();
     return (!query || searchable.includes(query)) && (!category || (company.categories || []).includes(category));
-  }).sort((a,b) => String(a.name).localeCompare(String(b.name)));
+  }).sort((a,b) => sort === "jobs"
+    ? jobsForCompany(b).filter(job => job.availability_status === "active").length - jobsForCompany(a).filter(job => job.availability_status === "active").length || String(a.name).localeCompare(String(b.name))
+    : String(a.name).localeCompare(String(b.name)));
 
   $("companyDirectoryCount").textContent = rows.length + " of " + companyMaster.length + " companies";
   if (!rows.length) {
+    $("companyPagination").innerHTML = "";
     box.innerHTML = '<div class="empty">No companies match this search. Try another name or category.</div>';
     return;
   }
 
-  rows.forEach(company => {
+  const pages = Math.max(1, Math.ceil(rows.length / COMPANIES_PER_PAGE));
+  currentCompaniesPage = Math.min(currentCompaniesPage, pages);
+  const start = (currentCompaniesPage - 1) * COMPANIES_PER_PAGE;
+  rows.slice(start, start + COMPANIES_PER_PAGE).forEach(company => {
     const card = document.createElement("article");
     card.className = "company-card";
 
@@ -2187,6 +2195,11 @@ function renderCompanies() {
     }
     card.append(actions);
     box.append(card);
+  });
+  renderPager("companyPagination", currentCompaniesPage, rows.length, COMPANIES_PER_PAGE, page => {
+    currentCompaniesPage = page;
+    renderCompanies();
+    $("companyGrid").scrollIntoView({behavior: "smooth", block: "start"});
   });
 }
 
