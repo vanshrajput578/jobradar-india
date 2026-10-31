@@ -890,6 +890,134 @@ footer::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;b
   #companyGrid .company-card__fact{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);padding:8px 0}
 }
 
+ 
+/* Impeccable: Operate-first design system. Compact hierarchy, clear task path, low-bandwidth friendly. */
+:root{
+ --jr-ink:#13223d;--jr-blue:#3158d8;--jr-blue-strong:#2347bf;--jr-blue-soft:#edf2ff;
+ --jr-line:#e2e8f2;--jr-radius-sm:10px;--jr-radius-md:14px;--jr-radius-lg:20px;
+ --jr-shadow-card:0 8px 24px rgba(16,35,71,.055);
+ --jr-content:1180px;
+}
+body.dark{
+ --jr-ink:#eff4ff;--jr-blue:#8ea5ff;--jr-blue-strong:#a8b9ff;--jr-blue-soft:#202e50;
+ --jr-line:#2a3953;--jr-shadow-card:0 10px 28px rgba(0,0,0,.22);
+}
+html{scroll-padding-top:84px}
+body{font-size:16px;line-height:1.58}
+header{min-height:72px;padding-inline:max(18px,calc((100% - var(--jr-content))/2));gap:16px}
+.logo{font-size:18px;letter-spacing:-.55px}
+nav{gap:3px;min-width:0}
+nav>a{padding:9px 10px;border-radius:9px;font-size:12px}
+nav>a.active,nav>a[aria-current="page"]{background:var(--soft);color:var(--primary)}
+.nav-more{position:relative}
+.nav-more>summary{display:flex;align-items:center;min-height:40px;padding:8px 10px;border-radius:9px;color:var(--muted);font-size:12px;font-weight:750;cursor:pointer;list-style:none}
+.nav-more>summary::-webkit-details-marker{display:none}
+.nav-more>summary:after{content:"⌄";margin-left:6px}
+.nav-more[open]>summary{background:var(--soft);color:var(--primary)}
+.nav-more__panel{position:absolute;top:calc(100% + 8px);right:0;z-index:40;display:grid;min-width:205px;gap:3px;padding:8px;border:1px solid var(--border);border-radius:13px;background:var(--surface);box-shadow:var(--shadow)}
+.nav-more__panel a{padding:10px 12px;border-radius:8px;color:var(--text);font-size:12px;text-decoration:none;font-weight:700}
+.nav-more__panel a:hover,.nav-more__panel a[aria-current="page"]{background:var(--soft);color:var(--primary)}
+.hero{padding:clamp(54px,7vw,82px) max(22px,calc((100% - var(--jr-content))/2)) 64px;background:radial-gradient(ellipse at 82% 20%,rgba(92,122,238,.24),transparent 35%),linear-gradient(118deg,#101a32 0%,#172b55 58%,#263e78 100%)}
+.hero-inner{position:relative;z-index:1;max-width:var(--jr-content);margin:0 auto}
+.hero-eyebrow{display:flex;align-items:center;gap:9px;margin:0 0 16px;color:#c7d4ff;font-size:11px;font-weight:850;letter-spacing:1.25px}
+.hero-eyebrow span{opacity:.55}
+.hero h1{max-width:760px;margin:0 0 14px;font-size:clamp(36px,5vw,60px);line-height:1.05;letter-spacing:-2.2px;text-wrap:balance}
+.hero-copy{max-width:620px;margin:0;color:#d6e0f7;font-size:16px;line-height:1.65}
+.hero-search{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(190px,.8fr) auto;gap:7px;max-width:850px;margin:27px 0 0;padding:7px;background:#fff;border:1px solid rgba(255,255,255,.35);border-radius:14px;box-shadow:0 14px 36px rgba(3,12,32,.2)}
+.hero-search__query,.hero-search__location{display:flex;align-items:center;gap:10px;min-width:0;padding:0 12px;color:#52617a}
+.hero-search__query{border-right:1px solid #e5eaf2}
+.hero-search__icon{font-size:22px;line-height:1;color:#7484a0}
+.hero-search input,.hero-search select{width:100%;min-width:0;min-height:48px;border:0;outline:0;background:transparent;color:#172033;font-size:15px}
+.hero-search input::placeholder{color:#7d899e}
+.hero-search__submit{min-width:145px;min-height:48px;border-radius:10px;background:#3158d8;color:#fff;font-size:13px;font-weight:800}
+.hero-search__submit:hover{background:#2347bf}
+.home-search-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:15px}
+.home-search-meta__label{color:#c6d3ef;font-size:11px;font-weight:750}
+.home-popular-searches{display:flex;flex-wrap:wrap;gap:7px}
+.home-popular-search{min-height:32px;padding:6px 10px;border:1px solid rgba(255,255,255,.24);border-radius:8px;background:rgba(255,255,255,.08);color:#f1f5ff;font-size:11px;font-weight:700}
+.home-popular-search:hover{background:rgba(255,255,255,.16)}
+.hero-secondary-link{display:inline-flex;align-items:center;gap:6px;margin-top:17px;color:#d7e1fa;font-size:12px;font-weight:750;text-decoration:none}
+.hero-secondary-link:hover{color:#fff}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.container{max-width:var(--jr-content);padding-inline:24px}
+.container>h2,.panel h2{font-size:clamp(21px,2vw,25px);line-height:1.2;letter-spacing:-.55px}
+.stats{gap:12px}
+.stat,.job,.panel,.company-card,.tool-card{border-radius:var(--jr-radius-md);box-shadow:var(--jr-shadow-card)}
+.stat{padding:17px 18px}
+.jobs{gap:14px}
+.job{padding:20px;display:flex;flex-direction:column;gap:10px}
+.job h3{margin:0;font-size:17px;line-height:1.35;letter-spacing:-.25px;overflow-wrap:anywhere}
+.company{font-size:12px}
+.job .tags{margin:0}
+.job .job-card__meta{display:flex;flex-wrap:wrap;gap:6px}
+.job .job-meta-item{max-width:100%;overflow-wrap:anywhere}
+.job .job-actions{margin-top:auto}
+.field{min-height:46px;padding:11px 13px}
+.field:disabled{color:var(--muted);background:var(--surface-2);cursor:not-allowed}
+.filter,.secondary,.apply,button{touch-action:manipulation}
+.quick-filter-group{gap:14px}
+.advanced-filters .controls{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.section-head{margin-top:22px}
+.company-directory-tools{grid-template-columns:minmax(0,2fr) minmax(220px,1fr)}
+.tool-grid{gap:14px}
+.tool-card{padding:21px}
+.tool-card h3{font-size:16px;line-height:1.3}
+.tool-card input,.tool-card textarea{font-size:16px}
+.panel{padding:24px}
+.table-wrap{border:1px solid var(--border);border-radius:12px}
+table{min-width:640px}
+.mobile-dock{padding-bottom:max(7px,env(safe-area-inset-bottom))}
+@media(max-width:1120px){
+ header{padding-inline:18px;gap:12px}
+ nav{gap:1px}
+ nav>a{padding-inline:8px;font-size:11px}
+ .logo{font-size:17px}
+}
+@media(max-width:800px){
+ header{min-height:64px;height:64px;padding-inline:15px}
+ .menu{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+ nav{display:none;position:absolute;top:calc(100% + 1px);left:10px;right:10px;max-height:calc(100dvh - 82px);overflow-y:auto;overscroll-behavior:contain;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:4px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);z-index:40}
+ nav.open{display:flex}
+ nav>a,nav .nav-more>summary{display:flex;width:100%;min-height:44px;align-items:center;padding:11px 12px;font-size:13px}
+ .nav-more__panel{position:static;min-width:0;margin:2px 0 7px;padding:4px 7px;border:0;border-left:2px solid var(--border);border-radius:0;box-shadow:none}
+ .nav-more__panel a{min-height:42px;padding:10px 12px}
+ nav .theme{width:100%;min-height:44px;text-align:left}
+ .hero{padding:54px 22px 48px}
+ .hero-search{grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:100%}
+ .hero-search__query{border-right:0}
+ .hero-search__location{border-left:1px solid #e5eaf2}
+ .hero-search__submit{grid-column:1/-1;width:100%}
+ .advanced-filters .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .company-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ body{font-size:16px;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+ .hero{padding:42px 18px 40px}
+ .hero h1{max-width:12ch;font-size:clamp(34px,9vw,42px);line-height:1.05;letter-spacing:-1.4px}
+ .hero-copy{font-size:14px;max-width:38ch}
+ .hero-search{grid-template-columns:minmax(0,1fr);gap:5px;margin-top:21px;padding:6px}
+ .hero-search__query,.hero-search__location{min-height:46px;padding-inline:10px;border:0}
+ .hero-search__query{border-bottom:1px solid #e5eaf2}
+ .hero-search__location{border-bottom:1px solid #e5eaf2}
+ .hero-search input,.hero-search select{font-size:16px;min-height:44px}
+ .hero-search__submit{min-height:46px;font-size:13px}
+ .home-search-meta{align-items:flex-start;flex-direction:column;gap:8px}
+ .home-popular-searches{overflow-x:auto;flex-wrap:nowrap;max-width:100%;padding-bottom:5px}
+ .home-popular-search{flex:0 0 auto}
+ .container{padding-inline:16px;margin-block:28px}
+ .jobs{grid-template-columns:minmax(0,1fr);gap:11px}
+ .advanced-filters .controls{grid-template-columns:minmax(0,1fr)}
+ .company-grid{grid-template-columns:minmax(0,1fr)}
+ .tool-grid,.verification-grid{grid-template-columns:minmax(0,1fr)}
+ .panel{padding:18px}
+ .tracker-toolbar{grid-template-columns:minmax(0,1fr)}
+ .mobile-dock{left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-orbit,.hero:after{animation:none!important}
+ .job,.company-card,.tool-card,button{transition:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -900,28 +1028,59 @@ footer::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;b
 <button class="menu secondary" id="menuBtn" aria-label="Open navigation" aria-controls="navigation" aria-expanded="false">☰</button>
 <nav id="navigation" aria-label="Main navigation">
 <a href="#home" data-view="home">Home</a>
-<a href="#jobs" data-view="jobs">Find Jobs</a>
+<a href="#jobs" data-view="jobs">Jobs</a>
 <a href="#companies" data-view="companies">Companies</a>
+<a href="#jobs" data-nav-intent="internships">Internships</a>
+<a href="#companies" data-nav-intent="government-recruiters">Government recruiters</a>
+<a href="#tools" data-view="tools" data-nav-intent="resources">Resources</a>
+<details class="nav-more" id="navMore">
+<summary aria-label="More navigation options">More</summary>
+<div class="nav-more__panel">
 <a href="#saved" data-view="saved">Saved Jobs</a>
 <a href="#tracker" data-view="tracker">My Applications</a>
 <a href="#verification" data-view="verification">Verification</a>
-<a href="#tools" data-view="tools">Career Tools</a>
 <a href="#about" data-view="about">About</a>
-<button class="theme" id="themeBtn">☾ Theme</button>
+</div>
+</details>
+<button class="theme" id="themeBtn" type="button" aria-label="Toggle colour theme">☾ Theme</button>
 </nav>
 </header>
 
 <div class="view active" id="view-home">
-<section class="hero" id="home"><div class="hero-orbit" aria-hidden="true"></div>
-<h1>Find work that moves you forward.</h1>
-<p>Explore employer-listed roles, verify availability, and manage your job search in one focused workspace.</p>
-<a class="hero-cta" href="#jobs" data-view="jobs">Explore jobs <span aria-hidden="true">→</span></a>
+<section class="hero" id="home">
+<div class="hero-orbit" aria-hidden="true"></div>
+<div class="hero-inner">
+  <p class="hero-eyebrow">JOBRADAR INDIA <span>·</span> CAREER DISCOVERY</p>
+  <h1>Find work that moves you forward.</h1>
+  <p class="hero-copy">Search employer-listed opportunities, check where roles are open, and keep your applications organised.</p>
+  <form class="hero-search" id="homeSearchForm" role="search" novalidate>
+    <label class="sr-only" for="homeSearchInput">Job title, skill or company</label>
+    <span class="hero-search__query">
+      <span class="hero-search__icon" aria-hidden="true">⌕</span>
+      <input id="homeSearchInput" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" aria-label="Search jobs by title, skill or company" placeholder="Job title, skill or company">
+    </span>
+    <label class="sr-only" for="homeLocationFilter">Filter by location</label>
+    <span class="hero-search__location">
+      <span aria-hidden="true">⌖</span>
+      <select id="homeLocationFilter" aria-label="Filter jobs by location">
+        <option value="">All locations</option>
+      </select>
+    </span>
+    <button type="submit" class="hero-search__submit">Search jobs <span aria-hidden="true">→</span></button>
+  </form>
+  <div class="home-search-meta">
+    <span class="home-search-meta__label">Explore by category</span>
+    <div class="home-popular-searches" id="homePopularSearches" aria-label="Popular job categories"></div>
+  </div>
+  <a class="hero-secondary-link" href="#jobs" data-view="jobs">Browse all opportunities <span aria-hidden="true">↗</span></a>
+</div>
 </section>
 
-
-
-<section class="container">
-<h2>Latest Jobs</h2>
+<section class="container home-latest-section">
+<div class="section-heading">
+  <div><h2>Latest jobs</h2><p class="muted">Recently detected opportunities from connected employer boards.</p></div>
+  <a href="#jobs" data-view="jobs" class="text-link">View all jobs <span aria-hidden="true">→</span></a>
+</div>
 <p class="muted">Recently detected opportunities.</p>
 <div class="jobs" id="latestJobs"></div>
 </section>
@@ -929,7 +1088,7 @@ footer::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;b
 <section class="container" id="market-insights">
 <div class="panel">
 <h2>Job Market Snapshot</h2>
-<p class="muted">Statistics describe only the listings collected by JobRadar, not the entire labour market.</p>
+<p class="muted">Snapshot of the current connected feed. These figures describe JobRadar listings, not the entire labour market.</p>
 <div class="verification-grid">
 <div class="stat"><strong id="insightIndia">0</strong><span>India listings</span></div>
 <div class="stat"><strong id="insightRemote">0</strong><span>Remote listings</span></div>
@@ -997,9 +1156,15 @@ footer::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;b
 <div class="controls">
 <select class="field" id="locationFilter"><option value="">All locations</option></select>
 <select class="field" id="companyFilter"><option value="">All companies</option></select>
-<select class="field" id="workFilter">
+<select class="field" id="workFilter" aria-label="Filter by work mode">
 <option value="">All work modes</option>
 <option>Remote</option><option>Hybrid</option><option>On-site</option><option>Not specified</option>
+</select>
+<select class="field" id="jobTypeFilter" aria-label="Filter by job type" disabled>
+<option value="">Job type not supplied by current sources</option>
+</select>
+<select class="field" id="experienceFilter" aria-label="Filter by experience" disabled>
+<option value="">Experience not supplied by current sources</option>
 </select>
 <select class="field" id="indiaEligibilityFilter" aria-label="Filter by India eligibility">
 <option value="">India eligibility: All</option><option value="eligible">Open to India</option><option value="not_eligible">Not open to India</option><option value="unclear">Eligibility unclear</option>
@@ -1240,6 +1405,7 @@ const $ = id => document.getElementById(id);
 let allJobs = [];
 let selectedRegion = "All";
 let selectedCategory = "All";
+let selectedDiscoveryMode = "";
 
 function readStore(key, fallback) {
   try {
@@ -1290,14 +1456,15 @@ function stats() {
   $("topCategories").textContent = "Category distribution: " + Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k,v])=>k+" ("+v+")").join(" · ");
 }
 
-function fillSelect(id, values) {
+function fillSelect(id, values, placeholder) {
   const select = $(id);
+  if (!select) return;
   const oldValue = select.value;
   select.innerHTML = "";
 
   const first = document.createElement("option");
   first.value = "";
-  first.textContent = id === "locationFilter" ? "All locations" : "All companies";
+  first.textContent = placeholder || "All options";
   select.append(first);
 
   values.forEach(value => {
@@ -1307,12 +1474,88 @@ function fillSelect(id, values) {
     select.append(option);
   });
 
+  select.disabled = values.length === 0;
   if(values.includes(oldValue)) select.value = oldValue;
 }
 
+function populateHomeLocations() {
+  const select = $("homeLocationFilter");
+  if (!select) return;
+  const current = select.value;
+  const locations = [...new Set(allJobs.map(job => String(job.location || "").trim())
+    .filter(value => value && value.toLowerCase() !== "not specified"))].sort((a,b)=>a.localeCompare(b));
+  select.innerHTML = '<option value="">All locations</option>';
+  locations.forEach(location => {
+    const option = document.createElement("option");
+    option.value = location;
+    option.textContent = location;
+    select.append(option);
+  });
+  if (locations.includes(current)) select.value = current;
+}
+
+function renderHomePopularSearches() {
+  const box = $("homePopularSearches");
+  if (!box) return;
+  box.innerHTML = "";
+  const counts = new Map();
+  allJobs.forEach(job => {
+    const category = String(job.category || "").trim();
+    if (category && category !== "Not specified") counts.set(category, (counts.get(category) || 0) + 1);
+  });
+  [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([category,count]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "home-popular-search";
+    button.textContent = category + " · " + count;
+    button.addEventListener("click", () => {
+      selectedDiscoveryMode = "";
+      selectedRegion = "All";
+      selectedCategory = category;
+      $("searchInput").value = "";
+      $("locationFilter").value = "";
+      $("companyFilter").value = "";
+      $("workFilter").value = "";
+      $("indiaEligibilityFilter").value = "";
+      $("statusFilter").value = "active";
+      $("sortFilter").value = "latest";
+      document.querySelectorAll("[data-category]").forEach(item => item.classList.toggle("active", item.dataset.category === category));
+      renderJobs();
+      if (location.hash !== "#jobs") location.hash = "jobs"; else showView("jobs");
+    });
+    box.append(button);
+  });
+}
+
+function applyHomeSearch(event) {
+  if (event) event.preventDefault();
+  selectedDiscoveryMode = "";
+  selectedRegion = "All";
+  selectedCategory = "All";
+  $("searchInput").value = $("homeSearchInput").value.trim();
+  $("locationFilter").value = $("homeLocationFilter").value;
+  $("companyFilter").value = "";
+  $("workFilter").value = "";
+  $("jobTypeFilter").value = "";
+  $("experienceFilter").value = "";
+  $("indiaEligibilityFilter").value = "";
+  $("statusFilter").value = "active";
+  $("sortFilter").value = "latest";
+  document.querySelectorAll("[data-region]").forEach(item => item.classList.toggle("active", item.dataset.region === "All"));
+  document.querySelectorAll("[data-category]").forEach(item => item.classList.toggle("active", item.dataset.category === "All"));
+  renderJobs();
+  if (location.hash !== "#jobs") location.hash = "jobs"; else showView("jobs");
+}
+
 function filtersInit() {
-  fillSelect("locationFilter", [...new Set(allJobs.map(j => j.location).filter(x => x && x !== "Not specified"))].sort());
-  fillSelect("companyFilter", [...new Set(allJobs.map(j => j.company).filter(Boolean))].sort());
+  fillSelect("locationFilter", [...new Set(allJobs.map(j => j.location).filter(x => x && x !== "Not specified"))].sort(), "All locations");
+  fillSelect("companyFilter", [...new Set(allJobs.map(j => j.company).filter(Boolean))].sort(), "All companies");
+  const jobTypes = [...new Set(allJobs.map(job => String(job.job_type || "").trim()).filter(value => value && value !== "Not specified"))].sort();
+  const experiences = [...new Set(allJobs.map(job => String(job.experience || "").trim()).filter(value => value && value !== "Not specified"))].sort();
+  fillSelect("jobTypeFilter", jobTypes, jobTypes.length ? "All job types" : "Job type not supplied by current sources");
+  fillSelect("experienceFilter", experiences, experiences.length ? "All experience levels" : "Experience not supplied by current sources");
+  populateHomeLocations();
+  renderHomePopularSearches();
 }
 
 function card(job) {
@@ -1393,11 +1636,14 @@ function card(job) {
   const footer = document.createElement("div");
   footer.className = "job-card__footer";
   const date = document.createElement("p");
-  const timestamp = Date.parse(job.first_detected_at || job.posted_at || "");
-  const detectedDate = Number.isFinite(timestamp)
-    ? new Intl.DateTimeFormat("en-IN", {day:"numeric", month:"short", year:"numeric"}).format(new Date(timestamp))
-    : "Date not available";
-  date.textContent = "Added " + detectedDate;
+  const postedTimestamp = Date.parse(job.posted_at || "");
+  const detectedTimestamp = Date.parse(job.first_detected_at || "");
+  const dateFormatter = new Intl.DateTimeFormat("en-IN", {day:"numeric", month:"short", year:"numeric"});
+  date.textContent = Number.isFinite(postedTimestamp)
+    ? "Posted " + dateFormatter.format(new Date(postedTimestamp))
+    : Number.isFinite(detectedTimestamp)
+      ? "First seen " + dateFormatter.format(new Date(detectedTimestamp))
+      : "Date not available";
   footer.append(date);
   article.append(footer);
 
@@ -1459,6 +1705,8 @@ function renderJobs() {
     : [];
   const company = $("companyFilter").value;
   const work = $("workFilter").value;
+  const jobType = $("jobTypeFilter")?.value || "";
+  const experience = $("experienceFilter")?.value || "";
   const indiaEligibility = $("indiaEligibilityFilter")?.value || "";
   const sort = $("sortFilter").value;
   const status = $("statusFilter")?.value || "active";
@@ -1474,6 +1722,7 @@ function renderJobs() {
       job.work_mode, job.job_type, job.experience, job.city, job.state, job.country, job.description
     ].join(" ").toLowerCase();
 
+    if (selectedDiscoveryMode === "internships" && !/\b(internship|intern)\b/i.test(String(job.title || ""))) return false;
     if(queryCompanyMatches.length) {
       if (!queryCompanyMatches.some(item => companyMatchesJob(item, job))) return false;
     } else if(query && !text.includes(query)) {
@@ -1483,6 +1732,8 @@ function renderJobs() {
     if(company && job.company !== company) return false;
     if(work === "Remote" && !remote(job)) return false;
     if(work && work !== "Remote" && String(job.work_mode || "Not specified") !== work) return false;
+    if(jobType && String(job.job_type || "") !== jobType) return false;
+    if(experience && String(job.experience || "") !== experience) return false;
     if(indiaEligibility && (job.india_eligibility || "unclear") !== indiaEligibility) return false;
     if(selectedRegion === "Remote" && !remote(job)) return false;
     if(selectedRegion !== "All" && selectedRegion !== "Remote" && regionOf(job) !== selectedRegion) return false;
@@ -1501,7 +1752,10 @@ function renderJobs() {
   list.innerHTML = "";
 
   if(!rows.length) {
-    list.innerHTML = '<div class="empty">No matching jobs found. Try changing your filters.</div>';
+    const message = selectedDiscoveryMode === "internships"
+      ? "No internship titles are currently present in the connected employer feeds. This section will populate when a source provides internship listings."
+      : "No matching jobs found. Try changing your filters.";
+    list.innerHTML = '<div class="empty" role="status">' + message + '</div>';
     return;
   }
 
@@ -1915,10 +2169,18 @@ function render() {
 function clearFilters() {
   $("searchInput").value = "";
   $("locationFilter").value = "";
+  selectedDiscoveryMode = "";
+  if ($("homeSearchInput")) $("homeSearchInput").value = "";
+  if ($("homeLocationFilter")) $("homeLocationFilter").value = "";
   $("companyFilter").value = "";
   $("workFilter").value = "";
+  $("jobTypeFilter").value = "";
+  $("experienceFilter").value = "";
   $("indiaEligibilityFilter").value = "";
   $("sortFilter").value = "latest";
+  $("homeSearchInput").value = "";
+  $("homeLocationFilter").value = "";
+  selectedDiscoveryMode = "";
   $("statusFilter").value = "all";
   selectedRegion = "All";
   selectedCategory = "All";
@@ -1962,6 +2224,7 @@ async function loadJobs() {
     allJobs = data.jobs;
     stats();
     filtersInit();
+    renderHomePopularSearches();
     render();
     renderCompanies();
     if (location.hash.startsWith("#company/")) renderCompanyProfile();
@@ -2046,8 +2309,16 @@ function showView(route) {
     if(active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
+  document.querySelectorAll("[data-nav-intent]").forEach(link => {
+    const intent = link.dataset.navIntent;
+    const active = (intent === "internships" && activeRoute === "jobs" && selectedDiscoveryMode === "internships") ||
+      (intent === "government-recruiters" && activeRoute === "companies" && $("companyDirectoryCategory").value === "Government & Public Sector Employers / Recruiters");
+    link.classList.toggle("active", active);
+    if(active) link.setAttribute("aria-current","page"); else link.removeAttribute("aria-current");
+  });
+  $("navMore")?.removeAttribute("open");
 
-  const moreActive = ["tools","companies","company-profile","verification","about"].includes(activeRoute);
+  const moreActive = ["saved","tracker","verification","about"].includes(activeRoute);
   $("moreBtn").classList.toggle("active", moreActive);
   $("moreMenu").setAttribute("hidden", "");
   $("moreBtn").setAttribute("aria-expanded", "false");
@@ -2086,14 +2357,69 @@ function routeFromHash() {
 
 window.addEventListener("hashchange", routeFromHash);
 $("backToCompanies").onclick = () => { selectedCompanyId = ""; location.hash = "companies"; };
+$("navMore")?.addEventListener("toggle", event => {
+  const summary = $("navMore").querySelector("summary");
+  summary.setAttribute("aria-expanded", String($("navMore").open));
+});
 
 document.querySelectorAll("[data-view]").forEach(link => {
   link.addEventListener("click", event => {
     event.preventDefault();
+    if (link.dataset.view === "companies" && !link.dataset.navIntent) {
+      $("companyDirectoryCategory").value = "";
+      $("companyDirectorySearch").value = "";
+      renderCompanies();
+    }
     const route = link.dataset.view;
     if(location.hash === "#" + route) showView(route);
     else location.hash = route;
   });
+});
+
+function handleDiscoveryNavigation(link) {
+  const intent = link.dataset.navIntent;
+  if (intent === "internships") {
+    selectedDiscoveryMode = "internships";
+    selectedRegion = "All";
+    selectedCategory = "All";
+    $("searchInput").value = "";
+    $("locationFilter").value = "";
+    $("companyFilter").value = "";
+    $("workFilter").value = "";
+    $("jobTypeFilter").value = "";
+    $("experienceFilter").value = "";
+    $("indiaEligibilityFilter").value = "";
+    $("statusFilter").value = "active";
+    renderJobs();
+    if (location.hash !== "#jobs") location.hash = "jobs"; else showView("jobs");
+  } else if (intent === "government-recruiters") {
+    selectedDiscoveryMode = "";
+    $("companyDirectorySearch").value = "";
+    const category = "Government & Public Sector Employers / Recruiters";
+    const exists = [...$("companyDirectoryCategory").options].some(option => option.value === category);
+    $("companyDirectoryCategory").value = exists ? category : "";
+    $("companyDirectoryNote").textContent = "Directory of public-sector employers and recruitment bodies. This is not a live vacancy feed; check each official recruitment notice.";
+    renderCompanies();
+    if (location.hash !== "#companies") location.hash = "companies"; else showView("companies");
+  }
+}
+
+document.querySelectorAll("[data-nav-intent]").forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    handleDiscoveryNavigation(link);
+    $("navigation").classList.remove("open");
+    $("menuBtn").setAttribute("aria-expanded","false");
+    $("navMore")?.removeAttribute("open");
+  });
+});
+
+$("homeSearchForm").addEventListener("submit", applyHomeSearch);
+$("homeSearchInput").addEventListener("input", () => {
+  $("searchInput").value = $("homeSearchInput").value;
+});
+$("homeLocationFilter").addEventListener("change", () => {
+  $("locationFilter").value = $("homeLocationFilter").value;
 });
 
 $("moreBtn").onclick = () => {
@@ -2110,7 +2436,7 @@ $("searchBtn").onclick = () => { renderJobs(); if(location.hash !== "#jobs") loc
 $("searchInput").addEventListener("keydown", event => { if(event.key === "Enter") $("searchBtn").click(); });
 $("searchInput").oninput = renderJobs;
 
-["locationFilter", "companyFilter", "workFilter", "indiaEligibilityFilter", "sortFilter", "statusFilter"].forEach(id => {
+["locationFilter", "companyFilter", "workFilter", "jobTypeFilter", "experienceFilter", "indiaEligibilityFilter", "sortFilter", "statusFilter"].forEach(id => {
   $(id).onchange = renderJobs;
 });
 
