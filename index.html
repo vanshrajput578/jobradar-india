@@ -388,10 +388,7 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <section class="hero" id="home"><video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="./icon.svg"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"></video><div class="hero-video-shade" aria-hidden="true"></div>
 <h1>Find work that moves you forward.</h1>
 <p>Explore employer-listed roles, verify availability, and manage your job search in one focused workspace.</p>
-<div class="search" role="search">
-<input id="searchInput" aria-label="Search jobs by title, skill or company" placeholder="Job title, skill or company...">
-<button id="searchBtn">Search Jobs</button>
-</div>
+<a class="hero-cta" href="#jobs" data-view="jobs">Explore jobs <span aria-hidden="true">→</span></a>
 </section>
 
 
@@ -421,6 +418,10 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 <main class="container" id="jobs">
 <h2>Explore opportunities</h2>
 <p class="muted">Find jobs that match your career goals.</p>
+<div class="search" role="search">
+<input id="searchInput" aria-label="Search jobs by title, skill or company" placeholder="Job title, skill or company...">
+<button id="searchBtn">Search Jobs</button>
+</div>
 
 <div class="stats">
 <div class="stat"><strong id="statAll">0</strong><span>Total jobs</span></div>
@@ -604,9 +605,9 @@ a,button,.job,.company-card,.tool-card{transition:background-color .16s ease,bor
 </div>
 </div>
 </section>
+</div>
 
-
-
+<div class="view" id="view-companies">
 <section class="container" id="companies">
 <h2>Company Directory</h2>
 <p class="muted">Browse the JobRadar master directory. A company appearing here does not mean it currently has a vacancy on JobRadar.</p>
@@ -1226,21 +1227,22 @@ const VIEW_ROUTES = {
  "market-insights":"view-home", "interview-calendar":"view-tracker", "saved-searches":"view-tracker"
 };
 function showView(route, updateHash=false){
- const key=VIEW_ROUTES[route] ? route : "home";
- const viewId=VIEW_ROUTES[key];
+ const key=route==="career-tools"?"tools":route;
+ const safeKey=VIEW_ROUTES[key] ? key : "home";
+ const viewId=VIEW_ROUTES[safeKey];
  document.querySelectorAll(".view").forEach(view=>view.classList.toggle("active",view.id===viewId));
  document.querySelectorAll("[data-view]").forEach(link=>{
-  const active=link.dataset.view===((key==="career-tools")?"tools":key);
+  const active=link.dataset.view===safeKey;
   link.classList.toggle("active",active);
   if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
  });
- const moreActive=["tools","companies","verification","about"].includes(key);
+ const moreActive=["tools","companies","verification","about"].includes(safeKey);
  $("moreBtn")?.classList.toggle("active",moreActive);
  $("moreMenu")?.setAttribute("hidden","");
  $("moreBtn")?.setAttribute("aria-expanded","false");
  $("navigation").classList.remove("open");
  $("menuBtn").setAttribute("aria-expanded","false");
- if(updateHash && location.hash!=="#"+key) history.pushState(null,"","#"+key);
+ if(updateHash && location.hash!=="#"+safeKey) history.pushState(null,"","#"+safeKey);
  window.scrollTo({top:0,behavior:"auto"});
 }
 function routeFromHash(){
