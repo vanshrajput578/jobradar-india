@@ -2500,12 +2500,16 @@ $("companyDirectoryCategory").onchange = renderCompanies;
      5) Directional scroll reveals (up / zoom / left / right)
      --------------------------------------------------------------- */
   var RULES = [
-    [".container > h2, .container > .muted", "up"],
-    [".filter-section, .controls, .search, .tracker-toolbar, .table-wrap, .company-directory-tools, .panel", "up"],
-    [".stats > .stat, .verification-grid > .stat", "zoom"],
-    [".jobs > .job", "grid"],
-    [".company-grid > .company-card", "grid"],
-    [".tool-grid > .tool-card, .verification-grid > .panel", "grid"]
+    /* Section headings, explanatory copy and page-level blocks */
+    [".container > h1, .container > h2, .container > h3, .container > .muted, .section-heading, .page-heading", "up"],
+    [".filter-section, .controls, .search, .tracker-toolbar, .table-wrap, .company-directory-tools, .panel, .notice, .alert, .empty-state, .empty, .verification-banner, .profile-header, .career-tool-section", "up"],
+    /* Reusable content surfaces across every view */
+    [".view .stat, .view .metric, .view .summary-card, .view .info-card, .view .feature-card, .view .insight-card, .view .tool-card, .view .company-card, .view .job", "grid"],
+    /* Repeated data and navigation elements */
+    [".jobs > .job, .company-grid > .company-card, .tool-grid > .tool-card, .verification-grid > .panel", "grid"],
+    [".view table tr, .view .list-item, .view .timeline-item, .view .step-card, .view .faq-item, .view .accordion-item", "up"],
+    /* Small controls get a subtle entrance, not a large movement */
+    [".view .filter-chip, .view .tag, .view .badge, .view .tab, .view .segmented-control, .view .pagination button", "zoom"]
   ];
   var revealIO = null;
   function columnsOf(parent){
@@ -2557,7 +2561,8 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     if(reduce || !revealIO) return;
     RULES.forEach(function(rule){
       var kind = rule[1], seen = 0;
-      document.querySelectorAll(".view " + rule[0].split(",").map(function(s){ return s.trim(); }).join(", .view ")).forEach(function(el){
+      document.querySelectorAll(rule[0].split(",").map(function(s){ return s.trim(); }).join(",")).forEach(function(el){
+        if(!el.closest(".view")) return;
         if(el.__rv) return;
         el.__rv = true;
         if(el.matches(".jobs > .job") && seen++ >= 24) return;      /* cap animated cards per scan */
@@ -2636,7 +2641,7 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     if(reduce || !revealIO) return;
     var active = document.querySelector(".view.active");
     if(!active) return;
-    var selectors = RULES.map(function(rule){ return rule[0].split(",").map(function(sel){ return ".view.active " + sel.trim(); }).join(","); }).join(",");
+    var selectors = RULES.map(function(rule){ return rule[0].split(",").map(function(sel){ return ".view.active " + sel.trim().replace(/^\.view\s+/, ""); }).join(","); }).join(",");
     var targets = document.querySelectorAll(selectors);
     targets.forEach(function(el){
       if(!active.contains(el)) return;
