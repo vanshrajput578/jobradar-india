@@ -14,7 +14,8 @@ DESCRIPTION_LIMIT = 2200
 PUBLIC_FIELDS = (
     "id", "source_id", "company_id", "title", "company", "location", "region",
     "category", "industry", "job_type", "experience", "work_mode",
-    "city", "state", "country", "location_confidence", "demo",
+    "city", "state", "country", "location_confidence",
+    "india_eligibility", "india_eligibility_reason", "india_eligibility_confidence", "demo",
     "first_detected_at", "posted_at", "application_url", "source_url",
     "availability_status", "verification_status", "last_verified_at",
     "description",
