@@ -1,914 +1,708 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101827">
-<meta name="description" content="Discover, save and track job opportunities with JobRadar India.">
 <title>JobRadar India | Career Opportunities</title>
-
 <style>
-:root {
-  --bg:#f4f6fb;
-  --card:#fff;
-  --text:#172033;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --primary:#2563eb;
-  --soft:#eaf1ff;
-  --success:#15803d;
-  --danger:#dc2626;
+:root{--bg:#f4f6fb;--card:#fff;--text:#172033;--muted:#64748b;--border:#e2e8f0;--primary:#2563eb;--soft:#eaf1ff}
+body.dark{--bg:#0b1220;--card:#131e30;--text:#f1f5f9;--muted:#a3b1c5;--border:#28364b;--primary:#60a5fa;--soft:#1c3150}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{border:0;border-radius:9px;padding:10px 14px;background:var(--primary);color:white;font-weight:600;cursor:pointer}
+a{color:var(--primary)}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 5%;background:var(--card);border-bottom:1px solid var(--border);position:relative}
+.logo{font-size:20px;font-weight:800}
+nav{display:flex;gap:14px;align-items:center}
+nav a{text-decoration:none;color:var(--muted);font-size:13px}
+.secondary,.filter{background:var(--soft);color:var(--primary);border:1px solid var(--border)}
+.theme{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.menu{display:none}
+.hero{text-align:center;color:white;background:linear-gradient(135deg,#101827,#1d3b70);padding:55px 16px}
+.hero h1{font-size:clamp(32px,6vw,52px);margin:0 0 12px}
+.hero p{color:#cbd5e1}
+.search{display:flex;gap:8px;background:white;padding:9px;border-radius:13px;max-width:800px;margin:25px auto 0}
+.search input{flex:1;min-width:0;border:0;padding:12px;color:#172033;outline:0}
+.container{max-width:1150px;margin:32px auto;padding:0 18px}
+.muted{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.stat,.job,.panel,.company-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px}
+.stat strong{display:block;font-size:25px}
+.stat span{font-size:13px;color:var(--muted)}
+.filter-section{margin:22px 0}
+.filter-title{font-weight:bold;margin-bottom:9px}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filter{font-size:13px;font-weight:400}
+.filter.active{background:var(--primary);color:white}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:18px 0}
+.field{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text)}
+.section-head,.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.job h3{margin:10px 0 6px}
+.company{color:var(--muted)}
+.badge{display:inline-block;padding:5px 7px;border-radius:6px;background:var(--soft);color:var(--primary);font-size:11px;margin:2px}
+.green{background:#dcfce7;color:#166534}
+.tags{margin:10px 0}
+.job p{font-size:12px;color:var(--muted)}
+.job-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.job-actions button,.apply{font-size:12px;padding:8px 10px}
+.apply{display:inline-block;background:var(--primary);color:white;border-radius:8px;text-decoration:none;font-weight:bold}
+.empty{grid-column:1/-1;text-align:center;padding:30px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--muted)}
+.panel{margin:18px 0}
+.panel h2{margin-top:0}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:550px}
+td,th{text-align:left;padding:10px;border-bottom:1px solid var(--border);font-size:13px}
+.company-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.company-card strong{display:block;margin-bottom:8px}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:20;align-items:center;justify-content:center;padding:15px}
+.modal.show{display:flex}
+.modal-content{background:var(--card);color:var(--text);padding:20px;border-radius:14px;width:min(480px,100%);max-height:90vh;overflow:auto}
+.modal-content label{display:block;margin:12px 0 5px;font-size:13px}
+.modal-content input,.modal-content select,.modal-content textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text)}
+.modal-content textarea{min-height:75px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+footer{text-align:center;padding:30px;background:var(--card);color:var(--muted);font-size:13px;margin-top:45px}
+@media(max-width:800px){
+nav a{display:none}
+.controls{grid-template-columns:repeat(2,1fr)}
+.company-grid{grid-template-columns:repeat(2,1fr)}
 }
-
-body.dark {
-  --bg:#0b1220;
-  --card:#131e30;
-  --text:#f1f5f9;
-  --muted:#a3b1c5;
-  --border:#28364b;
-  --primary:#60a5fa;
-  --soft:#1c3150;
-}
-
-* {box-sizing:border-box}
-
-html {scroll-behavior:smooth}
-
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  transition:.2s;
-}
-
-button,input,select,textarea {font:inherit}
-
-button {
-  border:0;
-  border-radius:9px;
-  padding:11px 15px;
-  background:var(--primary);
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-}
-
-button:disabled {
-  opacity:.5;
-  cursor:not-allowed;
-}
-
-a {color:var(--primary)}
-
-header {
-  position:relative;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 5%;
-  background:var(--card);
-  border-bottom:1px solid var(--border);
-  gap:12px;
-}
-
-.logo {
-  font-size:21px;
-  font-weight:800;
-  white-space:nowrap;
-}
-
-.logo span {color:var(--primary)}
-
-nav {
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-
-nav a {
-  color:var(--muted);
-  text-decoration:none;
-  font-size:13px;
-}
-
-.secondary {
-  background:var(--soft);
-  color:var(--primary);
-  border:1px solid var(--border);
-}
-
-.theme {
-  background:var(--bg);
-  color:var(--text);
-  border:1px solid var(--border);
-}
-
-.menu-button {display:none}
-
-.hero {
-  background:linear-gradient(135deg,#101827,#1d3b70);
-  color:white;
-  text-align:center;
-  padding:65px 20px;
-}
-
-.hero h1 {
-  font-size:clamp(32px,6vw,54px);
-  margin:0 0 14px;
-}
-
-.hero p {
-  color:#cbd5e1;
-  font-size:17px;
-}
-
-.search {
-  display:flex;
-  gap:10px;
-  max-width:850px;
-  margin:30px auto 0;
-  padding:10px;
-  background:white;
-  border-radius:14px;
-}
-
-.search input {
-  flex:1;
-  min-width:0;
-  padding:13px;
-  border:0;
-  outline:0;
-  color:#172033;
-}
-
-.container {
-  max-width:1200px;
-  margin:35px auto;
-  padding:0 20px;
-}
-
-.section-title {
-  font-size:25px;
-  margin:0 0 8px;
-}
-
-.muted {color:var(--muted)}
-
-.stats {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  margin:25px 0;
-}
-
-.stat {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:19px;
-}
-
-.stat strong {
-  display:block;
-  font-size:27px;
-  margin-bottom:7px;
-}
-
-.stat span {
-  color:var(--muted);
-  font-size:13px;
-}
-
-.filter-section {margin:24px 0}
-
-.filter-title {
-  font-weight:bold;
-  font-size:14px;
-  margin-bottom:11px;
-}
-
-.filters {
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-}
-
-.filter {
-  background:var(--card);
-  color:var(--muted);
-  border:1px solid var(--border);
-  font-size:13px;
-  font-weight:normal;
-}
-
-.filter.active {
-  background:var(--primary);
-  color:white;
-}
-
-.controls {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:10px;
-  margin:20px 0;
-}
-
-.field {
-  width:100%;
-  padding:12px;
-  border-radius:9px;
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--text);
-}
-
-.jobs {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
-}
-
-.job {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:20px;
-  min-width:0;
-}
-
-.job h3 {
-  margin:10px 0 7px;
-  font-size:18px;
-}
-
-.company {
-  color:var(--muted);
-  font-size:14px;
-}
-
-.badges,.tags {
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin:14px 0;
-}
-
-.badge {
-  display:inline-block;
-  padding:5px 8px;
-  border-radius:6px;
-  font-size:11px;
-  background:var(--soft);
-  color:var(--primary);
-}
-
-.badge.green {
-  background:#dcfce7;
-  color:#166534;
-}
-
-.badge.gray {
-  background:var(--bg);
-  color:var(--muted);
-}
-
-.job p {
-  font-size:12px;
-  color:var(--muted);
-}
-
-.job-actions {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:15px;
-}
-
-.job-actions button {
-  font-size:12px;
-  padding:9px 11px;
-}
-
-.apply {
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  background:var(--primary);
-  color:white;
-  padding:9px 12px;
-  border-radius:8px;
-  font-size:12px;
-  font-weight:bold;
-}
-
-.empty {
-  grid-column:1/-1;
-  text-align:center;
-  padding:45px 15px;
-  color:var(--muted);
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-}
-
-.panel {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:20px;
-  margin:20px 0;
-}
-
-.panel-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:15px;
-}
-
-.panel h2 {margin:0}
-
-.table-wrap {overflow-x:auto}
-
-table {
-  width:100%;
-  border-collapse:collapse;
-  min-width:600px;
-}
-
-th,td {
-  padding:13px;
-  text-align:left;
-  border-bottom:1px solid var(--border);
-  font-size:13px;
-}
-
-th {color:var(--muted)}
-
-.small-button {
-  padding:7px 10px;
-  font-size:12px;
-}
-
-.company-grid {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px;
-}
-
-.company-card {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:15px;
-}
-
-.company-card strong {display:block;margin-bottom:6px}
-
-.modal {
-  position:fixed;
-  inset:0;
-  background:#0009;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  z-index:100;
-}
-
-.modal.show {display:flex}
-
-.modal-content {
-  background:var(--card);
-  color:var(--text);
-  border-radius:15px;
-  padding:22px;
-  width:min(500px,100%);
-  max-height:90vh;
-  overflow:auto;
-}
-
-.modal-content h2 {margin-top:0}
-
-.modal-content label {
-  display:block;
-  font-size:13px;
-  margin:13px 0 6px;
-}
-
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  width:100%;
-  padding:11px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:var(--bg);
-  color:var(--text);
-}
-
-.modal-content textarea {min-height:85px}
-
-.modal-actions {
-  display:flex;
-  justify-content:flex-end;
-  gap:9px;
-  margin-top:18px;
-}
-
-footer {
-  margin-top:60px;
-  padding:35px 20px;
-  text-align:center;
-  background:var(--card);
-  border-top:1px solid var(--border);
-  color:var(--muted);
-  font-size:13px;
-}
-
-footer a {
-  color:var(--primary);
-  text-decoration:none;
-}
-
-@media(max-width:850px) {
-  nav a {display:none}
-  .controls {grid-template-columns:repeat(2,minmax(0,1fr))}
-  .company-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-
-@media(max-width:600px) {
-  header {padding:13px 4%}
-  .logo {font-size:18px}
-  .menu-button {display:block}
-  nav {
-    display:none;
-    position:absolute;
-    top:100%;
-    left:0;
-    right:0;
-    background:var(--card);
-    border-bottom:1px solid var(--border);
-    padding:15px;
-    z-index:5;
-    flex-wrap:wrap;
-  }
-  nav.open {display:flex}
-  nav a {display:block;width:100%;padding:8px}
-  .hero {padding:48px 16px}
-  .search {flex-direction:column}
-  .stats {grid-template-columns:repeat(2,minmax(0,1fr))}
-  .jobs {grid-template-columns:1fr}
-  .controls {grid-template-columns:1fr 1fr}
-  .container {padding:0 14px}
+@media(max-width:600px){
+header{padding:12px}
+.menu{display:block}
+nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);padding:14px;z-index:5;flex-wrap:wrap}
+nav.open{display:flex}
+nav.open a{display:block;width:100%;padding:7px}
+.hero{padding:42px 14px}
+.search{flex-direction:column}
+.stats{grid-template-columns:repeat(2,1fr)}
+.jobs{grid-template-columns:1fr}
+.container{padding:0 13px}
 }
 </style>
 </head>
-
 <body>
 
 <header>
-  <div class="logo"><span>◉</span> JobRadar India</div>
-
-  <button class="menu-button secondary" id="menuBtn">☰</button>
-
-  <nav id="navigation">
-    <a href="#home">Home</a>
-    <a href="#jobs">Find Jobs</a>
-    <a href="#companies">Companies</a>
-    <a href="#saved">Saved Jobs</a>
-    <a href="#tracker">My Applications</a>
-    <a href="#about">About</a>
-    <button class="theme" id="themeBtn">☾ Theme</button>
-  </nav>
+<div class="logo">🔵 JobRadar India</div>
+<button class="menu secondary" id="menuBtn">☰</button>
+<nav id="navigation">
+<a href="#home">Home</a>
+<a href="#jobs">Find Jobs</a>
+<a href="#companies">Companies</a>
+<a href="#saved">Saved Jobs</a>
+<a href="#tracker">My Applications</a>
+<a href="#about">About</a>
+<button class="theme" id="themeBtn">☾ Theme</button>
+</nav>
 </header>
 
 <section class="hero" id="home">
-  <h1>Find Your Next Opportunity.</h1>
-  <p>Discover, save and track opportunities from companies worldwide.</p>
-
-  <div class="search">
-    <input id="searchInput" type="search"
-      placeholder="Job title, skill, company or location...">
-    <button id="searchBtn">Search Jobs</button>
-  </div>
+<h1>Find Your Next Opportunity.</h1>
+<p>Discover opportunities from companies across the world.</p>
+<div class="search">
+<input id="searchInput" placeholder="Job title, skill or company...">
+<button id="searchBtn">Search Jobs</button>
+</div>
 </section>
 
 <main class="container" id="jobs">
+<h2>Explore Opportunities</h2>
+<p class="muted">Find jobs that match your career goals.</p>
 
-  <div>
-    <h2 class="section-title">Explore Opportunities</h2>
-    <p class="muted">Find opportunities that match your career goals.</p>
-  </div>
+<div class="stats">
+<div class="stat"><strong id="statAll">0</strong><span>Total jobs</span></div>
+<div class="stat"><strong id="statIndia">0</strong><span>India jobs</span></div>
+<div class="stat"><strong id="statGlobal">0</strong><span>Global jobs</span></div>
+<div class="stat"><strong id="statRemote">0</strong><span>Remote jobs</span></div>
+</div>
 
-  <div class="stats">
-    <div class="stat">
-      <strong id="statAll">0</strong>
-      <span>Total jobs</span>
-    </div>
-    <div class="stat">
-      <strong id="statIndia">0</strong>
-      <span>India jobs</span>
-    </div>
-    <div class="stat">
-      <strong id="statGlobal">0</strong>
-      <span>Global jobs</span>
-    </div>
-    <div class="stat">
-      <strong id="statRemote">0</strong>
-      <span>Remote jobs</span>
-    </div>
-  </div>
+<div class="filter-section">
+<div class="filter-title">Filter by Region</div>
+<div class="filters">
+<button class="filter active" data-region="All">All Regions</button>
+<button class="filter" data-region="India">India</button>
+<button class="filter" data-region="Global">Global</button>
+<button class="filter" data-region="Remote">Remote</button>
+<button class="filter" data-region="Unspecified">Unspecified</button>
+</div>
+</div>
 
-  <div class="filter-section">
-    <div class="filter-title">Filter by Region</div>
-    <div class="filters" id="regionFilters">
-      <button class="filter active" data-region="All">All Regions</button>
-      <button class="filter" data-region="India">India</button>
-      <button class="filter" data-region="Global">Global</button>
-      <button class="filter" data-region="Remote">Remote</button>
-      <button class="filter" data-region="Unspecified">Unspecified</button>
-    </div>
-  </div>
+<div class="filter-section">
+<div class="filter-title">Filter by Category</div>
+<div class="filters">
+<button class="filter active" data-category="All">All Categories</button>
+<button class="filter" data-category="Technology">Technology</button>
+<button class="filter" data-category="Finance">Finance</button>
+<button class="filter" data-category="Engineering">Engineering</button>
+<button class="filter" data-category="Internships">Internships</button>
+</div>
+</div>
 
-  <div class="filter-section">
-    <div class="filter-title">Filter by Category</div>
-    <div class="filters" id="categoryFilters">
-      <button class="filter active" data-category="All">All Categories</button>
-      <button class="filter" data-category="Technology">Technology</button>
-      <button class="filter" data-category="Finance">Finance</button>
-      <button class="filter" data-category="Engineering">Engineering</button>
-      <button class="filter" data-category="Internships">Internships</button>
-    </div>
-  </div>
+<div class="controls">
+<select class="field" id="locationFilter"><option value="">All locations</option></select>
+<select class="field" id="companyFilter"><option value="">All companies</option></select>
+<select class="field" id="workFilter">
+<option value="">All work modes</option>
+<option>Remote</option><option>Hybrid</option><option>On-site</option><option>Not specified</option>
+</select>
+<select class="field" id="sortFilter">
+<option value="latest">Latest detected</option>
+<option value="company">Company A-Z</option>
+<option value="title">Job title A-Z</option>
+</select>
+</div>
 
-  <div class="controls">
-    <select class="field" id="locationFilter">
-      <option value="">All locations</option>
-    </select>
-
-    <select class="field" id="companyFilter">
-      <option value="">All companies</option>
-    </select>
-
-    <select class="field" id="workFilter">
-      <option value="">All work modes</option>
-      <option value="Remote">Remote</option>
-      <option value="Hybrid">Hybrid</option>
-      <option value="On-site">On-site</option>
-      <option value="Not specified">Not specified</option>
-    </select>
-
-    <select class="field" id="sortFilter">
-      <option value="latest">Latest detected</option>
-      <option value="company">Company A-Z</option>
-      <option value="title">Job title A-Z</option>
-    </select>
-  </div>
-
-  <div class="section-head">
-    <p class="muted" id="jobCount">Loading jobs...</p>
-    <button class="secondary" id="clearFilters">Clear filters</button>
-  </div>
-
-  <div class="jobs" id="jobList">
-    <div class="empty">Loading job database...</div>
-  </div>
-
+<div class="section-head">
+<p class="muted" id="jobCount">Loading jobs...</p>
+<button class="secondary" id="clearFilters">Clear filters</button>
+</div>
+<div class="jobs" id="jobList"><div class="empty">Loading job database...</div></div>
 </main>
 
-<!-- LATEST JOBS -->
-
 <section class="container">
-  <h2 class="section-title">Latest Jobs</h2>
-  <p class="muted">Recently detected opportunities.</p>
-  <div class="jobs" id="latestJobs"></div>
+<h2>Latest Jobs</h2>
+<p class="muted">Recently detected opportunities.</p>
+<div class="jobs" id="latestJobs"></div>
 </section>
-
-<!-- SAVED JOBS -->
 
 <section class="container" id="saved">
-  <div class="panel">
-    <div class="panel-head">
-      <div>
-        <h2>Saved Jobs</h2>
-        <p class="muted">Your personally saved opportunities.</p>
-      </div>
-      <span id="savedCount" class="muted">0 saved</span>
-    </div>
-
-    <div class="jobs" id="savedJobs"></div>
-  </div>
+<div class="panel">
+<div class="panel-head">
+<div><h2>Saved Jobs</h2><p class="muted">Your personally saved opportunities.</p></div>
+<span id="savedCount" class="muted">0 saved</span>
+</div>
+<div class="jobs" id="savedJobs"></div>
+</div>
 </section>
-
-<!-- APPLICATION TRACKER -->
 
 <section class="container" id="tracker">
-  <div class="panel">
-    <div class="panel-head">
-      <div>
-        <h2>My Applications</h2>
-        <p class="muted">Track your job application progress.</p>
-      </div>
-    </div>
-
-    <div class="stats">
-      <div class="stat">
-        <strong id="appliedCount">0</strong>
-        <span>Applied</span>
-      </div>
-      <div class="stat">
-        <strong id="interviewCount">0</strong>
-        <span>Interviews</span>
-      </div>
-      <div class="stat">
-        <strong id="offerCount">0</strong>
-        <span>Offers</span>
-      </div>
-      <div class="stat">
-        <strong id="rejectedCount">0</strong>
-        <span>Rejected</span>
-      </div>
-    </div>
-
-    <button id="addApplication">+ Add application manually</button>
-
-    <div class="table-wrap" style="margin-top:20px">
-      <table>
-        <thead>
-          <tr>
-            <th>Job</th>
-            <th>Company</th>
-            <th>Status</th>
-            <th>Applied date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="applicationRows"></tbody>
-      </table>
-    </div>
-  </div>
+<div class="panel">
+<h2>My Applications</h2>
+<p class="muted">Track your job application progress.</p>
+<div class="stats">
+<div class="stat"><strong id="appliedCount">0</strong><span>Applied</span></div>
+<div class="stat"><strong id="interviewCount">0</strong><span>Interviews</span></div>
+<div class="stat"><strong id="offerCount">0</strong><span>Offers</span></div>
+<div class="stat"><strong id="rejectedCount">0</strong><span>Rejected</span></div>
+</div>
+<button id="addApplication">+ Add application manually</button>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Job</th><th>Company</th><th>Status</th><th>Applied date</th><th>Action</th></tr></thead>
+<tbody id="applicationRows"></tbody>
+</table>
+</div>
+</div>
 </section>
-
-<!-- COMPANIES -->
 
 <section class="container" id="companies">
-  <h2 class="section-title">Explore Companies</h2>
-  <p class="muted">Companies currently connected to JobRadar.</p>
-  <div class="company-grid" id="companyGrid"></div>
+<h2>Explore Companies</h2>
+<p class="muted">Companies currently connected to JobRadar.</p>
+<div class="company-grid" id="companyGrid"></div>
 </section>
 
-<!-- ABOUT -->
-
 <section class="container" id="about">
-  <div class="panel">
-    <h2>About JobRadar India</h2>
-    <p class="muted">
-      JobRadar India helps people discover opportunities
-      through connected company job boards. Listings link
-      applicants to employer application pages.
-    </p>
-    <h3>Data and verification</h3>
-    <p class="muted">
-      Job information is collected from configured company
-      sources. Availability and application requirements
-      can change. Always verify the vacancy on the employer's
-      official website before applying.
-    </p>
-    <p class="muted" id="lastUpdated">Last database update: Not available</p>
-    <p class="muted">JobRadar India — Discover. Track. Apply.</p>
-  </div>
+<div class="panel">
+<h2>About JobRadar India</h2>
+<p class="muted">Discover opportunities through connected company job boards. Listings link applicants to employer application pages.</p>
+<h3>Data and verification</h3>
+<p class="muted">Always verify vacancy availability and application requirements on the employer's official website.</p>
+<p class="muted" id="lastUpdated">Last database update: Not available</p>
+</div>
 </section>
 
 <footer>
-  <strong>JobRadar India</strong>
-  <p>Discover. Track. Apply.</p>
-  <p>© 2026 JobRadar India.</p>
-  <p>Always verify vacancies on the employer's official website.</p>
-  <p>Personal saved jobs and tracker data are stored locally in this browser.</p>
+<b>JobRadar India</b>
+<p>Discover. Track. Apply.</p>
+<p>Personal saved jobs and tracker data are stored locally in this browser.</p>
 </footer>
 
-<!-- APPLICATION MODAL -->
-
 <div class="modal" id="applicationModal">
-  <div class="modal-content">
-    <h2 id="modalTitle">Add Application</h2>
-
-    <form id="applicationForm">
-      <input type="hidden" id="applicationId">
-
-      <label for="appJob">Job title</label>
-      <input id="appJob" required>
-
-      <label for="appCompany">Company</label>
-      <input id="appCompany" required>
-
-      <label for="appStatus">Application status</label>
-      <select id="appStatus">
-        <option>Saved</option>
-        <option>Applied</option>
-        <option>Interview</option>
-        <option>Offer</option>
-        <option>Rejected</option>
-      </select>
-
-      <label for="appDate">Application date</label>
-      <input type="date" id="appDate">
-
-      <label for="interviewDate">Interview date</label>
-      <input type="date" id="interviewDate">
-
-      <label for="appNotes">Personal notes</label>
-      <textarea id="appNotes" placeholder="Add notes..."></textarea>
-
-      <div class="modal-actions">
-        <button type="button" class="secondary" id="closeModal">Cancel</button>
-        <button type="submit">Save application</button>
-      </div>
-    </form>
-  </div>
+<div class="modal-content">
+<h2 id="modalTitle">Add Application</h2>
+<form id="applicationForm">
+<input type="hidden" id="applicationId">
+<label>Job title</label><input id="appJob" required>
+<label>Company</label><input id="appCompany" required>
+<label>Status</label>
+<select id="appStatus">
+<option>Saved</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option>
+</select>
+<label>Application date</label><input type="date" id="appDate">
+<label>Interview date</label><input type="date" id="interviewDate">
+<label>Notes</label><textarea id="appNotes"></textarea>
+<div class="modal-actions">
+<button type="button" class="secondary" id="closeModal">Cancel</button>
+<button type="submit">Save application</button>
+</div>
+</form>
+</div>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
-
 let allJobs = [];
 let selectedRegion = "All";
 let selectedCategory = "All";
-let savedIds = loadStorage("jobradar-saved", []);
-let applications = loadStorage("jobradar-applications", []);
 
-function loadStorage(key, fallback) {
+function readStore(key, fallback) {
   try {
     const value = JSON.parse(localStorage.getItem(key));
-    return value ?? fallback;
+    return Array.isArray(value) ? value : fallback;
   } catch {
     return fallback;
   }
 }
 
-function saveStorage() {
-  localStorage.setItem("jobradar-saved", JSON.stringify(savedIds));
-  localStorage.setItem("jobradar-applications", JSON.stringify(applications));
+let savedIds = readStore("jobradar-saved", []);
+let applications = readStore("jobradar-applications", []);
+
+const idOf = job => String(job.id || job.source_url || job.title + job.company);
+const regionOf = job => job.region || "Unspecified";
+const remote = job => String(job.work_mode || "").toLowerCase().includes("remote");
+
+function timeOf(job) {
+  const value = Date.parse(job.first_detected_at || job.posted_at || "");
+  return Number.isFinite(value) ? value : 0;
 }
 
-function safe(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
+function persist() {
+  try {
+    localStorage.setItem("jobradar-saved", JSON.stringify(savedIds));
+    localStorage.setItem("jobradar-applications", JSON.stringify(applications));
+  } catch(error) {
+    console.warn(error);
+  }
 }
 
-function dateValue(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "" : date.getTime();
-}
-
-function getRegion(job) {
-  return job.region || "Unspecified";
-}
-
-function isRemote(job) {
-  return String(job.work_mode || "").toLowerCase().includes("remote");
-}
-
-function updateStats() {
+function stats() {
   $("statAll").textContent = allJobs.length;
-  $("statIndia").textContent = allJobs.filter(j => getRegion(j) === "India").length;
-  $("statGlobal").textContent = allJobs.filter(j => getRegion(j) === "Global").length;
-  $("statRemote").textContent = allJobs.filter(isRemote).length;
+  $("statIndia").textContent = allJobs.filter(j => regionOf(j) === "India").length;
+  $("statGlobal").textContent = allJobs.filter(j => regionOf(j) === "Global").length;
+  $("statRemote").textContent = allJobs.filter(remote).length;
 }
 
-function populateSelect(id, values) {
+function fillSelect(id, values) {
   const select = $(id);
   const oldValue = select.value;
+  select.innerHTML = "";
 
-  select.innerHTML = '<option value="">All ' +
-    (id === "locationFilter" ? "locations" : "companies") +
-    '</option>';
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = id === "locationFilter" ? "All locations" : "All companies";
+  select.append(first);
 
   values.forEach(value => {
     const option = document.createElement("option");
     option.value = value;
     option.textContent = value;
-    select.appendChild(option);
+    select.append(option);
   });
 
-  if (values.includes(oldValue)) select.value = oldValue;
+  if(values.includes(oldValue)) select.value = oldValue;
 }
 
-function populateFilters() {
-  const locations = [...new Set(
-    allJobs.map(j => j.location).filter(
-      x => x && x !== "Not specified"
-    )
-  )].sort();
-
-  const companies = [...new Set(
-    allJobs.map(j => j.company).filter(Boolean)
-  )].sort();
-
-  populateSelect("locationFilter", locations);
-  populateSelect("companyFilter", companies);
+function filtersInit() {
+  fillSelect("locationFilter", [...new Set(allJobs.map(j => j.location).filter(x => x && x !== "Not specified"))].sort());
+  fillSelect("companyFilter", [...new Set(allJobs.map(j => j.company).filter(Boolean))].sort());
 }
 
-function makeJobCard(job) {
-  const id = String(job.id);
-  const saved = savedIds.includes(id);
-  const tracked = applications.some(a => a.jobId === id);
-
+function card(job) {
+  const id = idOf(job);
   const article = document.createElement("article");
   article.className = "job";
 
-  const status = document.createElement("span");
-  status.className = "badge green";
-  status.textContent = "JOB LISTING";
-  article.appendChild(status);
+  const badge = document.createElement("span");
+  badge.className = "badge green";
+  badge.textContent = "JOB LISTING";
+  article.append(badge);
 
   const region = document.createElement("span");
   region.className = "badge";
-  region.textContent = getRegion(job);
-  article.appendChild(region);
+  region.textContent = regionOf(job);
+  article.append(region);
 
   const title = document.createElement("h3");
   title.textContent = job.title || "Untitled job";
-  article.appendChild(title);
+  article.append(title);
 
   const company = document.createElement("div");
   company.className = "company";
   company.textContent = job.company || "Unknown company";
-  article.appendChild(company);
+  article.append(company);
 
   const tags = document.createElement("div");
   tags.className = "tags";
 
-  [
-    job.location,
-    job.category,
-    job.job_type,
-    job.work_mode,
-    job.experience
-  ].filter(x => x && x !== "Not specified").forEach(value => {
-    const tag = document.createElement("span");
-    tag.className = "badge gray";
-    tag.textContent = value;
-    tags.appendChild(tag);
-  });
+  [job.location, job.category, job.job_type, job.work_mode, job.experience]
+    .filter(value => value && value !== "Not specified")
+    .forEach(value => {
+      const tag = document.createElement("span");
+      tag.className = "badge";
+      tag.textContent = value;
+      tags.append(tag);
+    });
 
-  article.appendChild(tags);
+  article.append(tags);
 
   const date = document.createElement("p");
-  date.textContent = "First detected: " +
-    (job.first_detected_at || "Not available");
-  article.appendChild(date);
+  date.textContent = "First detected: " + (job.first_detected_at || "Not available");
+  article.append(date);
 
   const actions = document.createElement("div");
   actions.className = "job-actions";
 
   const url = job.application_url || job.source_url;
 
-  if (url) {
+  if(url) {
     try {
       const parsed = new URL(url);
-      if (parsed.protocol === "https:" || parsed.protocol === "http:") {
+      if(["https:", "http:"].includes(parsed.protocol)) {
         const link = document.createElement("a");
+        link.className = "apply";
         link.href = parsed.href;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
-        link.className = "apply";
         link.textContent = "Official application ↗";
-        actions.appendChild(link);
+        actions.append(link);
       }
     } catch {}
   }
 
-  const saveButton = document.createElement("button");
-  saveButton.className = "secondary";
-  saveButton.textContent = saved ? "♥ Saved" : "♡ Save";
-  saveButton.addEventListener("click", () => toggleSaved(id));
-  actions.appendChild(saveButton);
+  const save = document.createElement("button");
+  save.className = "secondary";
+  save.textContent = savedIds.includes(id) ? "♥ Saved" : "♡ Save";
+  save.onclick = () => {
+    savedIds = savedIds.includes(id) ? savedIds.filter(x => x !== id) : [...savedIds, id];
+    persist();
+    render();
+  };
+  actions.append(save);
 
-  const trackButton = document.createElement("button");
-  trackButton.className = "secondary";
-  trackButton.textContent = tracked ? "Tracked" : "+ Track";
-  trackButton.addEventListener("click", () => addJobToTracker(job));
-  actions.appendChild(trackButton);
+  const track = document.createElement("button");
+  track.className = "secondary";
+  track.textContent = applications.some(a => a.jobId === id) ? "Tracked" : "+ Track";
+  track.onclick = () => openModal(null, job);
+  actions.append(track);
 
-  article.appendChild(actions);
-
+  article.append(actions);
   return article;
 }
 
 function renderJobs() {
   const query = $("searchInput").value.toLowerCase().trim();
-
   const location = $("locationFilter").value;
   const company = $("companyFilter").value;
-  const work
+  const work = $("workFilter").value;
+  const sort = $("sortFilter").value;
+
+  let rows = allJobs.filter(job => {
+    const text = [
+      job.title, job.company, job.location, job.category,
+      job.work_mode, job.job_type, job.experience
+    ].join(" ").toLowerCase();
+
+    if(query && !text.includes(query)) return false;
+    if(location && job.location !== location) return false;
+    if(company && job.company !== company) return false;
+    if(work === "Remote" && !remote(job)) return false;
+    if(work && work !== "Remote" && String(job.work_mode || "Not specified") !== work) return false;
+    if(selectedRegion === "Remote" && !remote(job)) return false;
+    if(selectedRegion !== "All" && selectedRegion !== "Remote" && regionOf(job) !== selectedRegion) return false;
+    if(selectedCategory !== "All" && job.category !== selectedCategory) return false;
+
+    return true;
+  });
+
+  if(sort === "company") rows.sort((a,b) => String(a.company).localeCompare(String(b.company)));
+  else if(sort === "title") rows.sort((a,b) => String(a.title).localeCompare(String(b.title)));
+  else rows.sort((a,b) => timeOf(b) - timeOf(a));
+
+  $("jobCount").textContent = rows.length + " jobs found";
+
+  const list = $("jobList");
+  list.innerHTML = "";
+
+  if(!rows.length) {
+    list.innerHTML = '<div class="empty">No matching jobs found. Try changing your filters.</div>';
+    return;
+  }
+
+  rows.forEach(job => list.append(card(job)));
+}
+
+function renderLatest() {
+  const box = $("latestJobs");
+  box.innerHTML = "";
+
+  [...allJobs].sort((a,b) => timeOf(b) - timeOf(a)).slice(0,4)
+    .forEach(job => box.append(card(job)));
+
+  if(!allJobs.length) box.textContent = "No jobs available.";
+}
+
+function renderSaved() {
+  const box = $("savedJobs");
+  box.innerHTML = "";
+
+  const rows = allJobs.filter(job => savedIds.includes(idOf(job)));
+  $("savedCount").textContent = rows.length + " saved";
+
+  if(!rows.length) {
+    box.innerHTML = '<div class="empty">No saved jobs yet.</div>';
+    return;
+  }
+
+  rows.forEach(job => box.append(card(job)));
+}
+
+function trackerStats() {
+  ["Applied", "Interview", "Offer", "Rejected"].forEach(status => {
+    const id = status.toLowerCase() + "Count";
+    $(id).textContent = applications.filter(a => a.status === status).length;
+  });
+}
+
+function renderApps() {
+  const body = $("applicationRows");
+  body.innerHTML = "";
+  trackerStats();
+
+  if(!applications.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 5;
+    cell.textContent = "No applications tracked yet.";
+    row.append(cell);
+    body.append(row);
+    return;
+  }
+
+  applications.forEach(app => {
+    const row = document.createElement("tr");
+
+    [app.jobTitle, app.company, app.status, app.applicationDate || "—"].forEach(value => {
+      const cell = document.createElement("td");
+      cell.textContent = value || "—";
+      row.append(cell);
+    });
+
+    const cell = document.createElement("td");
+
+    const edit = document.createElement("button");
+    edit.className = "secondary";
+    edit.textContent = "Edit";
+    edit.onclick = () => openModal(app);
+
+    const remove = document.createElement("button");
+    remove.className = "secondary";
+    remove.textContent = "Delete";
+    remove.style.marginLeft = "5px";
+    remove.onclick = () => {
+      applications = applications.filter(x => x.id !== app.id);
+      persist();
+      renderApps();
+      renderJobs();
+    };
+
+    cell.append(edit, remove);
+    row.append(cell);
+    body.append(row);
+  });
+}
+
+function openModal(app = null, job = null) {
+  $("applicationForm").reset();
+  $("applicationId").value = app?.id || "";
+  $("appJob").value = app?.jobTitle || job?.title || "";
+  $("appCompany").value = app?.company || job?.company || "";
+  $("appStatus").value = app?.status || "Saved";
+  $("appDate").value = app?.applicationDate || "";
+  $("interviewDate").value = app?.interviewDate || "";
+  $("appNotes").value = app?.notes || "";
+  $("modalTitle").textContent = app ? "Edit Application" : "Add Application";
+  $("applicationModal").classList.add("show");
+}
+
+function renderCompanies() {
+  const box = $("companyGrid");
+  box.innerHTML = "";
+
+  [...new Set(allJobs.map(j => j.company).filter(Boolean))]
+    .sort()
+    .slice(0,40)
+    .forEach(name => {
+      const card = document.createElement("div");
+      card.className = "company-card";
+
+      const title = document.createElement("strong");
+      title.textContent = name;
+
+      const count = document.createElement("p");
+      count.className = "muted";
+      count.textContent = allJobs.filter(j => j.company === name).length + " open listings";
+
+      const button = document.createElement("button");
+      button.className = "secondary";
+      button.textContent = "View jobs";
+      button.onclick = () => {
+        $("companyFilter").value = name;
+        selectedRegion = "All";
+        selectedCategory = "All";
+        $("searchInput").value = "";
+        renderJobs();
+        $("jobs").scrollIntoView({behavior:"smooth"});
+      };
+
+      card.append(title, count, button);
+      box.append(card);
+    });
+}
+
+function render() {
+  renderJobs();
+  renderLatest();
+  renderSaved();
+  renderApps();
+}
+
+function clearFilters() {
+  $("searchInput").value = "";
+  $("locationFilter").value = "";
+  $("companyFilter").value = "";
+  $("workFilter").value = "";
+  $("sortFilter").value = "latest";
+  selectedRegion = "All";
+  selectedCategory = "All";
+
+  document.querySelectorAll("[data-region]").forEach(button =>
+    button.classList.toggle("active", button.dataset.region === "All")
+  );
+
+  document.querySelectorAll("[data-category]").forEach(button =>
+    button.classList.toggle("active", button.dataset.category === "All")
+  );
+
+  renderJobs();
+}
+
+async function loadJobs() {
+  try {
+    const response = await fetch("./jobs.json", {cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP " + response.status);
+
+    const data = await response.json();
+    if(!Array.isArray(data.jobs)) throw new Error("jobs array missing");
+
+    allJobs = data.jobs;
+
+    stats();
+    filtersInit();
+    render();
+    renderCompanies();
+
+    $("lastUpdated").textContent =
+      "Last database update: " + (data.last_updated || "Not available");
+
+  } catch(error) {
+    console.error("JobRadar loading error:", error);
+    $("jobCount").textContent = "Could not load jobs";
+    $("jobList").innerHTML =
+      '<div class="empty">Job database could not be loaded: ' + error.message + '</div>';
+    renderApps();
+  }
+}
+
+$("searchBtn").onclick = renderJobs;
+$("searchInput").oninput = renderJobs;
+
+["locationFilter", "companyFilter", "workFilter", "sortFilter"].forEach(id => {
+  $(id).onchange = renderJobs;
+});
+
+$("clearFilters").onclick = clearFilters;
+
+document.querySelectorAll("[data-region]").forEach(button => {
+  button.onclick = () => {
+    selectedRegion = button.dataset.region;
+    document.querySelectorAll("[data-region]").forEach(item =>
+      item.classList.toggle("active", item === button)
+    );
+    renderJobs();
+  };
+});
+
+document.querySelectorAll("[data-category]").forEach(button => {
+  button.onclick = () => {
+    selectedCategory = button.dataset.category;
+    document.querySelectorAll("[data-category]").forEach(item =>
+      item.classList.toggle("active", item === button)
+    );
+    renderJobs();
+  };
+});
+
+$("themeBtn").onclick = () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "jobradar-theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+};
+
+if(localStorage.getItem("jobradar-theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+$("menuBtn").onclick = () => $("navigation").classList.toggle("open");
+
+document.querySelectorAll("#navigation a").forEach(link => {
+  link.onclick = () => $("navigation").classList.remove("open");
+});
+
+$("addApplication").onclick = () => openModal();
+
+$("closeModal").onclick = () =>
+  $("applicationModal").classList.remove("show");
+
+$("applicationModal").onclick = event => {
+  if(event.target === $("applicationModal")) {
+    $("applicationModal").classList.remove("show");
+  }
+};
+
+$("applicationForm").onsubmit = event => {
+  event.preventDefault();
+
+  const id = $("applicationId").value || Date.now().toString(36);
+  const old = applications.find(app => app.id === id);
+
+  const record = {
+    id,
+    jobId: old?.jobId || "",
+    jobTitle: $("appJob").value.trim(),
+    company: $("appCompany").value.trim(),
+    status: $("appStatus").value,
+    applicationDate: $("appDate").value,
+    interviewDate: $("interviewDate").value,
+    notes: $("appNotes").value.trim()
+  };
+
+  const index = applications.findIndex(app => app.id === id);
+
+  if(index >= 0) applications[index] = record;
+  else applications.push(record);
+
+  persist();
+  $("applicationModal").classList.remove("show");
+  renderApps();
+};
+
+loadJobs();
+</script>
+</body>
+</html>
