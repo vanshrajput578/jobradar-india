@@ -2,6 +2,7 @@ name: JobRadar Automatic Job Updates
 
 on:
   workflow_dispatch:
+
   schedule:
     - cron: "17 */6 * * *"
 
@@ -14,28 +15,148 @@ concurrency:
 
 jobs:
   update-jobs:
+    name: Collect, Verify and Publish Jobs
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
+      # 1. Get the latest repository files
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      # 2. Configure Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
 
-      - name: Collect job vacancies
-        run: python fetch_jobs.py
-
-      - name: Save updated job database
+      # 3. Confirm required files exist
+      - name: Check required project files
         run: |
-          if [[ -n "$(git status --porcelain jobs.json)" ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add jobs.json duplicate_audit.json
-            git commit -m "Update job listings"
-            git push
+          set -e
+          test -f fetch_jobs.py
+          test -f jobs.json
+          test -f sources.json
+          test -f index.html
+          echo "Required project files found."
+
+      # 4. Check Python syntax
+      - name: Check Python syntax
+        run: |
+          python -m py_compile fetch_jobs.py
+          echo "Python syntax check passed."
+
+      # 5. Run automated verification tests
+      - name: Run verification tests
+        run: |
+          if [ -f tests/test_verification.py ]; then
+            python -m unittest discover \
+              -s tests \
+              -p "test_*.py" \
+              -v
           else
-            echo "No changes to job listings."
+            echo "::warning::tests/test_verification.py is not present. Automated verification tests were not run."
           fi
+
+      # 6. Collect jobs and reconcile their availability
+      - name: Collect and verify job vacancies
+        run: |
+          python fetch_jobs.py
+
+      # 7. Validate all generated JSON files
+      - name: Validate generated JSON
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          required = [
+              "jobs.json",
+              "duplicate_audit.json",
+              "expiry_audit.json"
+          ]
+
+          for filename in required:
+              path = Path(filename)
+              if not path.is_file():
+                  raise SystemExit(f"Missing generated file: {filename}")
+
+              with path.open("r", encoding="utf-8") as file:
+                  data = json.load(file)
+
+              if not isinstance(data, dict):
+                  raise SystemExit(f"{filename} must contain a JSON object")
+
+              print(f"Valid JSON: {filename}")
+
+          with open("jobs.json", encoding="utf-8") as file:
+              database = json.load(file)
+
+          if not isinstance(database.get("jobs"), list):
+              raise SystemExit("jobs.json must contain a jobs list")
+
+          if database.get("total_jobs") != len(database["jobs"]):
+              raise SystemExit("total_jobs does not match jobs list length")
+
+          with open("duplicate_audit.json", encoding="utf-8") as file:
+              duplicate_audit = json.load(file)
+
+          if "candidates" not in duplicate_audit:
+              raise SystemExit("Duplicate audit is missing candidates")
+
+          with open("expiry_audit.json", encoding="utf-8") as file:
+              expiry_audit = json.load(file)
+
+          required_audit_fields = [
+              "generated_at",
+              "source_results",
+              "status_counts",
+              "status_events",
+              "automatic_deletion_enabled"
+          ]
+
+          for field in required_audit_fields:
+              if field not in expiry_audit:
+                  raise SystemExit(
+                      f"Expiry audit missing field: {field}"
+                  )
+
+          if expiry_audit["automatic_deletion_enabled"] is not False:
+              raise SystemExit("Automatic deletion must remain disabled")
+
+          print("All generated data checks passed.")
+          PY
+
+      # 8. Publish only generated data and audit reports
+      - name: Commit updated database and audit reports
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add jobs.json duplicate_audit.json expiry_audit.json
+
+          if git diff --cached --quiet; then
+            echo "No generated data changes to commit."
+          else
+            git commit -m "Update verified job listings and audit reports"
+            git push origin HEAD:main
+          fi
+
+      # 9. Print final execution summary
+      - name: JobRadar execution summary
+        if: success()
+        run: |
+          echo "JobRadar collection and validation completed."
+          echo "Job database and audit reports checked."
+          echo "See this workflow run for detailed source results."
+
+      # 10. Report failures clearly
+      - name: Report workflow failure
+        if: failure()
+        run: |
+          echo "::error::JobRadar update failed. Check the failed step and its logs."
