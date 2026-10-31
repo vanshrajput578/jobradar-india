@@ -541,6 +541,7 @@ def make_job(source, posting, previous):
     return {
         "id": source["id"] + "-" + external_id,
         "source_id": source["id"],
+        "company_id": source.get("company_id") or "",
         "title": title,
         "company": source["company"],
         "location": location,
