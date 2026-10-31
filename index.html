@@ -2650,12 +2650,15 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     if(reduce || !revealIO) return;
     var active = document.querySelector(".view.active");
     if(!active) return;
-    var selectors = RULES.map(function(rule){ return rule[0].split(",").map(function(sel){ return ".view.active " + sel.trim().replace(/^\.view\s+/, ""); }).join(","); }).join(",");
-    var targets = document.querySelectorAll(selectors);
+    /* Use the elements actually registered by prepareReveals. Rebuilding
+       selectors from RULES broke ID-anchored selectors such as #view-home > .hero. */
+    var targets = Array.prototype.slice.call(active.querySelectorAll("[data-rvk]"));
     targets.forEach(function(el){
-      if(!active.contains(el)) return;
       el.classList.remove("is-visible", "in");
-      el.querySelectorAll(".rv-part").forEach(function(part){ part.classList.remove("rv-part-in"); part.style.removeProperty("--part-delay"); });
+      el.querySelectorAll(".rv-part").forEach(function(part){
+        part.classList.remove("rv-part-in");
+        part.style.removeProperty("--part-delay");
+      });
       el.classList.add("rv");
       el.style.transition = "none";
       el.style.removeProperty("--rx"); el.style.removeProperty("--ry");
@@ -2663,7 +2666,6 @@ $("companyDirectoryCategory").onchange = renderCompanies;
     });
     void active.offsetWidth;
     targets.forEach(function(el){
-      if(!active.contains(el)) return;
       el.style.transition = "";
       revealIO.observe(el);
     });
