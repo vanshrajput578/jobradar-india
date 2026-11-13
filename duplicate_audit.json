@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-13T06:52:38.017611+00:00",
-  "total_jobs_checked": 543,
-  "candidate_pairs": 9,
+  "generated_at": "2026-11-13T19:48:46.562965+00:00",
+  "total_jobs_checked": 549,
+  "candidate_pairs": 10,
   "description_similarity_threshold": 0.92,
   "review_required": true,
   "automatic_deletion_enabled": false,
@@ -150,6 +150,22 @@
       "review_required": true,
       "automatic_action": "none",
       "description_similarity": 0.9994
+    },
+    {
+      "job_a_id": "neo4j-4729463006",
+      "job_b_id": "neo4j-4726474006",
+      "company_a": "Neo4j",
+      "company_b": "Neo4j",
+      "title_a": "Sr. Enterprise Account Executive",
+      "title_b": "Sr. Enterprise Account Executive",
+      "location_a": "Remote: West Coast US",
+      "location_b": "Remote: West Coast US",
+      "application_url_a": "https://boards.greenhouse.io/neo4j/jobs/4729463006?gh_jid=4729463006",
+      "application_url_b": "https://boards.greenhouse.io/neo4j/jobs/4726474006?gh_jid=4726474006",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 0.9921
     }
   ]
 }
