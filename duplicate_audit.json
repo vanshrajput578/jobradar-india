@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-18T07:37:44.872258+00:00",
-  "total_jobs_checked": 580,
-  "candidate_pairs": 10,
+  "generated_at": "2026-11-18T20:38:22.238495+00:00",
+  "total_jobs_checked": 587,
+  "candidate_pairs": 12,
   "description_similarity_threshold": 0.92,
   "review_required": true,
   "automatic_deletion_enabled": false,
@@ -88,6 +88,22 @@
       "description_similarity": 1.0
     },
     {
+      "job_a_id": "gitlab-8941364002",
+      "job_b_id": "gitlab-8907111002",
+      "company_a": "GitLab",
+      "company_b": "GitLab",
+      "title_a": "Solutions Architect - SLED (East)",
+      "title_b": "Solutions Architect - SLED (East)",
+      "location_a": "Remote, United States",
+      "location_b": "Remote, United States",
+      "application_url_a": "https://job-boards.greenhouse.io/gitlab/jobs/8941364002",
+      "application_url_b": "https://job-boards.greenhouse.io/gitlab/jobs/8907111002",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 1.0
+    },
+    {
       "job_a_id": "neo4j-4728771006",
       "job_b_id": "neo4j-4720046006",
       "company_a": "Neo4j",
@@ -150,6 +166,22 @@
       "review_required": true,
       "automatic_action": "none",
       "description_similarity": 0.9982
+    },
+    {
+      "job_a_id": "razorpay-4754957005",
+      "job_b_id": "razorpay-4749360005",
+      "company_a": "Razorpay",
+      "company_b": "Razorpay",
+      "title_a": "Analyst, Financial Operations",
+      "title_b": "Analyst, Financial Operations",
+      "location_a": "Bengaluru",
+      "location_b": "Bengaluru",
+      "application_url_a": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4754957005",
+      "application_url_b": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4749360005",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 0.9978
     },
     {
       "job_a_id": "neo4j-4729463006",
