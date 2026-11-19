@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-19T07:33:28.623111+00:00",
+  "generated_at": "2026-11-19T20:43:32.670145+00:00",
   "policy": "Only a missing job ID from a successfully fetched source is marked closed. Failed sources never close jobs. Records are retained.",
   "source_results": [
     {
       "source_id": "groww",
       "company": "Groww",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
       "fetched_jobs": 9,
       "valid_jobs": 9
     },
@@ -14,39 +14,39 @@
       "source_id": "razorpay",
       "company": "Razorpay",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
-      "fetched_jobs": 29,
-      "valid_jobs": 29
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
+      "fetched_jobs": 30,
+      "valid_jobs": 30
     },
     {
       "source_id": "6sense",
       "company": "6sense",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
-      "fetched_jobs": 36,
-      "valid_jobs": 36
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
+      "fetched_jobs": 33,
+      "valid_jobs": 33
     },
     {
       "source_id": "alphasense",
       "company": "AlphaSense India",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
-      "fetched_jobs": 28,
-      "valid_jobs": 28
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
+      "fetched_jobs": 25,
+      "valid_jobs": 25
     },
     {
       "source_id": "deepintent",
       "company": "DeepIntent",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
-      "fetched_jobs": 25,
-      "valid_jobs": 25
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
+      "fetched_jobs": 24,
+      "valid_jobs": 24
     },
     {
       "source_id": "gitlab",
       "company": "GitLab",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
       "fetched_jobs": 248,
       "valid_jobs": 248
     },
@@ -54,102 +54,198 @@
       "source_id": "neo4j",
       "company": "Neo4j",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
-      "fetched_jobs": 63,
-      "valid_jobs": 63
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
+      "fetched_jobs": 64,
+      "valid_jobs": 64
     },
     {
       "source_id": "commerceiq",
       "company": "CommerceIQ",
       "status": "success",
-      "checked_at": "2026-11-19T07:33:28.623111+00:00",
+      "checked_at": "2026-11-19T20:43:32.670145+00:00",
       "fetched_jobs": 13,
       "valid_jobs": 13
     }
   ],
   "status_counts": {
-    "active": 451,
-    "closed": 144,
+    "active": 446,
+    "closed": 160,
     "unverified": 0
   },
   "status_events": [
     {
-      "job_id": "gitlab-8940703002",
+      "job_id": "razorpay-4753866005",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "gitlab-8945990002",
+      "job_id": "gitlab-8948050002",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "gitlab-8897543002",
+      "job_id": "gitlab-8478405002",
+      "from": "closed",
+      "to": "active",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "gitlab-8948559002",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "deepintent-6263851004",
+      "job_id": "gitlab-8949667002",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "deepintent-6265124004",
+      "job_id": "gitlab-8895531002",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "deepintent-6265161004",
+      "job_id": "neo4j-4730475006",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "deepintent-6265171004",
+      "job_id": "neo4j-4730833006",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "razorpay-4738327005",
+      "job_id": "neo4j-4730836006",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "gitlab-8945143002",
+      "job_id": "neo4j-4730834006",
+      "from": "unknown",
+      "to": "active",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "neo4j-4730835006",
+      "from": "unknown",
+      "to": "active",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "deepintent-6266192004",
+      "from": "unknown",
+      "to": "active",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "gitlab-8933640002",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "commerceiq-7801513003",
+      "job_id": "neo4j-4716592006",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "gitlab-8784185002",
+      "job_id": "neo4j-4716565006",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "gitlab-8919962002",
+      "job_id": "neo4j-4718351006",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
     },
     {
-      "job_id": "gitlab-8857185002",
+      "job_id": "neo4j-4718349006",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-19T07:33:28.623111+00:00"
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "gitlab-8675560002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "gitlab-8789017002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "gitlab-8692880002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "gitlab-8899972002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "deepintent-5826589004",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "deepintent-5472780004",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "alphasense-8686886002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "alphasense-8693026002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "alphasense-8693024002",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "6sense-8224039",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "6sense-8331500",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
+    },
+    {
+      "job_id": "6sense-8273670",
+      "from": "active",
+      "to": "closed",
+      "at": "2026-11-19T20:43:32.670145+00:00"
     }
   ],
   "automatic_deletion_enabled": false
