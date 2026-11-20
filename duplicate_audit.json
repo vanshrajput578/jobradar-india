@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-19T20:43:45.585961+00:00",
-  "total_jobs_checked": 606,
-  "candidate_pairs": 14,
+  "generated_at": "2026-11-20T07:25:22.255042+00:00",
+  "total_jobs_checked": 610,
+  "candidate_pairs": 13,
   "description_similarity_threshold": 0.92,
   "review_required": true,
   "automatic_deletion_enabled": false,
@@ -166,22 +166,6 @@
       "review_required": true,
       "automatic_action": "none",
       "description_similarity": 0.9994
-    },
-    {
-      "job_a_id": "gitlab-8838331002",
-      "job_b_id": "gitlab-8838394002",
-      "company_a": "GitLab",
-      "company_b": "GitLab",
-      "title_a": "Senior Professional Services Engineer - PubSec - DC Metro",
-      "title_b": "Senior Professional Services Engineer - PubSec - DC Metro",
-      "location_a": "Remote, United States",
-      "location_b": "Remote, United States",
-      "application_url_a": "https://job-boards.greenhouse.io/gitlab/jobs/8838331002",
-      "application_url_b": "https://job-boards.greenhouse.io/gitlab/jobs/8838394002",
-      "reason": "same_company_title_location_and_similar_description",
-      "review_required": true,
-      "automatic_action": "none",
-      "description_similarity": 0.9982
     },
     {
       "job_a_id": "razorpay-4754957005",
