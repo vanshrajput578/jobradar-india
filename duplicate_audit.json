@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-23T07:48:12.035787+00:00",
-  "total_jobs_checked": 620,
-  "candidate_pairs": 13,
+  "generated_at": "2026-11-23T23:58:52.363590+00:00",
+  "total_jobs_checked": 632,
+  "candidate_pairs": 14,
   "description_similarity_threshold": 0.92,
   "review_required": true,
   "automatic_deletion_enabled": false,
@@ -166,6 +166,22 @@
       "review_required": true,
       "automatic_action": "none",
       "description_similarity": 0.9994
+    },
+    {
+      "job_a_id": "razorpay-4747004005",
+      "job_b_id": "razorpay-4746983005",
+      "company_a": "Razorpay",
+      "company_b": "Razorpay",
+      "title_a": "Senior Software Development Engineer",
+      "title_b": "Senior Software Development Engineer",
+      "location_a": "Bengaluru",
+      "location_b": "Bengaluru",
+      "application_url_a": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4747004005",
+      "application_url_b": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4746983005",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 0.9988
     },
     {
       "job_a_id": "razorpay-4754957005",
