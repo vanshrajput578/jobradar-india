@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-24T10:00:05.654470+00:00",
-  "total_jobs_checked": 634,
-  "candidate_pairs": 14,
+  "generated_at": "2026-11-24T22:31:35.530611+00:00",
+  "total_jobs_checked": 641,
+  "candidate_pairs": 16,
   "description_similarity_threshold": 0.92,
   "review_required": true,
   "automatic_deletion_enabled": false,
@@ -152,6 +152,22 @@
       "description_similarity": 0.9997
     },
     {
+      "job_a_id": "gitlab-8891752002",
+      "job_b_id": "gitlab-8790102002",
+      "company_a": "GitLab",
+      "company_b": "GitLab",
+      "title_a": "Commercial Account Executive - Mid-Market, East",
+      "title_b": "Commercial Account Executive - Mid-Market, East",
+      "location_a": "Remote, United States",
+      "location_b": "Remote, United States",
+      "application_url_a": "https://job-boards.greenhouse.io/gitlab/jobs/8891752002",
+      "application_url_b": "https://job-boards.greenhouse.io/gitlab/jobs/8790102002",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 0.9997
+    },
+    {
       "job_a_id": "razorpay-4746498005",
       "job_b_id": "razorpay-4746959005",
       "company_a": "Razorpay",
@@ -230,6 +246,22 @@
       "review_required": true,
       "automatic_action": "none",
       "description_similarity": 0.9729
+    },
+    {
+      "job_a_id": "gitlab-8948619002",
+      "job_b_id": "gitlab-8927560002",
+      "company_a": "GitLab",
+      "company_b": "GitLab",
+      "title_a": "Senior Journey Architect",
+      "title_b": "Senior Journey Architect",
+      "location_a": "Remote, United States",
+      "location_b": "Remote, United States",
+      "application_url_a": "https://job-boards.greenhouse.io/gitlab/jobs/8948619002",
+      "application_url_b": "https://job-boards.greenhouse.io/gitlab/jobs/8927560002",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 0.9544
     }
   ]
 }
