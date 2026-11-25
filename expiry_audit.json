@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-11-24T22:31:20.765080+00:00",
+  "generated_at": "2026-11-25T08:44:09.086146+00:00",
   "policy": "Only a missing job ID from a successfully fetched source is marked closed. Failed sources never close jobs. Records are retained.",
   "source_results": [
     {
       "source_id": "groww",
       "company": "Groww",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
-      "fetched_jobs": 7,
-      "valid_jobs": 7
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
+      "fetched_jobs": 8,
+      "valid_jobs": 8
     },
     {
       "source_id": "razorpay",
       "company": "Razorpay",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
-      "fetched_jobs": 23,
-      "valid_jobs": 23
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
+      "fetched_jobs": 24,
+      "valid_jobs": 24
     },
     {
       "source_id": "6sense",
       "company": "6sense",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
       "fetched_jobs": 35,
       "valid_jobs": 35
     },
@@ -30,7 +30,7 @@
       "source_id": "alphasense",
       "company": "AlphaSense India",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
       "fetched_jobs": 27,
       "valid_jobs": 27
     },
@@ -38,23 +38,23 @@
       "source_id": "deepintent",
       "company": "DeepIntent",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
-      "fetched_jobs": 24,
-      "valid_jobs": 24
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
+      "fetched_jobs": 23,
+      "valid_jobs": 23
     },
     {
       "source_id": "gitlab",
       "company": "GitLab",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
-      "fetched_jobs": 252,
-      "valid_jobs": 252
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
+      "fetched_jobs": 249,
+      "valid_jobs": 249
     },
     {
       "source_id": "neo4j",
       "company": "Neo4j",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
       "fetched_jobs": 60,
       "valid_jobs": 60
     },
@@ -62,106 +62,76 @@
       "source_id": "commerceiq",
       "company": "CommerceIQ",
       "status": "success",
-      "checked_at": "2026-11-24T22:31:20.765080+00:00",
+      "checked_at": "2026-11-25T08:44:09.086146+00:00",
       "fetched_jobs": 16,
       "valid_jobs": 16
     }
   ],
   "status_counts": {
-    "active": 444,
-    "closed": 197,
+    "active": 442,
+    "closed": 203,
     "unverified": 0
   },
   "status_events": [
     {
-      "job_id": "gitlab-8891752002",
+      "job_id": "groww-5042260101",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8956660002",
+      "job_id": "razorpay-4758549005",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8948619002",
+      "job_id": "razorpay-4758202005",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8955422002",
+      "job_id": "gitlab-8959549002",
       "from": "unknown",
       "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8937275002",
-      "from": "unknown",
-      "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
-    },
-    {
-      "job_id": "alphasense-8958236002",
-      "from": "unknown",
-      "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
-    },
-    {
-      "job_id": "alphasense-8769853002",
-      "from": "unknown",
-      "to": "active",
-      "at": "2026-11-24T22:31:20.765080+00:00"
-    },
-    {
-      "job_id": "gitlab-8939857002",
+      "job_id": "gitlab-8929253002",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "razorpay-4749337005",
+      "job_id": "razorpay-4727236005",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "razorpay-4749335005",
+      "job_id": "deepintent-6239191004",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8907028002",
+      "job_id": "gitlab-8753664002",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8790102002",
+      "job_id": "gitlab-8698330002",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     },
     {
-      "job_id": "gitlab-8638232002",
+      "job_id": "gitlab-8629019002",
       "from": "active",
       "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
-    },
-    {
-      "job_id": "6sense-8238333",
-      "from": "active",
-      "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
-    },
-    {
-      "job_id": "razorpay-4748774005",
-      "from": "active",
-      "to": "closed",
-      "at": "2026-11-24T22:31:20.765080+00:00"
+      "at": "2026-11-25T08:44:09.086146+00:00"
     }
   ],
   "automatic_deletion_enabled": false
