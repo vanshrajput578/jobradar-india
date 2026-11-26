@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-25T21:46:15.502344+00:00",
-  "total_jobs_checked": 648,
-  "candidate_pairs": 17,
+  "generated_at": "2026-11-26T08:29:23.988252+00:00",
+  "total_jobs_checked": 654,
+  "candidate_pairs": 19,
   "description_similarity_threshold": 0.92,
   "review_required": true,
   "automatic_deletion_enabled": false,
@@ -120,6 +120,22 @@
       "description_similarity": 1.0
     },
     {
+      "job_a_id": "razorpay-4715389005",
+      "job_b_id": "razorpay-4749335005",
+      "company_a": "Razorpay",
+      "company_b": "Razorpay",
+      "title_a": "Product Manager II",
+      "title_b": "Product Manager II",
+      "location_a": "Bengaluru",
+      "location_b": "Bengaluru",
+      "application_url_a": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4715389005",
+      "application_url_b": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4749335005",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 1.0
+    },
+    {
       "job_a_id": "razorpay-4749337005",
       "job_b_id": "razorpay-4736585005",
       "company_a": "Razorpay",
@@ -166,6 +182,22 @@
       "review_required": true,
       "automatic_action": "none",
       "description_similarity": 0.9997
+    },
+    {
+      "job_a_id": "deepintent-6268434004",
+      "job_b_id": "deepintent-5979034004",
+      "company_a": "DeepIntent",
+      "company_b": "DeepIntent",
+      "title_a": "Applied AI Engineer",
+      "title_b": "Applied AI Engineer",
+      "location_a": "New York, New York",
+      "location_b": "New York, New York",
+      "application_url_a": "https://job-boards.greenhouse.io/deepintent/jobs/6268434004",
+      "application_url_b": "https://job-boards.greenhouse.io/deepintent/jobs/5979034004",
+      "reason": "same_company_title_location_and_similar_description",
+      "review_required": true,
+      "automatic_action": "none",
+      "description_similarity": 0.9995
     },
     {
       "job_a_id": "razorpay-4746498005",
